@@ -1,0 +1,38 @@
+#backToTop {
+  display: block;      /* กำหนดเป็น block */
+  position: fixed;     /* ให้ปุ่มลอยตามการ scroll */
+  bottom: 80px;        /* ห่างจากขอบล่าง */
+  right: 30px;         /* ห่างจากขอบขวา */
+  z-index: 99;         /* ให้อยู่เหนือเลเยอร์อื่น */
+  border: none;
+  outline: none;
+  background-color: transparent; /* ให้พื้นหลังปุ่มใสเพื่อโชว์รูปวงกลม */
+  cursor: pointer;
+  padding: 0;
+  width: 60px;         /* ปรับขนาดตามความเหมาะสมของรูป */
+  opacity: 0;          /* เริ่มต้นให้โปร่งใส (ซ่อนไว้) */
+  transition: opacity 0.4s; /* เอฟเฟกต์ Fade In/Out */
+  visibility: hidden;
+}
+
+#backToTop img {
+  width: 100%;         /* ให้รูปขยายเต็มปุ่ม */
+  height: auto;
+}
+
+#backToTop.show {
+  opacity: 1;          /* เมื่อเลื่อนลงมาให้แสดงผล */
+  visibility: visible;
+}
+
+/* เพิ่มเอฟเฟกต์เมื่อเอาเมาส์ไปชี้ (Hover) */
+#backToTop:hover {
+  transform: scale(1.1); /* ขยายขนาดขึ้น 10% */
+  filter: brightness(1.1); /* เพิ่มความสว่างขึ้นเล็กน้อย */
+  transition: transform 0.2s ease-in-out; /* ให้การขยายดูนุ่มนวล */
+}
+
+/* เอฟเฟกต์ตอนกด (Active) */
+#backToTop:active {
+  transform: scale(0.95); /* ย่อขนาดลงเล็กน้อยตอนคลิก ให้ความรู้สึกเหมือนกดปุ่มจริง */
+}

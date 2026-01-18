@@ -1,0 +1,23 @@
+/* แสงเงาสำหรับรูปภาพใน Modal */
+.img-silver-rare {
+    box-shadow: 0 0 20px rgba(192, 192, 192, 0.8);
+    border: 2px solid #C0C0C0;
+}
+
+.img-golden-rare {
+    box-shadow: 0 0 25px #ffd700;
+    border: 2px solid #ffd700;
+}
+
+/* สีข้อความระดับความหายาก */
+.text-silver-rare {
+    color: #a8a8a8;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.text-golden-rare {
+    color: #d4af37;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+}

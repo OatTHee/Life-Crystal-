@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Crystal│Dinomaster TCG </title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="filterdiv.css">
+    <link rel="stylesheet" href="deck_builder.css">
+    <link rel="stylesheet" href="hilight_text.css"> 
+    <link rel="stylesheet" href="totop.css"> 
+    <link rel="stylesheet" href="rarity_inModal.css"> 
+    <link rel="stylesheet" href="collection_style.css"> 
+    <link rel="stylesheet" href="responsive.css"> 
+	<link rel="stylesheet" href="showcase_mode.css"> 
+    <link rel="stylesheet" href="bottom_nav.css"> 
+
+
+    <style>
+        /* --- 1. Global Styles --- */
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: #F7F7FC;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #main-wrapper {
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            position: relative;
+            display: block; 
+            box-sizing: border-box;
+            padding: 0 20px 100px 20px;
+            overflow: visible !important; 
+        }
+
+        h1 { 
+            text-align: center; 
+            padding: 30px 0; 
+            margin: 0;
+            color: #07357D;
+        }
+        
+        /* --- 2. Search & Controls (Sticky System) --- */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 15px 20px;
+            background: #ffffff; 
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0; 
+            z-index: 900;
+            margin: 0 -20px 30px -20px; 
+            border-bottom: 2px solid #ff9f43;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* --- 3. Card & Container --- */
+        #cardContainer {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding-top: 10px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card {
+            width: 200px; 
+            flex: 0 1 200px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        /* เมื่อเปิดหน้าต่างจัดเด็ค (Side Panel Open) - สำหรับ PC */
+        body.panel-open #main-wrapper {
+            padding-right: 570px; 
+        }
+
+
+
+/* --- 4. Modal Styles --- */
+        .modal-img-side {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-img-side img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .modal-info-side {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #fff;
+            color: #333;
+            text-align: left;
+        }
+
+        .modal-info-side h2 { margin-top: 0; color: #1a1a1a; }
+        .modal-info-side .ability-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 5px solid #ff4757;
+            white-space: normal;
+            line-height: 1.6;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #333;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Ability Box Colors */
+        .ability-box.type-Creature { background: #fff9e7; border-left-color: #6B6450; }
+        .ability-box.type-Boost_Creature { background: #fffffddd; border-left-color: #ad8d0c; }
+
+        .ability-box.type-Action { background: #ffe4e5; border-left-color: #bc1f1f; }
+        .ability-box.type-Action_Field { background: #fbffda; border-left-color: #9bb700cb; }
+        .ability-box.type-Armor { background: #d7ebff; border-left-color: #0088ff; }
+        .ability-box.type-Field { background: #e6ffe6; border-left-color: #4caf50; }
+        .ability-box.type-Master { background: #fff8e1; border-left-color: #ffc107; }
+        .ability-box.type-Fusion_Monster { background: #EBE5FF; border-left-color: #1F1F3D; }
+        .ability-box.type-Illusion { background: #bfc0ff; border-left-color: #5903ed; }
+        .ability-box.type-Armored_Dino { background: #EBE5FF; border-left-color: #2d3a46; }
+
+
+        /* --- 5. SIDE PANEL STRUCTURE --- */
+        .side-panel {
+            position: fixed;
+            right: -550px; 
+            top: 0;
+            width: 550px;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: visible !important;
+        }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+#deckBuilderView, #deckCollectionView {
+    display: flex; /* มั่นใจว่าเป็น Flex */
+    flex-direction: column;
+    height: 100%;
+    overflow: visible !important; /* ปล่อยให้เนื้อหาข้างใน (deck-body) จัดการการเลื่อนเอง */
+}
+
+        .deck-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #ff9f43 #f1f1f1;
+        }
+
+        .deck-body::-webkit-scrollbar { width: 8px; }
+        .deck-body::-webkit-scrollbar-thumb { background: #ff9f43; border-radius: 10px; }
+
+        .view-active { display: flex !important; }
+        .view-hidden { display: none !important; }
+
+        /* --- 6. Side Panel Components --- */
+        .btn-sort {
+            background-color: #CC5500 !important;
+            color: white !important;
+            border: none !important;
+            padding: 8px 15px !important;
+            border-radius: 6px !important;
+            cursor: pointer;
+            font-size: 14px !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-clear-all {
+            background-color: #800020 !important;
+            color: white !important;
+            width: 100%;
+            padding: 12px !important;
+            border-radius: 8px !important;
+            font-size: 16px !important;
+            border: none !important;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .collection-toggle-tab {
+            position: absolute;
+            left: -50px; 
+            top: 150px;
+            width: 50px;
+            min-height: 160px;
+            background: linear-gradient(135deg, #ff9f43 0%, #ff6b6b 100%);
+            color: white;
+            cursor: pointer;
+            border-radius: 15px 0 0 15px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1005;
+            box-shadow: -4px 0 10px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-right: none;
+        }
+
+        .tab-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 13px;
+        }
+
+.main-title {
+    display: flex;
+    align-items: center;     /* จัดให้อยู่กึ่งกลางแนวตั้งร่วมกัน */
+    justify-content: center;    /* ถ้าต้องการให้หัวข้ออยู่กึ่งกลางหน้าจอ */
+    gap: 15px;               /* ระยะห่างระหว่างโลโก้กับตัวอักษร */
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: #07357D;          /* สีน้ำเงินตามธีมหลักของคุณ */
+}
+
+.main-title img {
+    display: block;          /* ป้องกันช่องว่างใต้รูป */
+    height: auto;            /* รักษาอัตราส่วนรูปภาพ */
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div id="main-wrapper">
+        
+       <h1 class="main-title">
+    <span>ฐานข้อมูลการ์ด Dinomaster</span>        
+    <img src="logo2.png" width="50" alt="Dinomaster Logo">
+</h1>
+
+        <button id="backToTop" title="Go to top">
+            <img src="images/button1.png" alt="Back to Top">
+        </button>
+
+        <div class="controls" id="searchBar">
+            <input type="text" id="searchInput" placeholder="ค้นหาชื่อการ์ด (ไทย / EN)...">
+
+            <select id="typeFilter">
+                <option value="">ทุกประเภท</option>
+                <option value="Creature">ครีเจอร์</option>
+                <option value="Action">แอคชั่น</option>
+                <option value="Armor">อาร์เมอร์</option>
+                <option value="Field">พื้นที่</option>
+                <option value="Illusion">อิลูชั่น</option>
+                <option value="Master">มาสเตอร์</option>
+                <option value="Boost_Creature">บูสครีเจอร์</option>
+                <option value="Boost_Master">บูสมาสเตอร์</option>
+                <option value="Fusion_Monster">มอนสเตอร์ฟิวชั่น</option>
+                <option value="Armored_Dino">ครีเจอร์ติดเกราะ</option>
+            </select>
+            
+            <select id="dpFilter">
+                <option value="">(ไม่เลือก DP)</option>
+                <option value="1">DP : 1</option>
+                <option value="2">DP : 2</option>
+                <option value="3">DP : 3</option>
+                <option value="4">DP : 4</option>
+                <option value="5">DP : 5</option>
+                <option value="6">DP : 6</option>
+                <option value="7">DP : 7</option>
+                <option value="8">DP : 8</option>
+                <option value="ไร้DP">การ์ดไร้ DP</option>
+            </select>
+            
+            <select id="clanFilter">
+                <option value="">(ไม่เลือกเผ่า)</option>
+                <option value="สองขา">เผ่าสองขา</option>
+                <option value="มีเกราะหางหนาม">เผ่ามีเกราะ</option>
+                <option value="สัตว์น้ำ">เผ่าสัตว์น้ำ</option>
+                <option value="มีเขา">เผ่ามีเขา</option>
+                <option value="มีปีก">เผ่าปีก</option>
+                <option value="คอยาว">เผ่าคอยาว</option>
+                <option value="จักรกล">เผ่าจักรกล</option>
+
+            </select>
+
+            <select id="rarityFilter">
+                <option value="">ทุกความหายาก</option>
+                <option value="Silver_Rare">Silver Rare (แรร์เงิน)</option>
+                <option value="Golden_Rare">Golden Rare (แรร์ทอง)</option>
+            </select>
+
+            <select id="setFilter">
+                <option value="">ทุกชุด</option>
+                <option value="ออริจินอล">ภาค 1 : ออริจินอล</option>
+                <option value="อินิกม่า">ภาค 2 : อินิกม่า</option>
+				<option value="คาแร็คเตอร์">ภาค 2.5 : คาแร็คเตอร์</option>
+                <option value="นิวมาสเตอร์">ภาค 3 : นิวมาสเตอร์</option>
+				<option value="สเต็ปเน็ก">ภาค 4 : สเต็ปเน็ก</option>
+				<option value="รีอินิกม่า">ภาค 5 : รีอินิกม่า</option>
+				<option value="AR1">ภาค 6 : AR1</option>
+				
+                <option value="บููสมาสเตอร์2">แฟนเมด : บููสมาสเตอร์ รีอินิกม่า</option>				
+                <option value="เปลี่ยนเกลือเป็นทอง">แฟนเมด : เปลี่ยนเกลือเป็นทอง</option>				
+                <option value="โดนใจรีเทิร์น">แฟนเมด : โดนใจรีเทิร์น</option>	
+                <option value="บูสมาสเตอร์1รีอาร์ท">แฟนเมด : รีอาร์ทชุุดบููสมาสเตอร์ 1</option>
+                <option value="คู่หูเพลิงน้ำแข็ง">แฟนเมด : คู่หูเพลิงน้ำแข็ง</option>
+                <option value="โดนใจรีเทิร์น2">แฟนเมด : โดนใจรีเทิร์น2</option>	
+
+            </select>
+            
+            <button id="resetBtn" onclick="resetFilters()">ล้างการค้นหา</button>
+            
+            <button id="mobileEditModeBtn" onclick="toggleMobileDeckMode()">
+                <span id="editIcon">➕</span> <span id="editText">เพิ่มการ์ดลงเด็ค</span>
+            </button>
+        </div>
+
+        <div id="cardContainer"></div>
+    </div> 
+
+    <div id="deckSidePanel" class="side-panel">
+        
+
+
+<div class="deck-toggle-handle" onclick="toggleSidePanel()">
+    <span class="triangle-icon">◀</span>
+</div>
+
+        <div id="deckBuilderView">
+
+		
+<div class="side-panel-header" style="position: relative; padding-right: 140px; min-height: 60px; display: flex; align-items: center;">
+    <button class="mobile-back-btn" onclick="toggleSidePanel()">← กลับไปเลือกการ์ด</button>                
+    
+    <h3 id="panelTitle" style="color: #07357D; margin: 0 15px; font-size: 18px;"> 
+        <i class="fa-solid fa-screwdriver-wrench"></i> จัดเด็คของคุณ</h3>
+
+<button id="collToggleBtn" onclick="handleCollectionNavigation()" 
+        style="position: absolute; top: 12px; right: 15px; 
+               background: linear-gradient(135deg, #ff9f43 0%, #ff6b6b 100%); 
+               color: white; border: none; padding: 7px 12px; border-radius: 8px; 
+               cursor: pointer; font-size: 12px; font-family: 'Kanit'; 
+               box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 5px; z-index: 1000;">
+    <span id="viewModeIcon">📂</span>
+    <span id="viewModeText">คอลเล็คชั่น</span>
+</button>
+</div>
+		
+            <div class="side-panel-header">
+                (มีระบบแบ็คอัพ)
+                <input type="text" id="deckNameInput" placeholder="ตั้งชื่อเด็คของคุณ..." class="deck-name-field">
+                
+<div class="menu">
+
+    <div class="menu-row">
+        <input type="file" id="importDeckInput" style="display: none;" accept=".json" onchange="importDeckFromFile(event)">
+        
+<button onclick="document.getElementById('importDeckInput').click()" class="btn-import">
+    <i class="fa-solid fa-file-import"></i>
+</button>
+
+        
+        <button onclick="saveOverwrite()" ><i class="fa-solid fa-floppy-disk"></i>  บันทึก</button>
+        
+        <button onclick="saveAsNew()" ><i class="fa-solid fa-floppy-disk"></i>  บันทึกเป็น</button>   
+    </div>
+</div>
+            </div>
+
+            <div class="deck-body">
+			
+<div class="menu-row">
+    <button class="btn-sort" onclick="toggleCoverSelectionMode()" class="btn-select-cover">🖼️ เลือกหน้าปก</button>
+    <button class="btn-sort" onclick="sortDeck()"><i class="fa-solid fa-sort"></i> เรียงการ์ด</button>                       
+</div>
+			
+                <div class="deck-section-label">STARTER (Master & Commander)</div>
+                <div id="starterContainer" class="deck-grid starter-zone"></div>
+
+                <div class="deck-section-label main-deck-label">
+                    <span>Main Deck <span id="mainDeckCounter">(0/60)</span></span>
+                    <span id="typeHistogramBtn" style="cursor:pointer; margin-left:8px; display:inline-block; transition:0.3s;">▼</span>
+                </div>
+                
+                <div id="typeHistogramPanel" class="histogram-panel"></div>
+                
+                <div id="deckContainer" class="deck-grid"></div>
+
+                <div class="deck-section-label extra-deck-label">
+                    EXTRA DECK <span id="extraDeckCounter">(0/15)</span>
+                </div>
+                <div id="extraDeckContainer" class="deck-grid"></div>
+            </div>
+
+            <div class="side-panel-footer">
+                <div class="header-controls">
+
+                    <button onclick="exportDeckToFile()" title="บันทึก JSON">
+                     <i class="fa-solid fa-download"></i>
+                    </button>
+					<button onclick="openDeckShowcase()" >
+    <i class="fa-solid fa-maximize"></i> ดูเต็มจอ
+                    </button>
+                </div>
+                <button onclick="clearDeck()" class="btn-clear-all">🗑️ ล้างเด็คทั้งหมด</button>
+            </div>
+
+
+     </div>
+		
+		
+		
+		<div id="deckShowcaseOverlay" class="showcase-overlay" style="display:none;">
+    <div class="showcase-content">
+        <div class="showcase-header">
+            <h2 id="showcaseTitle">ชื่อเด็ค</h2>
+
+										
+		<button onclick="openHandSimulator()" style="
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px; /* เว้นระยะห่างจากปุ่มเดิม */
+">
+    ✋ ทดลองจั่ว
+</button>
+
+ <button onclick="exportToPNG()" title="ส่งออกเป็นรูปภาพ">
+                  <i class="fa-solid fa-camera"></i>
+         </button>
+
+<button onclick="toggleShowcaseEdit()" style="padding:10px 20px; background:#6c5ce7; 
+color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">👁️ แก้ไข</button>
+
+										
+            <button onclick="closeDeckShowcase()" class="btn-close-showcase">✖</button>
+        </div>
+        <div id="showcaseBody">
+            </div>
+    </div>
+	
+</div>
+		
+		
+		
+
+        <div id="deckCollectionView" style="display: none;">
+            <div class="side-panel-header">
+			
+			<button class="mobile-back-btn" onclick="toggleSidePanel()">← กลับไปเลือกการ์ด</button>                
+
+			
+                <h3 style="color: #07357D; margin: 15px;">
+ 
+<i class="fa-solid fa-book"></i> คอลเล็คชั่นเด็ค</h3>
+            </div>
+            <div class="deck-body" id="collectionListContainer"></div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal" onclick="closeModalOutside(event)">
+        <div class="modal-content-wrapper" onclick="event.stopPropagation()">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-img-side">
+                <img id="modalImg" src="">
+            </div>
+            <div class="modal-info-side" id="modalInfo"></div>
+        </div>
+    </div>
+    
+<nav class="bottom-navbar">
+    <div class="nav-left" onclick="openInfoModal()">
+        <span class="dev-name">
+            <img src="logo.png", width="20"></i> Dev by <strong>@Oat Dinomaster Playground
+            </strong>
+        </span>
+        <span class="info-link">
+            <i class="fas fa-info-circle"></i> เกี่ยวกับ & ข้อกำหนด
+        </span>
+    </div>
+
+    <div class="nav-right">
+        <a href="https://forms.gle/FFKSLwKTckbnnzEX8" target="_blank" class="nav-btn btn-bug" title="แจ้งปัญหา">
+            <i class="fas fa-bug"></i> <span class="btn-text">แจ้งปัญหา</span>
+        </a>
+        <a href="https://tipme.in.th/oneonecard6969" target="_blank" class="nav-btn btn-donate" title="สนับสนุนผู้สร้าง">
+            <i class="fas fa-coffee"></i> <span class="btn-text">Donate</span>
+        </a>
+    </div>
+</nav>
+
+<div id="siteInfoModal" class="info-modal">
+    <div class="info-modal-content">
+        <span class="close-info" onclick="closeInfoModal()">&times;</span>
+        
+        <h2>เกี่ยวกับ <img src="logo2.png", width="30"></i>  Life Crystal│Dinomaster TCG</h2>
+        <p>พัฒนาโดย: <strong>@Oat Dinomaster Playground (AKA แอดฮิปโป ONE ONE CARD)</strong></p>
+        <p>เว็บนี้สร้างขึ้นด้วยใจรัก เพื่อให้เพื่อนๆ ผู้เล่นทุกคนค้นหาข้อมูลการ์ดได้ง่ายขึ้น สะดวกขึ้น และสนุกกับการจัดเด็คมากขึ้นครับ</p>
+        
+        <hr>
+        
+        <h3><i class="fas fa-shield-alt"></i> ข้อความเบื้องต้น</h3>
+        <ul class="disclaimer-list">
+            <li>เว็บไซต์นี้เป็น <strong>Fan-made Website</strong> จัดทำขึ้นเพื่อรวบรวมข้อมูลเท่านั้น</li>
+            <li>ภาพการ์ด ข้อมูล และทรัพย์สินทางปัญญาที่เกี่ยวข้อง เป็นลิขสิทธิ์ถูกต้องของ <strong>Dinomaster TCG</strong> และบริษัท เจนิเว่ จำกัด</li>
+            <li>ทางผู้จัดทำไม่มีส่วนเกี่ยวข้องในเชิงพาณิชย์หรือเป็นตัวแทนของเจ้าของผลิตภัณฑ์</li>
+        </ul>
+
+        <h2>ข้อกำหนดและเงื่อนไขการใช้งาน</h2>
+ยินดีต้อนรับสู่ Life Crystal (ซึ่งต่อไปนี้จะเรียกว่า "เว็บไซต์") กรุณาอ่านข้อกำหนดและเงื่อนไขการใช้งานต่อไปนี้
+อย่างละเอียด การเข้าถึงหรือใช้งานเว็บไซต์นี้ถือว่าท่านได้ยอมรับและตกลงที่จะผูกพันตามข้อกำหนดเหล่านี้ทุกประการ 
+หากท่านไม่เห็นด้วยกับข้อกำหนดใดๆ กรุณาระงับการใช้งานเว็บไซต์ทันที
+
+<h3>1. การใช้บริการและคุณสมบัติของผู้ใช้</h3>
+การยอมรับข้อกำหนด: การใช้งานเครื่องมือต่างๆ บนเว็บไซต์ เช่น ระบบสร้างเด็ค (Deck Builder) ถือเป็นการทำสัญญาทางอิเล็กทรอนิกส์ระหว่างท่านกับเว็บไซต์
+
+อายุผู้ใช้งาน: หากท่านมีอายุต่ำกว่า 20 ปี ท่านยืนยันว่าได้รับความยินยอมจากผู้ปกครองตามกฎหมายในการใช้งานและยอมรับข้อกำหนดนี้
+
+
+<h3>2. กฎระเบียบในการใช้งานและเนื้อหา (Code of Conduct)</h3>
+ท่านตกลงที่จะไม่กระทำการดังต่อไปนี้:
+
+<h4>การละเมิดระบบ:</h4> 
+ห้ามพยายามเจาะระบบ (Hacking) หรือใช้โปรแกรมอัตโนมัติ (Bots/Scripts) ในการดึงข้อมูลหรือสร้างความเสียหายต่อเซิร์ฟเวอร์
+<h4>เนื้อหาที่ไม่เหมาะสม: </h4>
+ห้ามแชร์เด็คหรือข้อความที่มีลักษณะลามกอนาจาร สร้างความขัดแย้ง หรือละเมิดลิขสิทธิ์ของผู้อื่น
+<h3>3. ทรัพย์สินทางปัญญา (Intellectual Property)</h3>
+<h4>ความเป็นเจ้าของ: </h4>
+เนื้อหา เครื่องหมายการค้า และเครื่องมือทั้งหมดบนเว็บไซต์เป็นทรัพย์สินของเราหรือผู้ได้รับอนุญาต 
+ห้ามนำไปใช้เพื่อการค้าโดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร
+
+<h4>การ์ดเกม:</h4> 
+รูปภาพการ์ดและเครื่องหมายการค้าที่เกี่ยวข้องกับ Dinomaster หรือการ์ดเกมอื่นๆ เป็นลิขสิทธิ์ของเจ้าของลิขสิทธิ์นั้นๆ 
+เว็บไซต์นี้จัดทำขึ้นเพื่อเป็นเครื่องมือสนับสนุนชุมชนเท่านั้น
+
+<h3>4. การจำกัดความรับผิด (Limitation of Liability)</h3>
+<h4>บริการตามสภาพ:</h4> 
+เว็บไซต์ให้บริการ "ตามที่เป็นอยู่" (As Is) เราไม่รับประกันว่าระบบจะทำงานได้โดยไม่มีข้อผิดพลาดหรือไม่มีการขัดข้อง 
+และจะไม่รับผิดชอบต่อการสูญหายของข้อมูลเด็คในกรณีที่เกิดปัญหาทางเทคนิค
+
+<h4>ความรับผิดชอบต่อโฆษณา:</h4> 
+ข้อความหรือแบนเนอร์โฆษณาบนเว็บไซต์เป็นความรับผิดชอบของสปอนเซอร์ เว็บไซต์ไม่มีส่วนเกี่ยวข้องกับการซื้อขายระหว่าง
+ท่านกับร้านค้าที่ลงโฆษณา
+
+<h3>5. การปรับปรุงและการสิ้นสุดการให้บริการ</h3>
+การเปลี่ยนแปลงข้อกำหนด: เราขอสงวนสิทธิ์ในการแก้ไขข้อกำหนดเหล่านี้ได้ทุกเมื่อ 
+โดยจะแจ้งให้ทราบผ่านหน้าเว็บไซต์ การใช้งานต่อหลังจากการเปลี่ยนแปลงถือว่าท่านยอมรับข้อกำหนดใหม่นั้น
+
+<h4>การระงับบัญชี:</h4> เรามีสิทธิ์ระงับหรือยกเลิกบัญชีผู้ใช้ที่ละเมิดข้อกำหนดเหล่านี้โดยไม่ต้องแจ้งให้ทราบล่วงหน้า
+
+<h3>6. กฎหมายที่ใช้บังคับ</h3>
+ข้อกำหนดนี้ให้อยู่ภายใต้การบังคับและตีความตามกฎหมายของราชอาณาจักรไทย
+
+<h3>7. ติดต่อเรา</h3>
+หากท่านมีข้อสงสัยหรือต้องการใช้สิทธิเกี่ยวกับข้อกำหนดการใช้งาน โปรดติดต่อเราได้ที่:
+
+<div class="facebook-link-container">
+    <a href="https://www.facebook.com/DinomasterPlayground" target="_blank" class="fb-link">
+        <i class="fab fa-facebook"></i>
+        <span>Dinomaster Playground</span>
+    </a>
+</div>
+<h3>8. การ์ด Fanmade</h3>
+การ์ดในหมวดหมูู่ "แฟนเมด" เป็นการ์ดที่ใช้เล่นเฉพาะในกลุ่ม Discord Dinomaster Club TH ไม่มีส่วนเกี่ยวข้อง
+กับเจ้าของลิขสิทธิ์ มีขึ้นเพื่อกระตุ้นชุมชนให้ยังคงมีอยู่ต่อไป เนื่องจากไม่มีการ์ดชุดใหม่ออกมานานแล้ว
+        <div class="modal-actions">
+            <a href="https://tipme.in.th/oneonecard6969" target="_blank" class="big-donate-btn">
+                <i class="fas fa-heart"></i> สนับสนุนค่ากาแฟ
+            </a>
+        </div>
+        
+        <div class="modal-footer">
+            &copy; 2026 Dinomaster Club. All rights reserved.
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    
+    <script src="small_script.js"></script>
+    <script src="card_data/C_original.js"></script>
+    <script src="card_data/MG_original.js"></script>
+    <script src="card_data/C_Enigma.js"></script>
+    <script src="card_data/MG_enigma.js"></script>
+	<script src="card_data/Character.js"></script>
+    <script src="card_data/C_Newmaster.js"></script>
+    <script src="card_data/MG_Newmaster.js"></script>	
+    <script src="card_data/MS_newmaster.js"></script>
+	<script src="card_data/MG_Stepnext.js"></script>
+    <script src="card_data/ReEnigma.js"></script>
+	<script src="card_data/C_StepNext.js"></script>
+	<script src="card_data/MG_AR1.js"></script>
+	
+    <script src="card_data/fanmade_BoostMaster2.js"></script>
+	<script src="card_data/fanmade_Reart1.js"></script>
+    <script src="card_data/fanmade_Boost3.js"></script>
+    <script src="card_data/fanmade_Boost4.js"></script>
+    <script src="card_data/fanmade_Boost5.js"></script>
+
+    <script src="card_data/fanmade_icefire.js"></script>
+	
+    <script src="deck_builder_logic.js"></script>
+	    <script src="handsimulate_logic.js"></script>
+    <script src="collection_logic.js"></script>
+        <script src="save_deck_logic.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

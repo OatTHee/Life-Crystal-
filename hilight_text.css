@@ -1,0 +1,50 @@
+/* คลาสสำหรับเน้นคำในความสามารถ */
+.hlabi {
+    color: #ff9f43;          /* สีส้ม */
+    font-weight: bold;       /* ตัวหนา */
+    background-color: #07357D; /* สีน้ำเงินเข้ม */
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}
+
+.hlauto {
+    color: #FFFFFF;
+    font-weight: bold;       /* ตัวหนา */
+    background-color: #E8AB00;
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}
+
+.hlcont {
+    color: #FFFFFF;
+    font-weight: bold;       /* ตัวหนา */
+    background-color: #7932BA;
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}
+
+.hlmanual {
+    color: #FFFFFF;
+    font-weight: bold;       /* ตัวหนา */
+    background-color: #B30000;
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}
+
+.hloneper {
+    color: #000000;
+    font-weight: bold;       /* ตัวหนา */
+    background-color: #FFFFFF;
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}

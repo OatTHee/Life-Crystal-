@@ -1,0 +1,800 @@
+/* หน้า Side Panel */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -50%; /* ซ่อนไว้ทางขวา */
+    width: 45%;
+    height: 100%;
+    background: #fff;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    transition: 0.4s ease; /* เอฟเฟกต์เฟด/เลื่อน */
+    z-index: 999;
+display: flex;
+    flex-direction: column;
+    overflow: hidden; /* ตัวนอกสุดล็อคไว้ถูกแล้ว */
+}
+
+.side-panel.open {
+    right: 0; /* เลื่อนออกมา */
+}
+
+/* Footer ยึดติดล่าง */
+.side-panel-footer {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    background: #f9f9f9;
+}
+
+.btn-clear-all {
+    width: 100%;
+    padding: 10px;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* เมื่อเปิด Panel ให้หดคลังการ์ดทางซ้ายลง (ถ้าต้องการ) */
+.body.panel-open .card-container {
+    margin-right: 45%;
+    transition: 0.4s;
+}
+
+/* ซ่อนปุ่ม "เพิ่มลงเด็ค" ในคลังการ์ดเป็นค่าเริ่มต้น */
+.add-to-deck-btn {
+    display: none;
+    width: 100%;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    border-radius: 4px;
+}
+
+
+
+/* เมื่อหน้าจัดเด็คเปิด ให้โชว์ปุ่มเพิ่มลงเด็คในการ์ดทุกใบ */
+body.panel-open .add-to-deck-btn {
+    display: block;
+}
+
+/* การ์ดจำลองที่ใช้ทำแอนิเมชั่น */
+.flying-card {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    /* เปลี่ยนจาก transition ธรรมดา เป็นการคุม transform และ opacity */
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), 
+                opacity 0.8s ease-out, 
+                width 0.8s ease, 
+                height 0.8s ease;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+    border-radius: 10px; /* ให้มนเท่ากับการ์ดจริง */
+    object-fit: contain; /* เปลี่ยนเป็น contain เพื่อไม่ให้รูปโดนตัดตอนบิน */
+    will-change: transform, opacity; /* ช่วยให้ Animation ลื่นไหลขึ้น */
+    opacity: 1;
+}
+
+/* 1. ตัว Side Panel หลัก */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -50%;
+    width: 45%;
+    height: 100vh; /* บังคับความสูงเต็มหน้าจอ */
+    background: #fff;
+    z-index: 999;
+    display: flex;
+    flex-direction: column; /* จัดเรียงลูกๆ เป็นแนวตั้ง (หัว-กลาง-ท้าย) */
+    transition: 0.4s ease;
+}
+
+/* 2. ส่วนหัว (ล็อคอยู่กับที่) */
+.side-panel-header {
+    padding: 15px;
+    background: #fff;
+    border-bottom: 2px solid #eee;
+}
+
+.deck-name-field {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+
+/* 4. ส่วนท้ายที่มีปุ่ม (ล็อคอยู่กับที่ด้านล่าง) */
+.deck-footer {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    background: white;
+    flex-shrink: 0; /* ป้องกันไม่ให้ส่วนท้ายโดนบีบหด */
+}
+
+
+
+
+/* ถ้าเป็นการ์ด Commander ให้เพิ่มประกายแสงสีทองตอน Hover */
+.starter-zone .deck-item[data-commander="true"] img:hover {
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
+}
+
+
+
+			/* ไอเทมการ์ดแต่ละใบในเด็ค */
+
+
+
+
+/* 1. คอนเทนเนอร์หลักของแต่ละใบ */
+.deck-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    isolation: isolate; /* ป้องกันการขยายของรูปไปทับตำแหน่งปุ่มใบข้างๆ */
+}
+
+/* 2. ส่วนของรูปภาพ */
+.deck-item img {
+    width: 100% !important;
+    /* เปลี่ยนจาก auto เป็นความสูงคงที่เพื่อให้สมดุลกับความกว้าง */
+    aspect-ratio: 2 / 3; 
+    
+    /* หัวใจสำคัญ: cover จะขยายรูปให้เต็มพื้นที่กรอบโดยไม่เสียสัดส่วน (อาจโดนขลิบขอบจิ๋วเดียวแต่ดูเต็มสวย) */
+    object-fit: cover !important; 
+    
+    border-radius: 4px;
+    display: block;
+    margin: 0;
+    padding: 0 !important;
+    transition: transform 0.3s ease;
+}
+
+/* Hover เฉพาะรูป ลอยขึ้นโดยไม่ขยับปุ่ม */
+.deck-item img:hover {
+    transform: translateY(-8px) scale(1.1); /* ขยายพอดีๆ ไม่ให้บังเพื่อนบ้านเกินไป */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+/* คอนเทนเนอร์ปุ่มควบคุม */
+.qty-control {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    margin-top: 5px;
+    width: 100%;          /* กว้างเท่ารูปการ์ด */
+    height: 26px;         /* ความสูงคงที่ */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+/* ปุ่มบวก/ลบ (ปรับให้ขนาดคงที่ ไม่ล้น) */
+.qty-btn {
+    width: 26px;          /* ล็อคความกว้างให้เท่าความสูง เป็นทรงจัตุรัส */
+    flex-shrink: 0;       /* บังคับไม่ให้โดนบีบจนเบี้ยว */
+    padding: 0;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    background: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.qty-btn.minus { color: #ff4757; border-right: 1px solid #eee; }
+.qty-btn.plus { color: #2ed573; border-left: 1px solid #eee; }
+
+.qty-btn:hover { background: #e9ecef; }
+
+/* ตัวเลขจำนวน (ให้ส่วนนี้เป็นตัวยืดหยุ่นแทน) */
+.qty-number {
+    flex-grow: 1;         /* กินพื้นที่ที่เหลือตรงกลาง */
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #333;
+}
+
+/* 4. ปรับ Grid ให้มีพื้นที่หายใจ */
+.deck-grid {
+    display: grid;
+    /* ลองลด min จาก 85px เหลือสัก 75px - 80px หากรูปดูเล็กไปในกรอบ */
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+    gap: 12px 8px; /* บน-ล่าง 12px, ซ้าย-ขวา 8px */
+    padding: 10px;
+    align-content: start;
+}
+
+
+
+					/* ป้ายกำกับแถบต่างๆ */
+.deck-section-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: 'Kanit', sans-serif;
+    letter-spacing: 1px; /* เพิ่มระยะห่างตัวอักษรให้ดูเป็นสากล */
+}
+
+/* ใส่กรอบสีทองให้คอมมานเดอร์ในหน้าเด็ค */
+.starter-zone .deck-item[data-commander="true"] {
+    border: 3px solid #f1c40f;
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+    border-radius: 8px;
+}
+
+
+/* แถบตัวนับตัวเลขข้างในให้ดูโปร่งแสงนิดๆ */
+.deck-section-label span {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+
+.main-deck-label {
+	background: #2d3436;
+    color: #fff;	
+	}
+	
+.extra-deck-label {
+    background: linear-gradient(90deg, #2d3436 0%, #6c5ce7 50%, #2d3436 100%);
+    border-bottom: 2px solid #ffd700; /* ขอบทองด้านล่าง */
+    color: #fff;
+}
+
+
+
+/* หัวข้อหมวดหมู่ในหน้าจัดเด็ค */
+.deck-category-title {
+    grid-column: 1 / -1; /* ให้ยืดเต็มแถวของ Grid */
+    background: #444;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-family: 'Kanit', sans-serif;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* ปรับความห่างในหน้าจัดเด็คเล็กน้อย */
+.deck-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); /* ปรับขนาดเล็กลงหน่อยเพื่อให้ดูเหมือน Master Duel */
+    gap: 8px;
+    align-content: start;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+
+/* คุมภาพรวมของ Panel ให้เป็น Flex แนวตั้ง */
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* บังคับสูงเท่าจอพอดี */
+    /* ... ค่าอื่นๆ ที่คุณมีอยู่แล้ว ... */
+}
+
+/* ส่วนหัว: ไม่ให้หดตัว */
+.side-panel-header {
+    flex-shrink: 0;
+    padding: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+/* ส่วนกลาง: ส่วนที่ต้องการให้มีแถบเลื่อน */
+.deck-body {
+    flex: 1 1 auto; /* ให้ยืดหยุ่น */
+    overflow-y: auto !important; /* บังคับให้มี Scroll แนวตั้ง */
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #ff9f43 #f1f1f1;
+    -webkit-overflow-scrolling: touch; /* สำหรับมือถือ */
+}
+
+/* ตกแต่ง Scrollbar สำหรับ Chrome/Safari ให้ชัดขึ้น */
+.deck-body::-webkit-scrollbar {
+    width: 10px;
+    display: block !important;
+}
+.deck-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.deck-body::-webkit-scrollbar-thumb {
+    background: #ff9f43;
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+.deck-body::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* ส่วนท้าย: ไม่ให้หดตัว และอยู่ล่างสุดเสมอ */
+.side-panel-footer {
+    flex-shrink: 0;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    background: white;
+}
+
+/* คลาสพิเศษสำหรับตอนถ่ายรูป (จะถูกจัดการผ่าน JS ถ้าจำเป็น หรือใช้ตัวเลือก scrollY ใน html2canvas) */
+.deck-body {
+    /* มั่นใจว่าพื้นหลังเป็นสีทึบ ไม่โปร่งแสง */
+    background-color: #fcfcfc !important;
+}
+
+
+
+
+/* คอนเทนเนอร์ปุ่มดึง */
+.deck-toggle-handle {
+    position: absolute;
+    left: -30px; /* ดึงปุ่มออกไปนอกหน้าต่างจัดเด็ค */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background-color: #2d3436; /* สีเดียวกับ Main Deck Label */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px 0 0 8px; /* มนเฉพาะฝั่งซ้าย */
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    transition: background 0.3s;
+    z-index: 1001;
+}
+
+.deck-toggle-handle:hover {
+    background-color: #444;
+}
+
+
+/* ไอคอนสามเหลี่ยม */
+.triangle-icon {
+    font-size: 12px;
+    transition: transform 0.4s;
+}
+
+/* เมื่อหน้าจัดเด็คเปิดอยู่ ให้หมุนสามเหลี่ยมกลับทาง */
+.side-panel.open .triangle-icon {
+    transform: rotate(180deg);
+}
+
+/* การ์ดที่ถูก Disable (เช่น ใส่ครบแล้ว หรือเงื่อนไขไม่ผ่าน) */
+.card.disabled-card {
+    filter: grayscale(100%) brightness(0.7); /* ทำให้เป็นสีเทาและมืดลง */
+    cursor: pointer; /* ยังคงให้เมาส์เป็นรูปมือเพื่อให้รู้ว่าคลิกได้ */
+    transition: all 0.3s ease;
+}
+
+/* เมื่อเอาเมาส์ชี้การ์ดที่สีเทา ให้สว่างขึ้นนิดหน่อยเพื่อให้รู้ว่ายังมีปฏิสัมพันธ์ได้ */
+.card.disabled-card:hover {
+    filter: grayscale(50%) brightness(0.9);
+    transform: translateY(-5px); /* ยังคงให้มีการ Hover เล็กน้อย */
+}
+
+/* ปรับปุ่มข้างล่างการ์ดที่เป็นสีเทาให้ดูจางลง */
+.card.disabled-card .deck-item-controls button {
+    background-color: #666 !important;
+    cursor: not-allowed; /* ปุ่มเพิ่มลงเด็คให้เป็นรูปห้ามกด */
+}
+
+
+
+/*//*เซฟเด็ค/*//*
+/* ปุ่มเซฟเด็ค (ทับอันเดิม) - สีน้ำเงิน/เขียวเข้ม */
+.btn-save-main {
+    background: #0bd65f !important; 
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+	    margin-left: 5px;
+}
+
+/* ปุ่มเซฟเป็นอันใหม่ - สีส้มทอง */
+.btn-save-new {
+    background: #0bd65f !important;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+	    margin-left: 5px;
+}
+
+.btn-save-main:hover, .btn-save-new:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+}
+
+
+/* ปุ่มเปิดโหมดเลือกปก */
+.btn-select-cover {
+    background: #2b113b !important;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 10px;
+    margin-left: 5px;
+}
+
+/* Overlay ทับหน้าจอตอนเลือกปก */
+#coverModeOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.2);
+    z-index: 1004; /* อยู่ใต้ Side Panel นิดเดียว */
+}
+
+
+
+/* --- ส่วนที่แก้ไขเพื่อแก้บั๊คโหมดเลือกปก --- */
+
+/* 1. ปรับระดับ Side Panel ให้ลอยเหนือ Overlay ทุกอย่างเมื่ออยู่ในโหมดเลือกปก */
+.side-panel.selecting-cover-active {
+    z-index: 1005 !important; /* ต้องสูงกว่า #coverModeOverlay (1004) */
+}
+
+/* 2. เมื่ออยู่ในโหมดเลือกปก ให้ภาพการ์ดในเด็คโดดเด่นและกดได้ */
+.selecting-cover-active .deck-item img {
+    cursor: crosshair !important;
+    filter: brightness(0.7); /* ทำให้มืดลงเพื่อรอการเลือก */
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1006;
+    pointer-events: auto; /* มั่นใจว่ารูปภาพรับการคลิกได้ */
+}
+
+/* 3. เอฟเฟกต์ตอน Hover การ์ดที่จะเลือก */
+.selecting-cover-active .deck-item img:hover {
+    filter: brightness(1.2) !important;
+    border: 3px solid #6c5ce7 !important;
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.8) !important;
+    transform: scale(1.05) translateY(-5px);
+}
+
+/* 4. ปิดการทำงานของปุ่มอื่นๆ ในเด็คชั่วคราวขณะเลือกปก เพื่อป้องกัน Event ตีกัน */
+.selecting-cover-active .qty-control,
+.selecting-cover-active .btn-remove,
+.selecting-cover-active .deck-toggle-handle,
+.selecting-cover-active .side-panel-footer {
+    pointer-events: none; /* ห้ามคลิกปุ่มบวกลบหรือปุ่มเซฟขณะเลือกปก */
+    opacity: 0.6;
+}
+
+/* 5. ไฮไลท์การ์ดที่เป็นปกปัจจุบัน */
+.deck-item.is-cover-now img {
+    border: 3px solid #f1c40f !important;
+    box-shadow: 0 0 15px #f1c40f !important;
+    filter: brightness(1.1);
+}
+
+/* 6. เพิ่มป้ายบอกว่าเป็น Cover (Optional: ช่วยให้ UX ชัดเจนขึ้น) */
+.deck-item.is-cover-now::before {
+    content: "⭐ COVER";
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f1c40f;
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 1007;
+    pointer-events: none;
+}
+
+/* 7. Overlay ทับหน้าจอ (แก้ให้รับคลิกเฉพาะนอก Side Panel) */
+#coverModeOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.4); /* ทำให้จอมืดลงเห็นชัดขึ้น */
+    z-index: 1004; /* อยู่ใต้ Side Panel ที่เป็น 1005 */
+    cursor: pointer;
+}
+
+/* --- คงไว้ซึ่งฟังก์ชันเดิม (ห้ามเปลี่ยน) --- */
+.side-panel {
+    /* ... ค่าเดิมของคุณ ... */
+    z-index: 999; 
+}
+
+
+/*ปุ่มลบคอมมานเดอร์ มาสเตอร์*/
+
+/* คอนเทนเนอร์ใหม่ ป้องกันการชนกับชื่อเดิม */
+/* คอนเทนเนอร์สำหรับปุ่ม (แสดงตลอดเวลา) */
+/* คอนเทนเนอร์ปุ่มด้านล่างการ์ด */
+.deck-item-bottom-controls {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;   /* ดันปุ่มลงมาจากส่วน Qty Control */
+    padding-bottom: 5px;
+}
+
+/* ปรับแต่งปุ่ม (ให้ดูเป็นปุ่มกดเต็มตัวมากขึ้น) */
+.btn-custom-action {
+    all: unset;
+    cursor: pointer;
+    padding: 4px 15px; /* เพิ่มพื้นที่กดให้กว้างขึ้น */
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn-custom-action:hover {
+    transform: translateY(-2px); /* ให้ความรู้สึกเหมือนปุ่มลอยขึ้นเวลาชี้ */
+    filter: brightness(1.1);
+}
+
+.btn-custom-action:active {
+    transform: translateY(0);
+}
+
+/* สีปุ่ม ปลด (Commander) */
+.btn-detach-cmd {
+    background: #ffc107;
+    color: #212529;
+    border-bottom: 3px solid #b7950b; /* เพิ่มมิติให้เหมือนปุ่มกด */
+}
+
+/* สีปุ่ม เอาออก (Master) */
+.btn-eject-master {
+    background: #007bff;
+    color: #ffffff;
+    border-bottom: 3px solid #0056b3;
+}
+
+
+
+/*กราฟแื่ง*/
+.histogram-panel {
+    max-height: 0;
+    overflow: hidden;
+    background: #1a252f; /* ปรับสีพื้นหลังให้เข้มขึ้นเพื่อให้กราฟเด่น */
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                padding 0.3s ease, 
+                opacity 0.3s ease;
+    border-radius: 0 0 8px 8px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    opacity: 0;
+}
+
+.histogram-panel.open {
+    max-height: 500px;
+    padding: 15px;
+    opacity: 1;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.histogram-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: white;
+    font-size: 12px;
+}
+
+.histogram-label {
+    width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.histogram-bar-container {
+    flex-grow: 1;
+    background: rgba(255,255,255,0.1);
+    height: 12px;
+    border-radius: 6px;
+    margin: 0 10px;
+    position: relative;
+}
+
+.histogram-bar-fill {
+    height: 100%;
+    background: #3498db; /* สีเริ่มต้น */
+    border-radius: 6px;
+    transition: width 0.5s ease-in-out;
+    width: 0%;
+}
+
+.histogram-count {
+    width: 30px;
+    text-align: right;
+    font-weight: bold;
+    font-family: 'monospace'; /* ใช้ font เลขคงที่เพื่อให้ตำแหน่งไม่แกว่งเวลาเลขเปลี่ยน */
+    color: #ecf0f1;
+    transition: color 0.3s ease;
+}
+
+.histogram-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    /* ใช้ cubic-bezier เพื่อความสมูทที่ดูมีน้ำหนัก (Bounce นิดๆ) */
+    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    position: relative;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2); /* เพิ่มมิติขาวด้านใน */
+}
+
+/* เพิ่ม Effect เรืองแสงอ่อนๆ ให้แท่งกราฟ */
+.histogram-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    opacity: 0.5;
+}
+
+/* บังคับให้หน้าต่าง Modal อยู่หน้าสุดเสมอ แม้จะเปิดจากโหมด Showcase */
+#imageModal {
+    z-index: 100000 !important; /* ค่านี้ต้องสูงกว่า z-index ของโหมด Showcase */
+}
+
+
+
+/*ปุ่มเซฟมีเอฟเฟค*/
+
+.btn-save-main.unsaved {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%) !important;
+    animation: pulse-orange 1.5s infinite !important;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+}
+
+@keyframes pulse-orange {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Success Toast ✅ บันทึกสำเร็จ */
+.save-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(11, 214, 95, 0.95); /* สีเขียวเดียวกับปุ่มคุณ */
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    z-index: 10000;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    animation: toast-pop 1.5s ease-in-out forwards;
+}
+
+@keyframes toast-pop {
+    0% { opacity: 0; transform: translate(-50%, -30%) scale(0.7); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -70%); }
+}
+
+/*ส่วนปรับปรุงการเซฟรูป*/
+
+/* คอนเทนเนอร์หลักสำหรับการ Export */
+.export-container {
+    width: 1000px;
+    background: #1a1c20;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    position: absolute;
+    left: -9999px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.export-section-title {
+    color: #f1c40f;
+    font-size: 22px;
+    font-weight: bold;
+    border-bottom: 2px solid #34495e;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+}
+
+.export-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr); /* แถวละ 8 ใบกำลังสวยสำหรับรูปสรุป */
+    gap: 15px;
+}
+
+.export-card-item {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.export-badge {
+    position: absolute;
+    bottom: 8px;          /* ระยะห่างจากขอบล่าง */
+    left: 50%;            /* กึ่งกลางซ้าย */
+    transform: translateX(-50%); /* ดึงกลับให้กึ่งกลางเป๊ะ */
+    background: #212120;  /* สีแดงตามโจทย์ */
+    color: white;
+    padding: 2px 10px;    /* ทรงสี่เหลี่ยมมุมมน */
+    border-radius: 6px;   /* มุมมน */
+    font-size: 14px;      /* ขนาดตัวอักษร */
+    font-weight: bold;
+    border: 1.5px solid rgba(255,255,255,0.9);
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    white-space: nowrap;
+}
+
+.export-card-img {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}

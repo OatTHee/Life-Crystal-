@@ -287,7 +287,9 @@ const C_EnigmaData = [
         dp: 2,
         type: "Creature",
         set: "อินิกม่า",
-        clan: "สัตว์น้ำ",
+        clan: "สัตว์น้ำ",				
+        specialCommander: true,
+
         ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ลงมาในสนาม เลือก Line ใด Line หนึ่ง Creature ฝั่งตรงข้ามทุกใบใน Line ที่เลือกติดสภาวะบาดเจ็บ ลด DF 250`,
         image: "images/Enigma/Tylosaurus.jpg"
     },

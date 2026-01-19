@@ -1230,26 +1230,6 @@ document.addEventListener('click', (e) => {
 
 
 /////////////////////////////////////Deck Showcase//////////////
-let isShowcaseEditMode = false;
-
-function toggleShowcaseEdit() {
-    isShowcaseEditMode = !isShowcaseEditMode;
-    const cards = document.querySelectorAll('.showcase-card');
-    const eyeBtn = document.querySelector('button[onclick="toggleShowcaseEdit()"]');
-    
-    cards.forEach(card => {
-        if (isShowcaseEditMode) {
-            card.classList.add('edit-active');
-        } else {
-            card.classList.remove('edit-active');
-        }
-    });
-
-    if (eyeBtn) {
-        eyeBtn.innerHTML = isShowcaseEditMode ? "👁️ ปิดการแก้ไข" : "👁️ เปิดการแก้ไข";
-        eyeBtn.style.background = isShowcaseEditMode ? "#e67e22" : "#6c5ce7";
-    }
-}
 
 
 
@@ -1416,7 +1396,7 @@ function getDeckStatsHTML() {
     const creatureCards = myDeck.filter(c => 
         c.type === "Creature" && 
         !c.isCommander && 
-        !["Fusion_Monster", "Armored_Dino"].includes(c.type)
+        !["Fusion_Monster", "Armored_Dino", "Boost_Creature"].includes(c.type)
     );
     
     // 2. กำหนดคู่สีตามเผ่า
@@ -1554,8 +1534,8 @@ function toggleShowcaseEdit() {
     controls.forEach(el => el.style.display = window.isShowcaseEditMode ? 'flex' : 'none');
 
     if (eyeBtn) {
-        eyeBtn.innerHTML = window.isShowcaseEditMode ? "👁️ ปิดการแก้ไข" : "👁️ เปิดการแก้ไข";
-        eyeBtn.style.background = window.isShowcaseEditMode ? "#e67e22" : "#6c5ce7";
+        eyeBtn.innerHTML = window.isShowcaseEditMode ? "เลิกแก้ไข" : "แก้ไข";
+        eyeBtn.style.background = window.isShowcaseEditMode ? "#e67e22" : "#07357d";
     }
 }
 

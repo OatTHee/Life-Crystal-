@@ -58,7 +58,7 @@
 		<span class="hlabi">Master Skill :</span> <br>
 		• <span class="hlmanual">Manual</span> จ่าย 3 DP + กำหนด Creature ของเราที่สวม Armor อยู่ 1 เป้าหมาย : การ์ดนั้น จำนวนครั้งที่โจมตีได้ +1 จนจบเทิร์น`
         ,
-        image: "images/Fanmade/reartboost1/BIGBEN.png"
+        image: "images/Fanmade/reartboost1/B_bigben.png"
     },
     {
         id: "2016RE-MSLovena / FM-PR01-MS04 JU",

@@ -1,4 +1,8 @@
-/* --- เพิ่มเติมส่วน Modal (Global) - คงเดิมตามไฟล์คุณ --- */
+/* ============================================================
+   ไฟล์: responsive.css (ฉบับแก้ไขปุ่มขาวโพลนและ Responsive สมบูรณ์)
+   ============================================================ */
+
+/* --- 1. ส่วน Modal (Global) - คงเดิมตามไฟล์คุณ --- */
 .modal {
     display: none; 
     position: fixed;
@@ -12,40 +16,69 @@
     backdrop-filter: blur(4px);
 }
 
-/* --- ส่วนของปุ่มลอย (โชว์เฉพาะมือถือ) - คงเดิมตามไฟล์คุณ --- */
+/* --- 2. ส่วนของปุ่มลอย (โชว์เฉพาะมือถือ) - คงเดิมตามไฟล์คุณ --- */
 #mobileEditModeBtn {
     position: fixed;
-    bottom: 25px;
+    bottom: 80px;
     left: 20px;
     z-index: 1500;
-    background: #28a745;
+    background: #28a745; /* สีเขียว */
     color: white;
     border: none;
     padding: 12px 20px;
     border-radius: 50px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     font-family: 'Kanit', sans-serif;
-    display: none; 
+    display: none; /* ปิดไว้ก่อน จะเปิดใน Media Query */
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
+/* --- 3. Responsive สำหรับหน้าจอไม่เกิน 768px --- */
 @media (max-width: 768px) {
+
+    #mobileEditModeBtn { display: flex; }
     
-    #main, #mainContent, .main-wrapper {
-        width: 100% !important;
-        margin-right: 0 !important;
-        transform: none !important;
+    /* แสดงปุ่มลอยในมือถือ */
+#mobileEditModeBtn.active {
+        background-color: #dc3545 !important;
     }
-    .side-panel {
-        right: -100% !important; 
+
+    /* [หัวใจสำคัญ] จัดการปุ่มจัดการการ์ด:
+       - ปกติบนมือถือ: ซ่อนปุ่มทั้งหมด 
+       - เมื่อเข้า Edit Mode: โชว์เฉพาะปุ่ม .add-to-deck-btn และซ่อนปุ่ม +- (.qty-control)
+    */
+    .card .card-controls {
+        display: none !important; /* ซ่อนไว้ก่อนในสภาวะปกติ */
     }
-    .side-panel.open {
-        right: 0 !important;
+
+    body.edit-mode-on .card .card-controls {
+        display: flex !important; /* แสดงเมื่อเปิดโหมดแก้ไข */
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        right: 0;
+        justify-content: center;
+        padding: 0 5px;
+        z-index: 10;
     }
-    
-    /* 1. รีเซ็ต Layout หลัก: บังคับให้หน้าคลังกว้างเต็มจอเสมอ */
+
+    /* บังคับให้แสดงปุ่มเพิ่มลงเด็ค และซ่อนปุ่มบวกลบ (ถ้ามี) */
+    body.edit-mode-on .card .add-to-deck-btn {
+        display: block !important;
+        width: 100%;
+        font-size: 11px; /* ขนาดเล็กลงเพื่อให้พอดีสัดส่วนการ์ดเดิม */
+        padding: 6px 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    body.edit-mode-on .card .qty-control {
+        display: none !important; /* ซ่อนปุ่ม +- ไม่ให้ทับซ้อน */
+    }
+
+    /* รีเซ็ต Layout หลัก: บังคับให้หน้าคลังกว้างเต็มจอเสมอ */
     #main, .container, main, #mainContent, .main-wrapper {
         width: 100% !important;
         max-width: 100vw !important;
@@ -57,7 +90,7 @@
         box-sizing: border-box !important;
     }
 
-    /* 2. หน้าจัดเด็ค (Side Panel) ปรับให้พอดีจอ */
+    /* หน้าจัดเด็ค (Side Panel) ปรับให้พอดีจอ */
     .side-panel {
         position: fixed !important;
         top: 0 !important;
@@ -72,30 +105,11 @@
         overflow: hidden !important;
     }
 
-    .side-panel-header {
-        flex-shrink: 0; 
-        background: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        padding: 10px !important;
+    .side-panel.open {
+        right: 0 !important;
     }
 
-    .side-panel-header .menu {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 5px !important;
-        margin-top: 8px;
-    }
-
-    /* 3. ส่วนเนื้อหาการ์ดในเด็ค (จุดที่แก้ไขเรื่องการ์ดล้น) */
-    .deck-body {
-        flex-grow: 1 !important;
-        overflow-y: auto !important;
-        padding: 8px !important; /* ปรับลด padding เล็กน้อยเพื่อให้มีพื้นที่ grid */
-        background: #f4f4f4;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* FIX: ปรับ Grid ให้แบ่งพื้นที่ 4 ส่วนเท่ากัน (1fr) จะทำให้การ์ดหดตัวพอดีจอ */
+    /* ปรับปรุง Grid ในหน้าจัดเด็คให้เป็นการ์ด 4 ใบต่อแถว */
     #deckContainer, #starterContainer, #extraDeckContainer, .deck-grid {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important; 
@@ -105,7 +119,6 @@
         box-sizing: border-box !important;
     }
 
-    /* FIX: คุมขนาด Card และ Image ไม่ให้กว้างเกินช่อง Grid */
     .deck-item, .card {
         width: 100% !important;
         max-width: 100% !important;
@@ -119,45 +132,7 @@
         object-fit: contain !important;
     }
 
-    /* 4. ปรับปรุงปุ่ม +/- (คงสไตล์เดิมที่คุณตั้งค่าไว้ แต่ปรับตำแหน่งให้พอดี) */
-    .qty-control {
-        bottom: 5px !important;
-        right: 0 !important;
-        left: 0 !important;
-        margin: 0 auto !important;
-        width: 95% !important;
-        transform: scale(0.8); /* ย่อลงเล็กน้อยเพื่อให้เข้ากับขนาดการ์ดที่หดลง */
-        background: rgba(255, 255, 255, 0.95);
-        padding: 4px 2px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 5px !important; 
-        z-index: 10;
-    }
-
-    .qty-btn {
-        width: 32px !important; 
-        height: 32px !important;
-        font-size: 18px !important; 
-        font-weight: bold !important;
-        border-radius: 8px !important;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .qty-number {
-        font-size: 16px !important; 
-        font-weight: bold;
-        color: #07357D;
-        min-width: 20px;
-        text-align: center;
-    }
-
-    /* 5. ส่วนอื่นๆ (คงเดิม) */
+    /* ปรับปรุงส่วน Footer ของ Side Panel */
     .side-panel-footer {
         flex-shrink: 0;
         padding: 10px !important;
@@ -168,8 +143,6 @@
         gap: 8px !important;
     }
 
-    #mobileEditModeBtn { display: flex; }
-    
     .modal-content-wrapper {
         display: block !important;
         width: 92% !important;
@@ -179,8 +152,9 @@
     }
 }
 
-/* 6. Grid 3 คอลัมน์สำหรับคลังการ์ด (คงเดิม) */
+/* --- 4. หน้าจอขนาดเล็กพิเศษ (มือถือแนวตั้ง) --- */
 @media (max-width: 480px) {
+    /* Grid 3 คอลัมน์สำหรับคลังการ์ดหลัก */
     #cardContainer {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important; 
@@ -190,7 +164,7 @@
     }
 }
 
-/* Showcase Grid (คงเดิมตามไฟล์คุณ) */
+/* --- 5. Showcase Grid (โหมดโชว์ผลงาน) --- */
 .showcase-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -205,8 +179,6 @@
     }
 }
 
-/* Menu logic (คงเดิม) */
+/* --- 6. Menu Logic (คงเดิม) --- */
 .menu { display: flex; flex-direction: column; gap: 12px; padding: 10px; }
 .menu-row { display: flex; gap: 8px; align-items: center; }
-.row-top { justify-content: flex-end; }
-.row-bottom { justify-content: space-between; }

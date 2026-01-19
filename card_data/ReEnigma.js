@@ -29,6 +29,8 @@
         type: "Creature",
         set: "รีอินิกม่า",
         clan: "สองขา",
+				specialCommander: true,
+
         ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> เมื่อ Creature ตัวนี้ต่อสู้สำเร็จและยังอยู่ในสนาม : จั่วการ์ด 1 ใบ <br> • <span class="hlmanual">Manual</span> {Charge Attack} จ่าย DP 3 : กำหนด Creature เป้าหมาย 1 ใบใน AT Line ให้ติดสภาวะสับสน (1 เทิร์น)`,
         image: "images/ReEnigma/Majungasaurus.jpg"
     },
@@ -264,7 +266,7 @@
 },
 
 {
-    id: "2016NE-DE505",
+    id: "2016NE-DE504",
     nameTH: "โทรพีอ็อกนาธัส",
     nameEN: "Tropeognathus",
     dp: 4,
@@ -809,6 +811,8 @@
         type: "Creature",
         set: "รีอินิกม่า",
         clan: "สัตว์น้ำ",
+				specialCommander: true,
+
         ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ลงมาในสนาม เลือก Line ใด Line หนึ่ง Creature ฝั่งตรงข้ามทุกใบใน Line ที่เลือกติดสภาวะบาดเจ็บ ลด DF 250`,
         image: "images/ReEnigma/Tylosaurus.jpg"
     },

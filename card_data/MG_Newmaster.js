@@ -776,14 +776,16 @@ image: "images/NewmasterMG/Horns of Ponder.jpg"
 {
 id: "2011NM-R028",
 nameTH: "ชุดช่วงล่างแรงโน้มถ่วง",
-nameEN: "Gravity Bottom SUit",
+nameEN: "Gravity Bottom Suit",
 dp: 3,
 type: "Armor",
 set: "",
 clan: "",
-ability:`<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> Creature ที่สวมใส่ปรับค่า SH+100<br> • <span class="hlcont">Cont.</span> Creature ที่สวมใส่ไม่สามารถถูกนำออกจากสนามจากผลสำแดงของ Magic Card และ/หรือ Skill ได้`
+ability:`<span class="hlabi">Skill :</span> <br>
+ • <span class="hlcont">Cont.</span> Creature ที่สวมใส่ปรับค่า SH+100<br>
+  • <span class="hlcont">Cont.</span> Creature ที่สวมใส่ไม่สามารถถูกนำออกจากสนามจากผลสำแดงของ Magic Card และ/หรือ Skill ได้`
 ,
-image: "images/NewmasterMG/Gravity Bottom SUit.jpg"
+image: "images/NewmasterMG/Gravity.jpg"
 },
 
 {

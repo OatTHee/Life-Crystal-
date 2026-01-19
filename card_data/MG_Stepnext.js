@@ -353,7 +353,7 @@ image: "images/StepNextMG/Zigzag Boots.jpg"
     set: "สเต็ปเน็ก",
     clan: "",
     ability: `<span class="hlabi">Master Skill :</span> <br> • <span class="hlauto">Auto</span> เมื่อ Master คนใดสับเด็ค : เราสามารถจั่วการ์ด 1 ใบ <br> • <span class="hlauto">Auto</span> เมื่อ Master คนใดจั่วการ์ดนอกช่วงจั่ว : เราสามารถสับเด็คของเรา <br> <span class="hlabi">Ultimate Master Skill :</span> <br> <span class="hlmanual">Manual</span> ท่าไม้ตาย ! "หยิน หยาง" <br> • จ่าย DP 5 จุด : สลับ Creature ทั้งหมดที่อยู่ใน Line เดิมไปยังอีก Line หนึ่ง > เราเลือกการ์ดในมือตามต้องการไว้ใต้เด็คของเราและมาสเตอร์คนอื่นทั้งหมดนำการ์ดในมือทั้งหมดไว้ใต้เด็คตน > Master ทุกคนจั่วการ์ดตามจำนวนการ์ดที่นำไว้ใต้เด็ค (ใช้ Ultimate Master Skill นี้ได้ตั้งแต่เทิร์นที่ 5 ขึ้นไป)`,
-    image: "images/Stepnext/Master Chen.png"
+    image: "images/StepNext/Master_Chensn.png"
 },
 
 {
@@ -366,7 +366,7 @@ image: "images/StepNextMG/Zigzag Boots.jpg"
     clan: "",
 		handSize: 7,
     ability: `<span class="hlabi">Master Skill :</span> <br> • <span class="hlcont">Cont.</span> เราสามารถดูการ์ดลำดับบนสุดของเด็คเราได้ตลอดเวลา <br> • <span class="hlmanual">Manual</span> แสดงการ์ดลำดับบนสุดของเด็คของเรา : เราฟื้นฟู LP 100 จุด <br> <span class="hlabi">Ultimate Master Skill :</span> <br> <span class="hlmanual">Manual</span> ท่าไม้ตาย ! "บทละครที่เขียนไว้" <br> • จ่าย DP 5 จุด : เราดูการ์ดลำดับบนสุด 10 ใบบนเด็คของเรา, เราสามารถเลือกการ์ดประเภท Creature ที่มีค่าเรียก 5 จุดหรือต่ำกว่าไม่เกิน 2 ใบเข้าสนามในไลน์ใดก็ได้ในการควบคุมของเรา, นำการ์ดที่เหลือสับกลับเข้าเด็คของเรา, เราฟื้นฟู LP 1000 จุด (ใช้ Ultimate Master Skill นี้ได้ตั้งแต่เทิร์นที่ 5 ขึ้นไป)`,
-    image: "images/Stepnext/Master Keiko.png"
+    image: "images/StepNext/Master_Keikosn.png"
 },
 
 {
@@ -378,7 +378,7 @@ image: "images/StepNextMG/Zigzag Boots.jpg"
     set: "สเต็ปเน็ก",
     clan: "",
     ability: `<span class="hlabi">Master Skill :</span> <br> • <span class="hlcont">Cont.</span> Master ฝ่ายตรงข้ามสามารถฟื้นฟูค่า LP ไม่เกิน 200 จุดต่อครั้ง <br> • <span class="hlmanual">Manual</span> จ่าย DP 2 จุด + ทิ้งการ์ด 1 ใบ : ค้นเด็คของเราหาการ์ดที่มีชื่อหรือส่วนหนึ่งของชื่อว่า Megatech 1 ใบ, แสดง, นำเข้ามือ, สับเด็คของเรา <br> <span class="hlabi">Ultimate Master Skill :</span> <br> <span class="hlmanual">Manual</span> ท่าไม้ตาย ! "เมกาเทค ดิ เอ็นด์" <br> • จ่าย DP 8 จุด : ค้นเด็คและในสุสานของเราหาการ์ดที่มีชื่อหรือส่วนหนึ่งของชื่อว่า Megatech รวมกันไม่เกิน 8 ใบ, แสดง, นำเข้ามือ, สับเด็คของเรา, เรารับ DP 4 จุด (ใช้ Ultimate Master Skill นี้ได้ตั้งแต่เทิร์นที่ 8 ขึ้นไป)`,
-    image: "images/Stepnext/Master Shino.png"
+    image: "images/StepNext/Master_Shinosn.png"
 },
 
 {
@@ -390,7 +390,7 @@ image: "images/StepNextMG/Zigzag Boots.jpg"
     set: "สเต็ปเน็ก",
     clan: "",
     ability: `<span class="hlabi">Master Skill :</span> <br> <span class="hlauto">Auto</span> เมื่อ Creature ที่เราควบคุมโจมตี > ปรับค่า AT+200 แก่ Creature เหล่านั้นเป็นเวลา 0 เทิร์น <br> <span class="hlabi">Ultimate Master Skill :</span> <br> <span class="hlmanual">Manual</span> ท่าไม้ตาย ! "ทัศนา คงกระพัน" <br> • จ่าย DP 5 จุด : สร้าง C.Skill [อมตะ] และปรับค่า AT+500 แก่ Creature เผ่า สองขา ทั้งหมดที่เราควบคุมเป็นเวลา 0 เทิร์น (Creature ที่มี [อมตะ] ไม่สามารถถูกทำลายได้) (ใช้ Ultimate Master Skill นี้ได้ตั้งแต่เทิร์นที่ 5 ขึ้นไป)`,
-    image: "images/Stepnext/Master Touch.png"
+    image: "images/StepNext/Master_Touchsn.png"
 },
 
 ];

@@ -272,6 +272,47 @@
     height: auto;            /* รักษาอัตราส่วนรูปภาพ */
 }
 
+/*untap*/
+
+/* สไตล์ปุ่ม Export Untap แบบสีทอง */
+.btn-export-untap {
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    
+    /* สีม่วงเข้มอมดำ */
+    color: #1a0a20; 
+    
+    /* การไล่เฉดสีทอง (Linear Gradient) */
+    background: linear-gradient(145deg, #ffd900d6, #ffbb00ac, #e6a400, #36294e);
+    
+    /* เพิ่มมิติด้วยเงา */
+    box-shadow: 0 4px 15px rgba(230, 164, 0, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* เอฟเฟกต์เมื่อเอาเมาส์ไปชี้ (Hover) */
+.btn-export-untap:hover {
+    background: linear-gradient(145deg, #ffed4a, #ffd700, #ffb900);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230, 164, 0, 0.4);
+}
+
+/* เอฟเฟกต์ตอนกดปุ่ม (Active) */
+.btn-export-untap:active {
+    transform: translateY(0);
+    filter: brightness(0.9);
+}
+
     </style>
 </head>
 
@@ -403,7 +444,7 @@
         <input type="file" id="importDeckInput" style="display: none;" accept=".json" onchange="importDeckFromFile(event)">
         
 <button onclick="document.getElementById('importDeckInput').click()" class="btn-import">
-    <i class="fa-solid fa-file-import"></i>
+    <i class="fa-solid fa-file-import"> นำเข้า</i>
 </button>
 
         
@@ -414,11 +455,13 @@
 </div>
             </div>
 
-            <div class="deck-body">
+<div class="deck-body">
 			
 <div class="menu-row">
     <button class="btn-sort" onclick="toggleCoverSelectionMode()" class="btn-select-cover">🖼️ เลือกหน้าปก</button>
-    <button class="btn-sort" onclick="sortDeck()"><i class="fa-solid fa-sort"></i> เรียงการ์ด</button>                       
+    <button class="btn-sort" onclick="sortDeck()"><i class="fa-solid fa-sort"></i> เรียงการ์ด</button>
+    <button class="btn-export-untap" onclick="exportToUntap()"><i class="fa-solid fa-code"></i> โค้ด Untap</button>                       
+                       
 </div>
 			
                 <div class="deck-section-label">STARTER (Master & Commander)</div>
@@ -439,21 +482,24 @@
                 <div id="extraDeckContainer" class="deck-grid"></div>
             </div>
 
-            <div class="side-panel-footer">
-                <div class="header-controls">
 
-                    <button onclick="exportDeckToFile()" title="บันทึก JSON">
-                     <i class="fa-solid fa-download"></i>
-                    </button>
-					<button onclick="openDeckShowcase()" >
-    <i class="fa-solid fa-maximize"></i> ดูเต็มจอ
-                    </button>
-                </div>
+<div class="side-panel-footer">
+        <div class="header-controls">
+            <button onclick="exportDeckToFile()" title="บันทึก JSON">
+                     <i class="fa-solid fa-download"></i> Download
+            </button>
+
+			<button onclick="openDeckShowcase()" >
+                    <i class="fa-solid fa-maximize"></i> ดูเต็มจอ
+            </button>
+        </div>
+
+                 <div class="side-panel-footer, menu-row"></div>   
                 <button onclick="clearDeck()" class="btn-clear-all">🗑️ ล้างเด็คทั้งหมด</button>
             </div>
 
 
-     </div>
+</div>
 		
 		
 		
@@ -463,30 +509,14 @@
             <h2 id="showcaseTitle">ชื่อเด็ค</h2>
 
 										
-		<button onclick="openHandSimulator()" style="
-    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 500;
-    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 10px; /* เว้นระยะห่างจากปุ่มเดิม */
-">
-    ✋ ทดลองจั่ว
+		<button onclick="openHandSimulator()"> จั่ว
 </button>
 
  <button onclick="exportToPNG()" title="ส่งออกเป็นรูปภาพ">
                   <i class="fa-solid fa-camera"></i>
          </button>
 
-<button onclick="toggleShowcaseEdit()" style="padding:10px 20px; background:#6c5ce7; 
-color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">👁️ แก้ไข</button>
+<button onclick="toggleShowcaseEdit()">แก้ไข</button>
 
 										
             <button onclick="closeDeckShowcase()" class="btn-close-showcase">✖</button>
@@ -661,7 +691,8 @@ color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">
     <script src="deck_builder_logic.js"></script>
 	    <script src="handsimulate_logic.js"></script>
     <script src="collection_logic.js"></script>
-        <script src="save_deck_logic.js"></script>
+    <script src="save_deck_logic.js"></script>
+    <script src="untap_logic.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

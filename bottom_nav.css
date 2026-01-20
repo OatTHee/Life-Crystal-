@@ -66,6 +66,28 @@
 }
 
 /* ปุ่ม Bug Report */
+.btn-facebook {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-facebook:hover {
+    background: #1877f2;
+    border-color: #1877f2;
+}
+
+.btn-discord {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-discord:hover {
+    background: #5665ed;
+    border-color: #5665ed;
+}
+
 .btn-bug {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;

@@ -1,7 +1,7 @@
 let isUnsaved = false;
 let isHistogramOpen = false; // ตัวแปรเก็บสถานะเปิด/ปิดแผนภูมิ
 let currentEditingDeckId = null;
-// แก้ไขฟังก์ชัน renderCards ใน deck_builder_logic.js
+
 function renderCards(cards) {
     const container = document.getElementById('cardContainer');
     if (!container) return;
@@ -23,6 +23,8 @@ function renderCards(cards) {
     cards.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
+
+            let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}&w=300&output=webp&q=80`;
 
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;
@@ -84,8 +86,13 @@ function renderCards(cards) {
 
         if (isIllegalByCommander) cardDiv.classList.add('disabled-card');
 
+        const rawUrl = card.image.startsWith('http') ? card.image : window.location.origin + '/' + card.image;
+        const optimizedImageUrl = `https://wsrv.nl/?url=${encodeURIComponent(rawUrl)}&w=250&output=webp&q=75`;
+
         cardDiv.innerHTML = `
-            <img src="${card.image}" class="card-img-btn" style="cursor: zoom-in;">
+            <img src="${optimizedImageUrl}"
+            onerror="this.src='${card.image}'; this.onerror=null;"
+            class="card-img-btn" style="cursor: zoom-in;" loading="lazy" width="150" height="210">
             <div class="card-controls">
                 <button class="add-to-deck-btn" 
                     ${isDisabled ? 'disabled' : ''} 

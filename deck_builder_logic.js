@@ -86,9 +86,8 @@ function renderCards(cards) {
 
         if (isIllegalByCommander) cardDiv.classList.add('disabled-card');
 
-        const rawUrl = card.image.startsWith('http') ? card.image : window.location.origin + '/' + card.image;
-        const optimizedImageUrl = `https://wsrv.nl/?url=${encodeURIComponent(rawUrl)}&w=250&output=webp&q=75`;
-
+const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
+const optimizedImageUrl = `https://wsrv.nl/?url=${encodeURIComponent(fullImgUrl)}&w=300&output=webp&q=80`;
         cardDiv.innerHTML = `
             <img src="${optimizedImageUrl}"
             onerror="this.src='${card.image}'; this.onerror=null;"

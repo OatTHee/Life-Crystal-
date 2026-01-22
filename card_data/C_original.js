@@ -651,6 +651,7 @@
 				type: "Creature",
 				set: "ออริจินอล",
 				clan: "มีเกราะหางหนาม",
+				specialCommander: true,
 				ability:`<span class="hlabi">Effect :</span> <br>
 				<span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เป็นเป้าหมายจากการโจมตีจาก Creature ที่มี DF น้อยกว่า สั่งทำลาย Creature ได้ 1 ใบ <br>
 				<span class="hlabi">Skill :</span> <br>

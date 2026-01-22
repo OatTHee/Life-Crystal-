@@ -799,7 +799,7 @@ const C_EnigmaData = [
     type: "Fusion_Monster",
     set: "อินิกม่า",
     rarity: "Golden_Rare",
-    clan: ["สองขา", "มีเขา"],
+    clan: "สองขา,มีเขา",
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">เงื่อนไข :</span> ต้องมี Volcano field อยู่ในสนาม <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้โจมตีสำเร็จ : สุ่มทำลายการ์ดในมือคู่ต่อสู้ 1 ใบ.`
     ,
     image: "images/Enigma/Tyrant.jpg"
@@ -813,7 +813,7 @@ const C_EnigmaData = [
     type: "Fusion_Monster",
     set: "อินิกม่า",
     rarity: "Golden_Rare",
-    clan: ["มีเกราะหางหนาม", "มีปีก"],
+    clan: "มีเกราะหางหนาม, มีปีก",
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">เงื่อนไข :</span> ต้องมี Swamp field อยู่ในสนาม <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้โจมตี : เลือก Dino Card ฝั่งเรา 1 ใบ, นำค่า AT ของการ์ดใบนั้นมาเพิ่มให้การ์ดนี้จนจบเทิร์น.`
     ,
     image: "images/Enigma/Edmanta.jpg"
@@ -827,7 +827,7 @@ const C_EnigmaData = [
     type: "Fusion_Monster",
     set: "อินิกม่า",
     rarity: "Golden_Rare",
-    clan: ["สองขา", "มีปีก"],
+    clan: "สองขา, มีปีก",
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">เงื่อนไข :</span> ต้องมี Valley field อยู่ในสนาม <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้โจมตี : หากคู่แข่งไม่มีการ์ดใน DF Line, การ์ดนี้สามารถโจมตี Master ได้ทันที.`
     ,
     image: "images/Enigma/T-Rog.jpg"
@@ -841,7 +841,7 @@ const C_EnigmaData = [
     type: "Fusion_Monster",
     set: "อินิกม่า",
     rarity: "Golden_Rare",
-    clan: ["คอยาว", "สองขา"],
+    clan: "คอยาว, สองขา",
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">เงื่อนไข :</span> ต้องมี Rainforest field อยู่ในสนาม <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกสุสาน : นำ Dino card เผ่าคอยาวทุกใบในสุสานกลับเข้ามาในสนามและใช้งานได้ทันที (เมื่อจบเทิร์นให้นำกลับลงสุสานตามเดิม).`
     ,
     image: "images/Enigma/Spatan.jpg"
@@ -855,7 +855,7 @@ const C_EnigmaData = [
     type: "Fusion_Monster",
     set: "อินิกม่า",
     rarity: "Golden_Rare",
-    clan: ["สัตว์น้ำ", "มีปีก"],
+    clan: "สัตว์น้ำ, มีปีก",
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">เงื่อนไข :</span> ต้องมี Lagoon field อยู่ในสนาม <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เข้ามาในสนาม : Dino Card ทุกใบฝั่งเรา สามารถใช้ Skill ได้โดยไม่เสียค่าร่าย.`
     ,
     image: "images/Enigma/Erampho.jpg"
@@ -869,7 +869,7 @@ const C_EnigmaData = [
     type: "Fusion_Monster",
     set: "อินิกม่า",
     rarity: "Golden_Rare",
-    clan: ["สองขา", "มีปีก"],
+    clan: "สองขา, มีปีก",
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">เงื่อนไข :</span> ต้องมี Volcano field อยู่ในสนาม <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้โจมตีสำเร็จ : สามารถเรียก Dino card เผ่าสองขา หรือ มีปีก 1 ใบจากในมือลงสนามโดยไม่เสียค่าร่าย.`
     ,
     image: "images/Enigma/Solychus.jpg"

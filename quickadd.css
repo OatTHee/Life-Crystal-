@@ -1,0 +1,43 @@
+/* แอนิเมชั่นตัวเลขเด้ง */
+.floating-feedback {
+    position: fixed;
+    pointer-events: none;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    z-index: 10000;
+    animation: floatUpAndFade 0.8s ease-out forwards;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 0px #000;
+}
+
+@keyframes floatUpAndFade {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    30% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-60px) scale(1); opacity: 0; }
+}
+
+/* สไตล์สำหรับป้ายแนะนำ */
+.edit-mode-hint {
+    position: fixed;
+    bottom: 80px; /* อยู่เหนือปุ่ม Mobile เล็กน้อย */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(44, 62, 80, 0.95);
+    color: #f1c40f; /* สีเหลืองทองเด่นๆ */
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    pointer-events: none; /* กดทะลุได้ ไม่ขวางการใช้งาน */
+    border: 1px solid #f1c40f;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.edit-mode-hint.fade-out {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+}
+

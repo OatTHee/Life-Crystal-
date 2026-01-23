@@ -2,6 +2,7 @@
    SCRIPTS FOR MOBILE & SIDE PANEL
    ====================================================== */
 
+   
 // 1. ระบบปุ่ม Back to Top
 const backToTopButton = document.querySelector("#backToTop");
 
@@ -20,11 +21,9 @@ if (backToTopButton) {
 }
 
 // 2. ระบบโหมดจัดเด็ค (เปิด-ปิด ปุ่มเขียวบนการ์ด)
-let isEditMode = false;
-
 function toggleMobileDeckMode() {
-    isEditMode = !isEditMode;
-    const btn = document.getElementById('mobileEditModeBtn'); // ตรวจสอบ ID ให้ตรงกับ HTML
+    isEditMode = !isEditMode; // ห้ามใส่ let/const ตรงนี้ เพราะเราจะใช้ตัวแปร Global
+    const btn = document.getElementById('mobileEditModeBtn');
     const body = document.body;
 
     if (isEditMode) {
@@ -46,6 +45,17 @@ function toggleMobileDeckMode() {
             if (text) text.innerText = "โหมดจัดเด็ค";
         }
     }
+
+    if (isEditMode) {
+        body.classList.add('edit-mode-on');
+        showEditModeHint(); // <--- เพิ่มบรรทัดนี้: แสดงเมื่อเปิดโหมด
+        // ...
+    } else {
+        body.classList.remove('edit-mode-on');
+        // ...
+    }
+
+    console.log("Current Edit Mode:", isEditMode); // ลองใส่เพื่อเช็คใน Console ของมือถือ
 }
 
 // 3. ระบบเปิด-ปิด Side Panel (หน้าจัดเด็ค)
@@ -64,6 +74,7 @@ function closeSidePanel() {
             mainContent.style.width = "100%";
         }
     }
+    
 }
 
 // ปรับ toggleSidePanel ให้ฉลาดขึ้น
@@ -72,6 +83,8 @@ function toggleSidePanel() {
     // อ้างอิง ID Wrapper หลักของคุณ
     const mainWrapper = document.getElementById("main-wrapper");
     
+
+
     if (!sidePanel) return;
 
     // เช็คขนาดหน้าจอ
@@ -87,14 +100,15 @@ function toggleSidePanel() {
                 mainWrapper.style.paddingRight = "570px"; 
             }
             document.body.classList.add('panel-open');
-        } else {
+        } 
+        else {
             sidePanel.style.right = "-550px";
             if (mainWrapper) {
                 mainWrapper.style.paddingRight = "20px"; // กลับไปค่า Default
             }
             document.body.classList.remove('panel-open');
         }
-    } else {
+            } else {
         /* --- ระบบสำหรับมือถือ (เลื่อนทับ) --- */
         // ล้างค่า Style ของ PC ออกให้หมดเพื่อให้ CSS Media Query คุมแทน
         sidePanel.style.right = ""; 
@@ -104,6 +118,10 @@ function toggleSidePanel() {
         }
         // การเลื่อน เปิด-ปิด จะใช้ Class .open ที่คุมโดย responsive.css
     }
+
+    if (!sidePanel.classList.contains('panel open')) {
+        showEditModeHint(); // <--- เพิ่มบรรทัดนี้: แสดงเมื่อเปิดแผงจัดเด็ค 
+        }
 }
 
 // --- Info Modal Logic ---

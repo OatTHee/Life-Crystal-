@@ -79,31 +79,20 @@ body.panel-open .add-to-deck-btn {
 }
 
 /* 1. ตัว Side Panel หลัก */
-.side-panel {
-    position: fixed;
-    top: 0;
-    right: -50%;
-    width: 45%;
-    height: 100vh; /* บังคับความสูงเต็มหน้าจอ */
-    background: #fff;
-    z-index: 999;
-    display: flex;
-    flex-direction: column; /* จัดเรียงลูกๆ เป็นแนวตั้ง (หัว-กลาง-ท้าย) */
-    transition: 0.4s ease;
-}
 
 /* 2. ส่วนหัว (ล็อคอยู่กับที่) */
 .side-panel-header {
     padding: 15px;
-    background: #fff;
-    border-bottom: 2px solid #eee;
+    background: #ffffff;
+    opacity: 80;
+    border-bottom: 2px solid #ffbf00;
 }
 
 .deck-name-field {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ffbf00;
     border-radius: 5px;
     font-family: 'Kanit', sans-serif;
 }
@@ -150,76 +139,73 @@ body.panel-open .add-to-deck-btn {
     isolation: isolate; /* ป้องกันการขยายของรูปไปทับตำแหน่งปุ่มใบข้างๆ */
 }
 
-/* 2. ส่วนของรูปภาพ */
-.deck-item img {
-    width: 100% !important;
-    /* เปลี่ยนจาก auto เป็นความสูงคงที่เพื่อให้สมดุลกับความกว้าง */
-    aspect-ratio: 2 / 3; 
-    
-    /* หัวใจสำคัญ: cover จะขยายรูปให้เต็มพื้นที่กรอบโดยไม่เสียสัดส่วน (อาจโดนขลิบขอบจิ๋วเดียวแต่ดูเต็มสวย) */
-    object-fit: cover !important; 
-    
-    border-radius: 4px;
-    display: block;
-    margin: 0;
-    padding: 0 !important;
-    transition: transform 0.3s ease;
-}
 
-/* Hover เฉพาะรูป ลอยขึ้นโดยไม่ขยับปุ่ม */
-.deck-item img:hover {
-    transform: translateY(-8px) scale(1.1); /* ขยายพอดีๆ ไม่ให้บังเพื่อนบ้านเกินไป */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    z-index: 99;
-}
+/* =========================================================
+   GOLDEN QTY CONTROL - SIDE PANEL
+   ========================================================= */
 
-/* คอนเทนเนอร์ปุ่มควบคุม */
+/* คอนเทนเนอร์ปุ่มควบคุม - ปรับเป็นสีดำเข้มขอบทอง */
 .qty-control {
     display: flex;
     align-items: stretch;
     justify-content: center;
     margin-top: 5px;
-    width: 100%;          /* กว้างเท่ารูปการ์ด */
-    height: 26px;         /* ความสูงคงที่ */
-    border: 1px solid #ddd;
+    width: 100%;
+    height: 28px; /* เพิ่มความสูงนิดนึงให้ดูเต็ม */
+    border: 1px solid rgba(212, 175, 55, 0.4); /* ขอบทองจางๆ */
     border-radius: 4px;
     overflow: hidden;
-    background: #fff;
+    background: #1a1a1a; /* พื้นหลังดำสนิท */
     box-sizing: border-box;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* ปุ่มบวก/ลบ (ปรับให้ขนาดคงที่ ไม่ล้น) */
+/* ปุ่มบวก/ลบ - ปรับเป็นโทนทองหม่น */
 .qty-btn {
-    width: 26px;          /* ล็อคความกว้างให้เท่าความสูง เป็นทรงจัตุรัส */
-    flex-shrink: 0;       /* บังคับไม่ให้โดนบีบจนเบี้ยว */
+    width: 28px;
+    flex-shrink: 0;
     padding: 0;
     font-size: 14px;
     font-weight: bold;
     border: none;
-    background: #f8f9fa;
+    background: #252525; /* พื้นหลังปุ่มเทาเข้ม */
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
 
-.qty-btn.minus { color: #ff4757; border-right: 1px solid #eee; }
-.qty-btn.plus { color: #2ed573; border-left: 1px solid #eee; }
+/* สีปุ่มลบ - แดงทอง */
+.qty-btn.minus { 
+    color: #e74c3c; 
+    border-right: 1px solid rgba(212, 175, 55, 0.2); 
+}
 
-.qty-btn:hover { background: #e9ecef; }
+/* สีปุ่มบวก - เขียวทอง */
+.qty-btn.plus { 
+    color: #2ecc71; 
+    border-left: 1px solid rgba(212, 175, 55, 0.2); 
+}
 
-/* ตัวเลขจำนวน (ให้ส่วนนี้เป็นตัวยืดหยุ่นแทน) */
+/* Hover: ให้ปุ่มสว่างขึ้นและเป็นสีทอง */
+.qty-btn:hover { 
+    background: #d4af37; 
+    color: #1a1a1a !important; /* เปลี่ยนตัวอักษรเป็นดำเมื่อ hover บนพื้นทอง */
+}
+
+/* ตัวเลขจำนวน - สีทองสว่าง */
 .qty-number {
-    flex-grow: 1;         /* กินพื้นที่ที่เหลือตรงกลาง */
+    flex-grow: 1;
     text-align: center;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    color: #333;
+    background: transparent; /* ให้เห็นพื้นหลังสีดำของตัวแม่ */
+    color: #f1c40f; /* สีทองสว่าง */
+    text-shadow: 0 0 5px rgba(241, 196, 15, 0.3); /* แสงฟุ้งสีทอง */
 }
 
 /* 4. ปรับ Grid ให้มีพื้นที่หายใจ */
@@ -267,8 +253,9 @@ body.panel-open .add-to-deck-btn {
 
 
 .main-deck-label {
-	background: #2d3436;
-    color: #fff;	
+    background: linear-gradient(90deg, #2d3436 0%, #006ae3 50%, #2d3436 100%);
+    border-bottom: 2px solid #ff8c00; /* ขอบทองด้านล่าง */
+    color: #fff;
 	}
 	
 .extra-deck-label {
@@ -318,57 +305,140 @@ body.panel-open .add-to-deck-btn {
     /* ... ค่าอื่นๆ ที่คุณมีอยู่แล้ว ... */
 }
 
-/* ส่วนหัว: ไม่ให้หดตัว */
+/* =========================================================
+   DARK GOLD THEME - SIDE PANEL
+   ========================================================= */
+
+/* 1. Header: พื้นหลังเข้ม ตัดขอบล่างด้วยสีทองไล่เฉด */
 .side-panel-header {
     flex-shrink: 0;
     padding: 20px;
-    border-bottom: 2px solid #f0f0f0;
+    background: #252525; /* สีพื้นหลังส่วนหัว (สว่างกว่าตัวนิดนึงให้มีมิติ) */
+    color: #fff;         /* สีตัวอักษรขาว */
+    
+    /* เทคนิคเส้นขอบสีทองไล่เฉด (Gold Gradient Border) */
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(to right, #8a6e2f, #f9f295, #e0aa3e, #8a6e2f) 1;
+    
+    /* เงาเล็กน้อยให้ดูลอย */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 10; /* ให้เงาทับส่วน Body */
 }
 
-/* ส่วนกลาง: ส่วนที่ต้องการให้มีแถบเลื่อน */
+/* ปรับสีตัวอักษรหัวข้อข้างใน (ถ้ามี h2 หรือ h3) */
+.side-panel-header h2, 
+.side-panel-header h3 {
+    color: #f1c40f; /* สีทองสว่าง */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* 2. Body: พื้นหลังดำโปร่งแสงเล็กน้อย */
 .deck-body {
-    flex: 1 1 auto; /* ให้ยืดหยุ่น */
-    overflow-y: auto !important; /* บังคับให้มี Scroll แนวตั้ง */
+    flex: 1 1 auto;
+    overflow-y: auto !important;
     padding: 20px;
+    
+    /* สีพื้นหลังดำเทา แบบมีความโปร่งแสงนิดๆ (Glassmorphism Dark) */
+    background-color: rgba(30, 30, 30, 0.95) !important; 
+    backdrop-filter: blur(10px); /* เบลอฉากหลังที่ซ้อนอยู่ */
+    
     scrollbar-width: thin;
-    scrollbar-color: #ff9f43 #f1f1f1;
-    -webkit-overflow-scrolling: touch; /* สำหรับมือถือ */
+    scrollbar-color: #d4af37 #1a1a1a; /* Firefox: ทอง / ดำ */
+    -webkit-overflow-scrolling: touch;
+    color: #e0e0e0; /* สีตัวอักษรในลิสต์ */
 }
 
-/* ตกแต่ง Scrollbar สำหรับ Chrome/Safari ให้ชัดขึ้น */
-.deck-body::-webkit-scrollbar {
-    width: 10px;
-    display: block !important;
-}
-.deck-body::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-.deck-body::-webkit-scrollbar-thumb {
-    background: #ff9f43;
-    border-radius: 10px;
-    border: 2px solid #f1f1f1;
-}
-
-.deck-body::-webkit-scrollbar-thumb:hover {
-    background: #888;
-}
-
-/* ส่วนท้าย: ไม่ให้หดตัว และอยู่ล่างสุดเสมอ */
+/* 3. Footer: พื้นหลังเข้ม ขอบบนทอง */
 .side-panel-footer {
     flex-shrink: 0;
     padding: 20px;
-    border-top: 1px solid #eee;
-    background: white;
+    background: #252525;
+    
+    /* เส้นขอบบนสีทองไล่เฉด */
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(to right, #8a6e2f, #f9f295, #e0aa3e, #8a6e2f) 1;
+    
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
 }
 
-/* คลาสพิเศษสำหรับตอนถ่ายรูป (จะถูกจัดการผ่าน JS ถ้าจำเป็น หรือใช้ตัวเลือก scrollY ใน html2canvas) */
-.deck-body {
-    /* มั่นใจว่าพื้นหลังเป็นสีทึบ ไม่โปร่งแสง */
-    background-color: #fcfcfc !important;
+/* =========================================================
+   CUSTOM SCROLLBAR (GOLD STYLE)
+   ========================================================= */
+
+/* ความกว้าง Scrollbar */
+.deck-body::-webkit-scrollbar {
+    width: 8px; /* ปรับให้เล็กเรียบหรู */
+    display: block !important;
 }
 
+/* ราง Scrollbar (Track) - สีดำ */
+.deck-body::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-left: 1px solid #333;
+}
 
+/* ตัวเลื่อน (Thumb) - สีทองไล่ระดับ */
+.deck-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #bf953f, #fcf6ba, #aa771c);
+    border-radius: 4px;
+    border: 1px solid #5e4b25; /* ขอบเข้มตัดให้ดูคม */
+}
 
+/* ตอนเอาเมาส์ชี้ */
+.deck-body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d4af37, #fffacd, #b8860b);
+}
+
+/* =========================================================
+   ADDITIONAL: ปรับการ์ดในลิสต์ให้เข้ากับธีมมืด
+   ========================================================= */
+
+/* ถ้าคุณมี Class สำหรับรายการการ์ด (สมมติชื่อ .deck-item) */
+/* รายการการ์ดแต่ละใบในหน้าจัดเด็ค */
+.deck-item {
+    display: flex;
+    align-items: center;
+    background: rgba(40, 40, 40, 0.6); /* ดำเทาโปร่งแสง */
+    border: 1px solid rgba(212, 175, 55, 0.3); /* ขอบทองจางๆ */
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: visible; /* ยอมให้รูปภาพ Hover แล้วลอยทะลุออกมาได้ */
+}
+
+.deck-item:hover {
+    background: rgba(50, 50, 50, 0.9);
+    border-color: rgba(212, 175, 55, 0.8); /* ขอบทองสว่างขึ้นเมื่อชี้ */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* ส่วนของรูปภาพการ์ดใน Side Panel */
+.deck-item img {
+    width: 60px !important; /* ปรับขนาดให้พอดีกับแถว */
+    aspect-ratio: 2 / 3; 
+    object-fit: cover !important; 
+    border-radius: 4px;
+    display: block;
+    margin: 0;
+    padding: 0 !important;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* เพิ่มความนุ่มนวลเวลาเด้ง */
+    
+    /* เพิ่มขอบให้รูปภาพดูเหมือนการ์ดจริง */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover เฉพาะรูป ลอยขึ้นและขยาย */
+.deck-item img:hover {
+    transform: translateY(-5px) scale(1.3); /* ขยายใหญ่ขึ้นเพื่อให้เห็น Text บนการ์ดชัดเจน */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    border-color: #f1c40f; /* ขอบทองสว่างตอนซูม */
+}
 
 /* คอนเทนเนอร์ปุ่มดึง */
 .deck-toggle-handle {
@@ -391,7 +461,7 @@ body.panel-open .add-to-deck-btn {
 }
 
 .deck-toggle-handle:hover {
-    background-color: #444;
+    background-color: #e7a900;
 }
 
 

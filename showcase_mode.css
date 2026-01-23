@@ -27,33 +27,37 @@
 }
 
 /* ตัวหลัก (สถานะปกติ) */
-.showcase-card {
+.showcase-card img{
     display: inline-block;
     position: relative;
     
     /* 1. ใช้ Cubic Bezier เพื่อจังหวะที่นุ่มนวลกว่าปกติ */
     /* กราฟนี้จะค่อยๆ เริ่ม และนุ่มนวลมากตอนจบ */
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
-                filter 0.4s ease;
 
     /* 2. บังคับให้เบราว์เซอร์ใช้ GPU ประมวลผล จะช่วยลดอาการกระตุก */
-    will-change: transform;
     backface-visibility: hidden;
     
     transform: scale(1);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* เพิ่มความนุ่มนวลเวลาเด้ง */
+
 }
 
-.showcase-card:hover {
-    transform: scale(1.08);
-    filter: brightness(1.05);
-    /* เพิ่มเงาที่ฟุ้งๆ ออกมา */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
+.showcase-card:hover img {
+    box-shadow: 
+        0 20px 30px rgba(0, 0, 0, 0.5),          /* เงาเข้มด้านล่าง */
+        0 0 15px rgba(255, 217, 0, 0.6),        /* แสงสีทองชั้นใน */
+        0 0 30px rgba(255, 217, 0, 0.3);        /* แสงสีทองฟุ้งๆ ชั้นนอก */
+        
+    transform: translateY(-5px) scale(1.1);                /* ให้การ์ดขยับขึ้นเล็กน้อย */
+    transition: all 0.1s ease-in-out;           /* ให้แสงค่อยๆ สว่างขึ้นอย่างนุ่มนวล */
+    outline: 2px solid rgba(255, 217, 0, 0.8);  /* เพิ่มเส้นขอบบางๆ ให้ดูคม */
+    outline-offset: -2px;                       /* ให้เส้นขอบอยู่ด้านในภาพนิดหน่อย */
+    border-radius: 13px;                        /* ปรับให้เข้ากับทรงการ์ด */
 
 .showcase-count-badge {
     position: absolute;
     top: -5px; right: -5px;
-    background: #ff4757;
+    background: #000000;
     color: white;
     padding: 4px 10px;
     border-radius: 20px;

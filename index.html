@@ -22,28 +22,32 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="filterdiv.css">
-    <link rel="stylesheet" href="deck_builder.css">
+    <link rel="stylesheet" href="filterdiv.css?v=1.1">
+    <link rel="stylesheet" href="deck_builder.css?v=1.1">
     <link rel="stylesheet" href="hilight_text.css"> 
     <link rel="stylesheet" href="totop.css"> 
     <link rel="stylesheet" href="rarity_inModal.css"> 
     <link rel="stylesheet" href="collection_style.css"> 
-    <link rel="stylesheet" href="responsive.css"> 
-	<link rel="stylesheet" href="showcase_mode.css"> 
+    <link rel="stylesheet" href="responsive.css?v=1.1"> 
+	<link rel="stylesheet" href="showcase_mode.css?v=1.1"> 
     <link rel="stylesheet" href="bottom_nav.css"> 
+    <link rel="stylesheet" href="quickadd.css"> 
+    <link rel="stylesheet" href="dynamic_bg.css"> 
 
 
     <style>
         /* --- 1. Global Styles --- */
         body {
             font-family: 'Kanit', sans-serif;
-            background: #F7F7FC;
+            background: #01051f;
             background-attachment: fixed;
             margin: 0;
             padding: 0;
-            color: #333;
+            color: #0e0e0e;
             overflow-x: hidden;
             min-height: 100vh;
+            transition: background 0.8s ease-in-out; 
+
         }
 
         #main-wrapper {
@@ -70,7 +74,10 @@
             gap: 10px;
             justify-content: center;
             padding: 15px 20px;
-            background: #ffffff; 
+            background: rgba(35, 35, 35, 0.952);
+            opacity: 95% ; 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             position: -webkit-sticky;
             position: sticky;
             top: 0; 
@@ -160,7 +167,7 @@
         }
 
         /* Ability Box Colors */
-        .ability-box.type-Creature { background: #fff9e7; border-left-color: #6B6450; }
+        .ability-box.type-Creature { background: #E6DEB8; border-left-color: #6B6450; }
         .ability-box.type-Boost_Creature { background: #fffffddd; border-left-color: #ad8d0c; }
 
         .ability-box.type-Action { background: #ffe4e5; border-left-color: #bc1f1f; }
@@ -180,7 +187,7 @@
             top: 0;
             width: 550px;
             height: 100vh;
-            background: white;
+            background: #000;
             z-index: 1000;
             transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
             box-shadow: -5px 0 15px rgba(0,0,0,0.1);
@@ -277,7 +284,9 @@
     gap: 15px;               /* ระยะห่างระหว่างโลโก้กับตัวอักษร */
     margin-top: 20px;
     margin-bottom: 30px;
-    color: #07357D;          /* สีน้ำเงินตามธีมหลักของคุณ */
+    color: #ffea00;          /* สีน้ำเงินตามธีมหลักของคุณ */
+        transition: color 0.6s ease; /* เพิ่มบรรทัดนี้ */
+
 }
 
 .main-title img {
@@ -324,6 +333,21 @@
 .btn-export-untap:active {
     transform: translateY(0);
     filter: brightness(0.9);
+}
+
+/* เตรียมแผ่นรองพื้นหลังไว้ที่ body โดยไม่กระทบต่อ Layout จริง */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* อยู่หลังสุด */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease; /* แถม: ทำให้ตอนเปลี่ยนเผ่าแล้วรูปค่อยๆ เฟด */
 }
 
     </style>
@@ -419,10 +443,9 @@
         <div id="cardContainer"></div>
     </div> 
 
+    
     <div id="deckSidePanel" class="side-panel">
-        
-
-
+   
 <div class="deck-toggle-handle" onclick="toggleSidePanel()">
     <span class="triangle-icon">◀</span>
 </div>
@@ -433,7 +456,7 @@
 <div class="side-panel-header" style="position: relative; padding-right: 140px; min-height: 60px; display: flex; align-items: center;">
     <button class="mobile-back-btn" onclick="toggleSidePanel()">← กลับไปเลือกการ์ด</button>                
     
-    <h3 id="panelTitle" style="color: #07357D; margin: 0 15px; font-size: 18px;"> 
+    <h3 id="panelTitle" style="color: #ffffff; margin: 0 15px; font-size: 18px;"> 
         <i class="fa-solid fa-screwdriver-wrench"></i> จัดเด็คของคุณ</h3>
 
 <button id="collToggleBtn" onclick="handleCollectionNavigation()" 
@@ -457,7 +480,7 @@
         <input type="file" id="importDeckInput" style="display: none;" accept=".json" onchange="importDeckFromFile(event)">
         
 <button onclick="document.getElementById('importDeckInput').click()" class="btn-import">
-    <i class="fa-solid fa-file-import"> นำเข้า</i>
+    <i class="fa-solid fa-file-import"></i> นำเข้า
 </button>
 
         
@@ -549,7 +572,7 @@
 			<button class="mobile-back-btn" onclick="toggleSidePanel()">← กลับไปเลือกการ์ด</button>                
 
 			
-                <h3 style="color: #07357D; margin: 15px;">
+                <h3 style="color: #ffffff; margin: 15px;">
  
 <i class="fa-solid fa-book"></i> คอลเล็คชั่นเด็ค</h3>
             </div>
@@ -686,8 +709,8 @@
 
 
 
-    
-    <script src="small_script.js"></script>
+
+
     <script src="card_data/C_original.js"></script>
     <script src="card_data/MG_original.js"></script>
     <script src="card_data/C_Enigma.js"></script>
@@ -706,15 +729,18 @@
     <script src="card_data/fanmade_Boost3.js"></script>
     <script src="card_data/fanmade_Boost4.js"></script>
     <script src="card_data/fanmade_Boost5.js"></script>
-
     <script src="card_data/fanmade_icefire.js"></script>
-	
-    <script src="deck_builder_logic.js"></script>
-    <script src="js/deck_builder_logic.js?v=1.0.1"></script>
+    
+    <script src="small_script.js?v=1.1"></script>	
+    <script src="deck_builder_logic.js?v=1.1"></script>
 	    <script src="handsimulate_logic.js"></script>
-    <script src="collection_logic.js"></script>
+    <script src="collection_logic.js?v=1.1"></script>
     <script src="save_deck_logic.js"></script>
     <script src="untap_logic.js"></script>
+    <script src="quickadd_logic.js"></script>
+    <script src="dynamic_bg.js"></script>    
     <script src="main.js"></script>
+    <script src="clan_identity_logic.js"></script>
+    
 </body>
 </html>

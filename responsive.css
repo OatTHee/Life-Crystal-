@@ -34,12 +34,16 @@
     gap: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: fixed !important;
 }
 
 /* --- 3. Responsive สำหรับหน้าจอไม่เกิน 768px --- */
 @media (max-width: 768px) {
 
-    #mobileEditModeBtn { display: flex; }
+    #mobileEditModeBtn { 
+        display: flex; 
+    position: fixed !important;
+    }
     
     /* แสดงปุ่มลอยในมือถือ */
 #mobileEditModeBtn.active {

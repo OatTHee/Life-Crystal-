@@ -29,7 +29,7 @@ input:focus, select:focus {
 /* --- 2. ปุ่มทั่วไป (ใช้คลาสเจาะจงเพื่อไม่ให้กระทบปุ่ม +- ในเด็ค) --- */
 /* ปุ่มมาตรฐาน เช่น ปุ่มค้นหา หรือปุ่มอื่นๆ */
 button:not(.qty-btn) {
-	    font-family: 'Kanit', sans-serif;
+    font-family: 'Kanit', sans-serif;
     background-color: #07357D;
     color: white;
     border: none;
@@ -38,13 +38,16 @@ button:not(.qty-btn) {
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
+    /* เพิ่ม Glow สีเหลืองจางๆ ในสภาวะปกติ */
+    box-shadow: 0 0 10px rgba(255, 217, 0, 0.4);
 }
 
 button:not(.qty-btn):hover {
-	    font-family: 'Kanit', sans-serif;
+    font-family: 'Kanit', sans-serif;
     background-color: #ff9f43;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    /* เพิ่ม Glow สีเหลืองให้เข้มและกว้างขึ้นเมื่อเอาเมาส์ชี้ */
+    box-shadow: 0 0 20px rgba(255, 217, 0, 0.7), 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* --- 3. จัดการปุ่ม +- และตัวเลขในหน้าคลังการ์ด (Main Gallery) --- */
@@ -115,7 +118,18 @@ button:not(.qty-btn):hover {
 }
 
 .card:hover img {
-    box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+    /* 1. เงาด้านล่าง (Shadow) เพื่อให้ดูการ์ดลอยขึ้น */
+    /* 2. เงาสีทอง/ขาว รอบตัวการ์ด (Outer Glow) */
+    box-shadow: 
+        0 20px 30px rgba(0, 0, 0, 0.5),          /* เงาเข้มด้านล่าง */
+        0 0 15px rgba(255, 217, 0, 0.6),        /* แสงสีทองชั้นใน */
+        0 0 30px rgba(255, 217, 0, 0.3);        /* แสงสีทองฟุ้งๆ ชั้นนอก */
+        
+    transform: translateY(-5px);                /* ให้การ์ดขยับขึ้นเล็กน้อย */
+    transition: all 0.1s ease-in-out;           /* ให้แสงค่อยๆ สว่างขึ้นอย่างนุ่มนวล */
+    outline: 2px solid rgba(255, 217, 0, 0.8);  /* เพิ่มเส้นขอบบางๆ ให้ดูคม */
+    outline-offset: -2px;                       /* ให้เส้นขอบอยู่ด้านในภาพนิดหน่อย */
+    border-radius: 13px;                        /* ปรับให้เข้ากับทรงการ์ด */
 }
 
 .card-info {

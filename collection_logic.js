@@ -1,5 +1,10 @@
 // 1. ฟังก์ชันสลับหน้า
 function toggleDeckViewMode() {
+
+
+        currentFilteredCards = cardsData;
+    renderCards(currentFilteredCards);
+
     const builder = document.getElementById('deckBuilderView');
     const collection = document.getElementById('deckCollectionView');
     
@@ -21,7 +26,17 @@ function toggleDeckViewMode() {
         if(viewModeIcon) viewModeIcon.innerText = "🛠️";
         if(viewModeText) viewModeText.innerText = "หน้าจัดเด็ค";
         
+        
         renderCollection(); 
+        myDeck = []; 
+        currentEditingDeckId = null;
+                updateDeckUI(); 
+
+               if (typeof renderCards === "function") {
+            // ใช้ currentFilteredCards เพื่อรักษาหน้าการค้นหาเดิมไว้
+            renderCards(currentFilteredCards); 
+        }  
+
     } else {
         // --- สลับกลับไปหน้า Builder ---
         collection.style.setProperty('display', 'none', 'important');
@@ -31,10 +46,13 @@ function toggleDeckViewMode() {
         if(viewModeIcon) viewModeIcon.innerText = "📂";
         if(viewModeText) viewModeText.innerText = "คอลเล็คชั่น";
     }
+        
+    
 }
 
 // 2. ฟังก์ชันแสดงรายการเด็ค (แก้ไข: ย้ายปุ่มเพิ่มไปไว้ท้ายสุด)
 function renderCollection() {
+
     const container = document.getElementById('collectionListContainer');
     if (!container) return;
     container.innerHTML = '';
@@ -66,6 +84,7 @@ function renderCollection() {
 
     // 2. วาดปุ่ม "สร้างเด็คใหม่" ไว้ท้ายสุดเสมอ
     createAddDeckButton(container);
+
 }
 
 // 3. ฟังก์ชันสำหรับลบเด็ค (ฉบับแก้ไขใหม่)
@@ -110,8 +129,8 @@ function confirmDeleteDeck(event, id) {
 function createAddDeckButton(container) {
     const addBtn = document.createElement('div');
     addBtn.className = 'collection-card-item';
-    addBtn.style.border = `2px dashed #2ecc71`;
-    addBtn.style.backgroundColor = "#f8f9fa";
+    addBtn.style.border = `2px dashed #ffd900`;
+    addBtn.style.backgroundColor = "#0b0b0b";
     addBtn.style.backgroundImage = "none"; // เอาพื้นหลังรูปออก
     
     addBtn.onclick = () => {
@@ -123,9 +142,9 @@ function createAddDeckButton(container) {
     };
     
     addBtn.innerHTML = `
-        <div class="deck-overlay" style="background: rgba(255,255,255,0.8); justify-content: center; flex-direction: column;">
-            <div style="font-size: 30px; color: #2ecc71;">➕</div>
-            <h4 style="color: #2ecc71; margin:0;">สร้างเด็คใหม่</h4>
+        <div class="deck-overlay" style="background: #0b0b0b; justify-content: center; flex-direction: column;">
+            <div style="font-size: 30px; color: #ffd900;">➕</div>
+            <h4 style="color: #ffd900; margin:0;">สร้างเด็คใหม่</h4>
         </div>
     `;
     container.appendChild(addBtn);

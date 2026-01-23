@@ -1,6 +1,78 @@
 let isUnsaved = false;
 let isHistogramOpen = false; // ตัวแปรเก็บสถานะเปิด/ปิดแผนภูมิ
 let currentEditingDeckId = null;
+let isEditMode = false; // สำหรับ Mobile Edit Mode
+let lastTap = 0;        // สำหรับตรวจจับ Double Tap (ต้องอยู่ข้างนอก)
+
+// ฟังก์ชันสำหรับอัปเดตสถานะปุ่ม "ทุกใบ" โดยไม่วาดรูปใหม่ (ป้องกันการกระพริบ)
+function updateAllButtonStates() {
+    const activeMaster = myDeck.find(c => c.type === "Master");
+    const activeBoostMaster = myDeck.find(c => c.type === "Boost_Master");
+    const commander = myDeck.find(c => c.isCommander);
+
+    // วนลูปการ์ดทุกใบที่แสดงอยู่ในหน้าจอ
+    const visibleCards = document.querySelectorAll('.card');
+    
+    visibleCards.forEach(cardDiv => {
+        const cardId = cardDiv.getAttribute('data-card-id');
+        if (!cardId) return;
+
+        // ดึงข้อมูลการ์ดจาก cardsData (ตัวแปร Global)
+        const card = cardsData.find(c => String(c.id) === String(cardId));
+        if (!card) return;
+
+        // --- Logic การคำนวณเดิมของคุณ ---
+        const countInDeck = myDeck.filter(c => String(c.id) === String(card.id)).length;
+        let isDisabled = false;
+        let btnText = ""; 
+        let btnColor = "#28a745"; 
+
+        // เช็คเงื่อนไข Commander/Master/Limit (ยกมาจาก Logic renderCards ของคุณ)
+        let isIllegalByCommander = false;
+        const isArmor = card.nameTH && card.nameTH.includes("Armor");
+        if (commander && card.type === "Creature" && !isArmor) {
+            const targetClans = Array.isArray(card.clan) ? card.clan : [card.clan];
+            const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
+            if (!targetClans.some(clan => commClans.includes(clan))) isIllegalByCommander = true;
+        }
+
+        if (isIllegalByCommander) {
+            isDisabled = true;
+            btnText = "เผ่าไม่ตรงกับ Commander";
+            btnColor = "#b0b0b0";
+        } else if (card.type === "Master") {
+            if (activeMaster) {
+                isDisabled = true;
+                btnColor = "#b0b0b0";
+                btnText = (String(card.id) === String(activeMaster.id)) ? "เพิ่มแล้ว 1 / 1" : "มี Master อื่นแล้ว";
+            } else { btnText = `+ เพิ่ม (0 / 1)`; }
+        } else if (card.type === "Boost_Master") {
+            if (activeBoostMaster) {
+                isDisabled = true;
+                btnColor = "#b0b0b0";
+                btnText = (String(card.id) === String(activeBoostMaster.id)) ? "เพิ่มแล้ว 1 / 1" : "มี Boost Master อื่นแล้ว";
+            } else { btnText = `+ เพิ่ม (0 / 1)`; }
+        } else {
+            const maxLimit = 3;
+            if (countInDeck >= maxLimit) {
+                isDisabled = true;
+                btnText = `ใส่ครบแล้ว ${countInDeck} / ${maxLimit}`;
+                btnColor = "#b0b0b0";
+            } else {
+                btnText = `+ เพิ่ม (${countInDeck} / ${maxLimit})`;
+            }
+        }
+
+        // สั่งอัปเดตที่ Element ปุ่มโดยตรง
+        const addBtn = cardDiv.querySelector('.add-to-deck-btn');
+        if (addBtn) {
+            addBtn.innerText = btnText;
+            addBtn.style.backgroundColor = btnColor;
+            addBtn.disabled = isDisabled;
+        }
+    });
+}
+//////////////////////////////////
 
 function renderCards(cards) {
     const container = document.getElementById('cardContainer');
@@ -23,6 +95,7 @@ function renderCards(cards) {
     cards.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
+        cardDiv.setAttribute('data-card-id', card.id);
 
             let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}&w=300&output=webp&q=80`;
 
@@ -36,7 +109,7 @@ function renderCards(cards) {
             const targetClans = Array.isArray(card.clan) ? card.clan : [card.clan];
             const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
             if (!targetClans.some(clan => commClans.includes(clan))) {
-                isIllegalByCommander = true;
+                isIllegalByCommander = true;                
             }
         }
 
@@ -114,11 +187,118 @@ const optimizedImageUrl = `https://wsrv.nl/?url=${encodeURIComponent(fullImgUrl)
             // แนะนำ: ถ้าเปลี่ยน handleAddToDeck ให้รับ card object จะลดโอกาสบั๊กได้มากกว่ารับ id
             handleAddToDeck(e, card); 
         };
+        
+        // 1. ฟังก์ชันตัวกลางสำหรับเพิ่มการ์ดแบบรวดเร็ว (Quick Add)
+        const performQuickAdd = (e) => {
+            if (isDisabled) {
+                showFeedback(e, "MAX!", "#ff4757");
+                return;
+            }
+            let limit = (card.type === "Master" || card.type === "Boost_Master") ? 1 : 3;
+            let currentInDeck = myDeck.filter(c => String(c.id) === String(card.id)).length;
+            let amountToAdd = limit - currentInDeck;
+
+            if (amountToAdd > 0) {
+                for (let i = 0; i < amountToAdd; i++) {
+                    handleAddToDeck(e, card); 
+                }
+                showFeedback(e, `+${amountToAdd}`, "#f1c40f");
+            } else {
+                showFeedback(e, "FULL", "#ff4757");
+            }
+        };
+
+// --- ส่วนจัดการ Event แบบแยกโหมด (Browsing vs Editing) ---
+        const cardImg = cardDiv.querySelector('.card-img-btn');
+        let clickTimer = null;
+        let isDoubleTapping = false; // ตัวแปรล็อคสถานะชั่วคราว
+
+        cardImg.onclick = (e) => {
+            e.stopPropagation();
+
+            // 1. เช็คสถานะ: PC เปิด Side Panel อยู่หรือไม่ OR Mobile อยู่ในโหมดจัดเด็คหรือไม่
+            const sidePanel = document.getElementById('deckSidePanel');
+            const isPcEditing = sidePanel && sidePanel.classList.contains('open');
+            // สมมติว่า toggleMobileDeckMode() มีการเปลี่ยนสถานะ isMobileEditing
+            const isMobileEditMode = (typeof isMobileEditing !== 'undefined') ? isMobileEditing : false;
+
+            const isInEditingMode = isPcEditing || isEditMode;
+
+            // --- กรณีที่ 1: โหมดส่องการ์ด (Browsing) ---
+            if (!isInEditingMode) {
+                if (clickTimer) clearTimeout(clickTimer);
+                clickTimer = null;
+                openModal(card); // เปิดทันที ไม่หน่วงเวลา
+                return;
+            }
+
+            // --- กรณีที่ 2: โหมดจัดเด็ค (Editing) ---
+            if (clickTimer === null) {
+                clickTimer = setTimeout(() => {
+                    openModal(card);
+                    clickTimer = null;
+                }, 250);
+            } else {
+                clearTimeout(clickTimer);
+                clickTimer = null;
+                if (typeof handleQuickMultiAdd === 'function') {
+                    handleQuickMultiAdd(e, card);
+                }
+            }
+        };
+
+        // 2. คลิกขวา (PC) - ทำงานเฉพาะตอนเปิด Side Panel เท่านั้น
+        cardImg.oncontextmenu = (e) => {
+            const sidePanel = document.getElementById('deckSidePanel');
+            if (sidePanel && sidePanel.classList.contains('open')) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (clickTimer) clearTimeout(clickTimer);
+                clickTimer = null;
+                if (typeof handleQuickMultiAdd === 'function') {
+                    handleQuickMultiAdd(e, card);
+                }
+            }
+            // ถ้าไม่เปิด Panel คลิกขวาจะขึ้นเมนู Browser ปกติ หรือไม่ทำอะไร
+        };
+
+ // --- 2. การจัดการ Double Tap (Mobile) ---
+cardImg.addEventListener('touchstart', (e) => {
+            // ถ้าไม่เปิดโหมดจัดเด็ค ปล่อยผ่าน
+            if (typeof isEditMode === 'undefined' || !isEditMode) return; 
+
+            const now = Date.now();
+            const TIMESPAN = 350; 
+
+            if (now - lastTap < TIMESPAN && now - lastTap > 0) {
+                // --- ตรวจพบ Double Tap ---
+                isDoubleTapping = true; // ล็อคไว้ไม่ให้ onclick เปิด Modal
+                
+                if (clickTimer) {
+                    clearTimeout(clickTimer);
+                    clickTimer = null;
+                }
+                
+                if (e.cancelable) e.preventDefault(); 
+                
+                if (typeof handleQuickMultiAdd === 'function') {
+                    handleQuickMultiAdd(e, card);
+                }
+                
+                lastTap = 0;
+
+                // ปลดล็อคหลังจากผ่านไปครู่หนึ่ง
+                setTimeout(() => { isDoubleTapping = false; }, 500);
+            } else {
+                lastTap = now;
+            }
+        }, { passive: false });
 
         container.appendChild(cardDiv);
     });
 
     window.scrollTo(0, scrollPos);
+
 }
 
 
@@ -244,7 +424,7 @@ function handleAddToDeck(e, cardOrId) {
 
     // อัปเดตหน้าคลังการ์ดเพื่อให้ตัวเลขจำนวนการ์ด (เช่น 1/3) เปลี่ยนตาม
     if (typeof renderCards === 'function') {
-        renderCards(currentFilteredCards);
+        updateAllButtonStates();
     }
 	
     // อัปเดต Histogram แบบ Real-time
@@ -281,7 +461,9 @@ function isCardCompatibleWithCommander(card) {
     const currentCommander = myDeck.find(c => c.isCommander === true);
     
     // กฎที่ 1: ถ้ายังไม่มีหัวหน้า หรือการ์ดเป็นประเภท Master/Action/Armor/Field ให้ผ่านเสมอ
-    if (!currentCommander || card.type.includes("Master")|| card.type.includes("Armor")|| card.type.includes("Action")|| card.type.includes("Field")) 
+    if (!currentCommander || card.type.includes("Master")|| card.type.includes("Armor")|| card.type.includes("Action")|| card.type.includes("Field")
+    || card.type.includes("Fusion_Monster")|| card.type.includes("Boost_Creature")|| card.type.includes("Armored_Dino")
+    ) 
 		return true;
 
     // กฎที่ 2: ถ้ามีหัวหน้าแล้ว ลูกน้องที่จะเพิ่มต้องมี "เผ่า" (Clan) ตรงกับหัวหน้า
@@ -417,7 +599,8 @@ function changeQty(cardId, delta, index = null) {
 
     // 4. อัปเดตสถานะปุ่มฝั่งคลังการ์ด
     if (typeof renderCards === 'function') {
-        renderCards(currentFilteredCards);
+        updateTotalCounterOnly();
+
     }
 	
 	isUnsaved = true;
@@ -436,13 +619,18 @@ function updateDeckUI() {
     renderAllDeckItems();
     updateTotalCounterOnly();
     bindHistogramEvent();
+    updateDynamicBackground(); 
     
     if (typeof renderTypeHistogram === 'function') {
         renderTypeHistogram(isHistogramOpen); 
     }
 
-    if (typeof renderCards === 'function') {
-        renderCards(currentFilteredCards);
+   // if (typeof renderCards === 'function') {
+   //     renderCards(currentFilteredCards);
+  //  }
+
+  if (typeof updateAllButtonStates === 'function') {
+        updateAllButtonStates(); // อัปเดตแค่เลขปุ่ม หน้าจอจะไม่กระพริบ
     }
 
 const saveBtn = document.querySelector('.btn-save-main'); 
@@ -459,7 +647,7 @@ const saveBtn = document.querySelector('.btn-save-main');
     }
 }
 
-// ฟังก์ชันวาดการ์ดทั้งหมด (เอา Logic เดิมที่ล้างหน้าจอมาไว้ที่นี่)
+
 
 // ฟังก์ชันอัปเดตแค่ตัวเลขรวม (ไม่ล้างหน้าจอ)
 function updateTotalCounterOnly() {
@@ -484,7 +672,6 @@ function updateTotalCounterOnly() {
         document.getElementById('extraDeckCounter').innerText = `(${extraCount}/15)`;
 }
 
-// ใน deck_builder_logic.js
 
 function createDeckItem(card, index) {
     const item = document.createElement('div');
@@ -520,21 +707,95 @@ function createDeckItem(card, index) {
     ` : ''}
     `;
     
-    // --- จุดตัดสินใจ: ถ้าเปิดโหมดเลือกปก ให้ตั้งปก / ถ้าปิดโหมด ให้เปิด Modal ---
-    item.querySelector('img').onclick = (e) => {
+    // --- [เพิ่มส่วน Logic: Quick Remove & Double Interaction] ---
+    const img = item.querySelector('img');
+    let removeTimer = null;
+    let lastRemoveTap = 0;
+    let isRemoveDoubleTapping = false;
+
+    // 1. คลิกซ้าย (PC) / แตะปกติ (Mobile)
+    img.onclick = (e) => {
         e.stopPropagation();
-        if (typeof isSelectingCover !== 'undefined' && isSelectingCover) {
-            setAsCover(index); // เรียกฟังก์ชันที่เราแก้ข้างบน
+
+        // ถ้าเป็นผลพวงมาจาก Double Tap บนมือถือ ให้หยุดทำงาน
+        if (isRemoveDoubleTapping) {
+            isRemoveDoubleTapping = false;
+            return;
+        }
+
+        // เช็คโหมดจัดเด็ค (สำหรับ Mobile)
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isInEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
+
+        // ถ้าไม่ได้อยู่ในโหมดแก้เด็ค (บน Mobile) ให้ทำงานปกติทันที
+        if (isMobile && !isInEditMode) {
+            if (typeof isSelectingCover !== 'undefined' && isSelectingCover) {
+                setAsCover(index);
+            } else {
+                openModal(card);
+            }
+            return;
+        }
+
+        // --- โหมดจัดเด็ค: ใช้ระบบหน่วงเวลาเพื่อแยก Single/Double Click ---
+        if (removeTimer === null) {
+            removeTimer = setTimeout(() => {
+                // SINGLE CLICK: ทำหน้าที่เดิม (ตั้งปก หรือ เปิด Modal)
+                if (typeof isSelectingCover !== 'undefined' && isSelectingCover) {
+                    setAsCover(index);
+                } else {
+                    if (typeof openModal === 'function') openModal(card); 
+                }
+                removeTimer = null;
+            }, 250); // หน่วงเวลา 0.25 วินาที
         } else {
-            if (typeof openModal === 'function') {
-                openModal(card); 
+            // DOUBLE CLICK: ลบยกชุดทันที
+            clearTimeout(removeTimer);
+            removeTimer = null;
+            if (typeof handleQuickRemove === 'function') {
+                handleQuickRemove(e, card, index);
             }
         }
     };
+
+    // 2. คลิกขวา (PC): ลบยกชุดทันที (ไม่ต้องรอเบิ้ลคลิก)
+    img.oncontextmenu = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (removeTimer) clearTimeout(removeTimer);
+        removeTimer = null;
+        if (typeof handleQuickRemove === 'function') {
+            handleQuickRemove(e, card, index);
+        }
+    };
+
+    // 3. Double Tap (Mobile): สำหรับผู้ใช้มือถือที่เปิด Edit Mode
+    img.addEventListener('touchend', (e, card, index) => {
+        if (typeof isEditMode === 'undefined' || !isEditMode) return;
+
+        const now = Date.now();
+        const TIMESPAN = 350;
+
+        if (now - lastRemoveTap < TIMESPAN && now - lastRemoveTap > 0) {
+            // ตรวจพบ Double Tap
+            isRemoveDoubleTapping = true;
+            if (removeTimer) clearTimeout(removeTimer);
+            removeTimer = null;
+
+            if (e.cancelable) e.preventDefault();
+            if (typeof handleQuickRemove === 'function') {
+                handleQuickRemove(e, card, index);
+            }
+            lastRemoveTap = 0;
+            // ปลดล็อค Flag หลังจากผ่านไปครู่หนึ่ง
+            setTimeout(() => { isRemoveDoubleTapping = false; }, 500);
+        } else {
+            lastRemoveTap = now;
+        }
+    }, { passive: false });
     
     return item;
 }
-
 
 
 
@@ -725,7 +986,6 @@ function clearDeck() {
             renderCards(currentFilteredCards); 
         }
         
-        alert("ล้างเด็คเรียบร้อยแล้ว");
     }
 	isUnsaved = true;
 }
@@ -791,12 +1051,14 @@ function sortDeck() {
 // =========================================================
 
 async function exportToPNG() {
+    // 1. เพิ่มแจ้งเตือนเล็กน้อยให้ผู้ใช้รู้ว่ากำลังทำงาน (Optional)
+    const originalBtnText = event?.target?.innerText;
+    if(event?.target) event.target.innerText = "⌛ กำลังเตรียมรูป...";
+
     const exportArea = document.createElement('div');
     exportArea.className = 'export-container';
-    
     const deckName = document.getElementById('deckNameInput').value || 'My Dinomaster Deck';
 
-    // ฟังก์ชันช่วยจัดกลุ่มการ์ด
     const getGroupedCards = (cardList) => {
         const groups = {};
         cardList.forEach(c => {
@@ -806,21 +1068,10 @@ async function exportToPNG() {
         return Object.values(groups);
     };
 
-    // แยกกลุ่มตามประเภทที่กำหนดใหม่
-    // 1. Starter: เฉพาะ Commander, Master, และ Boost_Master
     const starterList = myDeck.filter(c => c.isCommander || c.type === "Master" || c.type === "Boost_Master");
-    
-    // 2. Extra Deck: เฉพาะสายซัพพอร์ตพิเศษ
     const extraTypes = ["Boost_Creature", "Fusion_Monster", "Illusion"];
     const extraList = myDeck.filter(c => extraTypes.includes(c.type));
-    
-    // 3. Main Deck: การ์ดอื่นที่ไม่ใช่ Starter และไม่อยู่ใน Extra
-    const mainList = myDeck.filter(c => 
-        !c.isCommander && 
-        c.type !== "Master" && 
-        c.type !== "Boost_Master" && 
-        !extraTypes.includes(c.type)
-    );
+    const mainList = myDeck.filter(c => !c.isCommander && c.type !== "Master" && c.type !== "Boost_Master" && !extraTypes.includes(c.type));
 
     exportArea.innerHTML = `
         <div style="text-align:center; margin-bottom:20px;">
@@ -829,13 +1080,10 @@ async function exportToPNG() {
         </div>
         <div class="export-section-title"><span>🛡️ Starter / Commander</span></div>
         <div class="export-grid" id="gridStarter"></div>
-        
         <div class="export-section-title"><span>🃏 Main Deck (${mainList.length})</span></div>
         <div class="export-grid" id="gridMain"></div>
-        
         <div class="export-section-title"><span>✨ Extra Deck (${extraList.length})</span></div>
         <div class="export-grid" id="gridExtra"></div>
-        
         <div style="text-align:center; margin-top:20px; color:#666; font-size:12px;">Generated by Dinomaster Tool</div>
     `;
 
@@ -844,14 +1092,12 @@ async function exportToPNG() {
     const renderGroupedToGrid = (cardList, gridId, showBadge = true) => {
         const grid = document.getElementById(gridId);
         const grouped = getGroupedCards(cardList);
-        
         grouped.forEach(card => {
             const wrap = document.createElement('div');
             wrap.className = 'export-card-item';
             
-            const imageUrl = card.image + (card.image.includes('?') ? '&' : '?') + 'not-tainted=1';
-            
-            // ปรับปรุง: บังคับโชว์ป้าย x ทุกใบในโซนที่มี Badge (รวมถึง x1)
+            // ปรับปรุง: ไม่เติม Query String เพื่อให้ดึงรูปจาก Cache ได้ทันที
+            const imageUrl = card.image; 
             const badgeHtml = showBadge ? `<div class="export-badge">x${card.count}</div>` : "";
             
             wrap.innerHTML = `
@@ -862,12 +1108,10 @@ async function exportToPNG() {
         });
     };
 
-    // เรียกใช้ฟังก์ชัน Render ตามโซนที่แบ่งไว้
-    renderGroupedToGrid(starterList, 'gridStarter', false); // Starter มักจะไม่โชว์เลขจำนวน
-    renderGroupedToGrid(mainList, 'gridMain', true);        // Main Deck โชว์ x1, x2...
-    renderGroupedToGrid(extraList, 'gridExtra', true);      // Extra Deck โชว์ x1, x2...
+    renderGroupedToGrid(starterList, 'gridStarter', false);
+    renderGroupedToGrid(mainList, 'gridMain', true);
+    renderGroupedToGrid(extraList, 'gridExtra', true);
 
-    // รอโหลดรูปภาพ
     const images = exportArea.getElementsByTagName('img');
     await Promise.all(Array.from(images).map(img => new Promise(res => { 
         if(img.complete) res(); 
@@ -877,23 +1121,32 @@ async function exportToPNG() {
     try {
         const canvas = await html2canvas(exportArea, {
             useCORS: true,
+            allowTaint: false,
             backgroundColor: '#1a1c20',
-            scale: 1.5, // ความละเอียดที่เหมาะสมสำหรับไฟล์ขนาดเล็ก
-            logging: false
+            scale: 1.5,
+            logging: false,
+            // เพิ่มการจัดการ Buffer
+            removeContainer: true 
         });
 
-        // บีบอัดไฟล์เป็น JPEG คุณภาพ 80% เพื่อคุมขนาดไฟล์ไม่ให้เกิน 3MB
-        const quality = 0.95; 
-        const dataUrl = canvas.toDataURL('image/jpeg', quality); 
-        
-        const link = document.createElement('a');
-        link.download = `Deck_${deckName.replace(/\s+/g, '_')}.jpg`;
-        link.href = dataUrl;
-        link.click();
+        // แก้ไขจุดสำคัญ: เปลี่ยนจาก toDataURL เป็น toBlob เพื่อความเร็วสูงสุด
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `Deck_${deckName.replace(/\s+/g, '_')}.png`;
+            link.href = url;
+            link.click();
+            
+            // ล้างหน่วยความจำ
+            URL.revokeObjectURL(url);
+            if(event?.target) event.target.innerText = originalBtnText;
+        }, 'image/png');
+
     } catch (err) {
         console.error("Export Error:", err);
+        if(event?.target) event.target.innerText = originalBtnText;
     } finally {
-        exportArea.remove(); // ลบพื้นที่จำลองทิ้งทันทีหลังทำงานเสร็จ
+        exportArea.remove();
     }
 }
 
@@ -1610,4 +1863,27 @@ function handleShowcaseUpdate(cardId, action) {
         // เอฟเฟกต์ Feedback
         cardEl.style.opacity = newTotalCount === 0 ? "0.4" : "1";
     });
+}
+
+// =========================================================
+//  Global Helper Functions (วางไว้ล่างสุดของไฟล์)
+// =========================================================
+
+// 1. ฟังก์ชันแสดง Visual Feedback (+1, +3, MAX) - แก้ Error showFeedback is not defined
+function showFeedback(e, text, color) {
+    const feedback = document.createElement('div');
+    feedback.className = 'floating-feedback';
+    feedback.innerText = text;
+    feedback.style.color = color;
+    
+    // คำนวณตำแหน่ง (รองรับทั้งเมาส์และนิ้ว)
+    const x = e.clientX || (e.touches && e.touches[0].clientX);
+    const y = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    feedback.style.left = `${x}px`;
+    feedback.style.top = `${y}px`;
+    
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => feedback.remove(), 800);
 }

@@ -1,7 +1,7 @@
 const cardsData = [...C_originalData,...MG_originalData,...CharacterData, ...C_EnigmaData,
     ...MG_enigmaData,...C_NewmasterData,
 ...MG_newmasterData, ...C_StepNextData, ...MS_newmasterData, ...MG_StepNextData,
- ...ReEnigmaData, ...MG_AR1Data,
+ ...ReEnigmaData, ...MG_AR1Data, ...Armored_DinoData,
 ...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...icefireData,...Boost5Data, ]; 
 
 let myDeck = JSON.parse(localStorage.getItem('dinomaster_deck')) || [];

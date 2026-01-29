@@ -68,6 +68,6 @@ const Armored_DinoData = [
     type: "Armored_Dino",
     set: "นิวมาสเตอร์",
     clan: "มีเกราะหางหนาม",
-        image: "images/Armored_Dino/Armored_Stegosaurus3.png"
+        image: "images/Armored_Dino/Armored_Stegosaurus3.jpg"
 },
 ];

@@ -21,7 +21,8 @@ const BoostMaster2Data = [
     clan: "สัตว์น้ำ",
     ability: `<span class="hlabi">Effect :</span> <br> 
 	• <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เข้ามาในสนาม หาก Master เราชื่อ [Banthom], สามารถเลือก Creature ในสุสานเราได้ 1 ใบ : นำการ์ดนั้นกลับเข้าสนาม > การ์ดนั้นติด [สภาวะหลับ] 2 เทิร์น. <br>
-	• <span class="hlauto">Auto</span> เมื่อ Creature [มีปีก] หรือ [มีปีก] ของเราตกเป็นเป้าหมายการโจมตี : การ์ดนี้จะเข้าไปอยู่ใน Line เดียวกันและรับการโจมตีแทน.` ,
+	• <span class="hlauto">Auto</span> เมื่อ Creature [เผ่าสัตว์น้ำ] หรือ [เผ่ามีปีก] ของเราตกเป็น
+    เป้าหมายการโจมตี : การ์ดนี้จะเข้าไปอยู่ใน Line เดียวกันและรับการโจมตีแทน.` ,
     image: "images/Fanmade/Boost2/Cymbospondylus.png"
 },
 {

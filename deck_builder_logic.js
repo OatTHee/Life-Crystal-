@@ -6,16 +6,6 @@ let currentEditingDeckId = null;
 let isEditMode = false; // สำหรับ Mobile Edit Mode
 let lastTap = 0;        // สำหรับตรวจจับ Double Tap (ต้องอยู่ข้างนอก)
 
-function getSmartCardImageUrl(originalPath) {
-    // 1. ตรวจสอบว่ามี ? ใน URL หรือยัง
-    const separator = originalPath.includes('?') ? '&' : '?';
-    
-    // 2. สร้าง URL ต้นฉบับที่พ่วง Version เข้าไป (หลอก GitHub / Browser)
-    const versionedUrl = `${originalPath}${separator}v=${IMAGE_ASSET_VERSION}`;
-    
-    // 3. ส่งเข้า wsrv.nl โดยพ่วง &nocache=1 เข้าไปด้วย (หลอก Proxy)
-    return `https://wsrv.nl/?url=${encodeURIComponent(versionedUrl)}&w=300&output=webp&q=80&nocache=1`;
-}
 
 // ฟังก์ชันสำหรับอัปเดตสถานะปุ่ม "ทุกใบ" โดยไม่วาดรูปใหม่ (ป้องกันการกระพริบ)
 function updateAllButtonStates() {
@@ -111,9 +101,7 @@ function renderCards(cards) {
         cardDiv.setAttribute('data-card-id', card.id);
 
 ////////////////////////////////////////////////////
-// เปลี่ยนเลขนี้เมื่อมีการอัปเดตรูปภาพชุดใหญ่
-let cardImgDisplay = getSmartCardImageUrl(card.image);
-///////////////////////////////////////
+let cardImgDisplay = `https://cdn.statically.io/img/oatthee.github.io/Life-Crystal-/${card.image}?w=300&f=webp`;///////////////////////////////////////
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;
         

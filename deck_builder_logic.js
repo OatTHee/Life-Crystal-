@@ -98,7 +98,11 @@ function renderCards(cards) {
         cardDiv.setAttribute('data-card-id', card.id);
 
 ////////////////////////////////////////////////////
-const cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}&w=300&output=webp&q=80&cb=${new Date().getTime()}`;
+// เปลี่ยนเลขนี้เมื่อมีการอัปเดตรูปภาพชุดใหญ่
+const IMAGE_VERSION = "20240516_v1"; 
+
+// ตอนเรียกใช้
+let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}?v=${IMAGE_VERSION}&w=300&output=webp&q=80`;
 ///////////////////////////////////////
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;

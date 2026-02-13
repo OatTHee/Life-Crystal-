@@ -98,8 +98,7 @@ function renderCards(cards) {
         cardDiv.setAttribute('data-card-id', card.id);
 
 ////////////////////////////////////////////////////
-const imgVersion = Date.now(); // จะได้เลขชุดยาวๆ เช่น 1715839...
-let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}&update=${cacheBuster}&w=300&output=webp&q=80`;
+const cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}&w=300&output=webp&q=80&cb=${new Date().getTime()}`;
 ///////////////////////////////////////
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;

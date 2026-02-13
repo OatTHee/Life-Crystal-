@@ -117,7 +117,12 @@ function openModal(cardOrId) {
     } else if (card.rarity === 'Golden_Rare') {
         modalImg.classList.add('img-golden-rare');
         rarityTextHTML = `<span class="text-golden-rare" style="font-size: 0.9em;">✦ ระดับความหายาก: Golden Rare</span>`;
-    } else {
+    } else if (card.rarity === 'Promo') {
+        modalImg.classList.add('img-Promo');
+        rarityTextHTML = `<span class="text-promo" style="font-size: 0.9em;">✦ การ์ดโปรโมฟอยล์</span>`;
+    } 
+    
+    else {
         rarityTextHTML = `<span style="color: #ccc; font-size: 0.8em;">✦ ระดับความหายาก: การ์ดทั่วไป</span>`;
     }
 

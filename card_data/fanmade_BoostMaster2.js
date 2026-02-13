@@ -95,7 +95,20 @@ const BoostMaster2Data = [
     type: "Boost_Master",
     set: "บููสมาสเตอร์2",
     clan: "",
-    ability: `เงื่อนไข : ใช้การ์ดนี้ได้ต่อเมื่อเด็คเราไม่มี Creature เผ่าอื่นนอกจาก [มีปีก] และ/หรือ [มีปีก] <br> CP Charge 8 [การ์ดของเรา], [Creature & [มีปีก] / [มีปีก]] [เข้าสนามจากการเรียก] <br> เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้, หากการ์ดนั้น DP 4 ขึ้นไป +2 CP แทน. <br> <span class="hlabi">Master Skill :</span> <br> • <span class="hlcont">Cont.</span> ต่อจำนวน Creature ที่ติด [สภาวะหลับ] 1 ใบ, Creature ที่เราควบคุมปรับ AT+100. <br> • <span class="hlmanual">Manual</span> จ่าย 4 CP + กำหนด Creature ที่ติด [สภาวะหลับ] 1 เป้าหมาย : ทำลายการ์ดนั้นและจั่วการ์ด 1 ใบ.` ,
+    ability: `<span style="color:#DC143C;">
+    เงื่อนไข : ใช้การ์ดนี้ได้ต่อเมื่อเด็คเราไม่มี Creature เผ่าอื่นนอกจาก สัตว์น้ำ 
+    และ/หรือ มีปีก</span> <br> 
+    <span class="hlabi">CP Charge :</span><br>
+    <span style="color:#7c5d00;"> 
+    [การ์ดของเรา], [Creature & [สัตว์น้ำ] / [มีปีก]] [เข้าสนามจากการเรียก] <br> เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้, หากการ์ดนั้น DP 4 ขึ้นไป +2 CP
+      แทน.
+      </span>
+      <br> 
+      <span class="hlabi">Master Skill :</span> <br> 
+      • <span class="hlcont">Cont.</span> ต่อจำนวน Creature ที่ติด [สภาวะหลับ] 1 ใบ, Creature 
+      ที่เราควบคุมปรับ AT+100. <br> 
+      • <span class="hlmanual">Manual</span> จ่าย 4 CP + กำหนด Creature ที่ติด [สภาวะหลับ] 1 
+      เป้าหมาย : ทำลายการ์ดนั้นและจั่วการ์ด 1 ใบ.` ,
     image: "images/Fanmade/Boost2/Banthom.png"
 },
 {
@@ -191,13 +204,25 @@ const BoostMaster2Data = [
 },
 {
     id: "FM-PR03 MS04 JU",
-    nameTH: "อัญญะ",
+    nameTH: "อัญญา",
     nameEN: "Anya",
     dp: "ไร้DP",
     type: "Boost_Master",
     set: "บููสมาสเตอร์2",
     clan: "",
-    ability: `เงื่อนไข : ใช้การ์ดใบนี้ได้ต่อเมื่อเด็คเราไม่มี Creature เผ่าอื่นนอกจาก มีเกราะหางหนาม และ/หรือ สัตว์น้ำ <br> <span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> ตราบที่เรามีการ์ดบนมือมากกว่าคู่แข่ง, Creature ของเราปรับ AT+200/DF+100. <br> • <span class="hlmanual">Manual</span> จ่าย 2 DP + แสดง Creature จากมือเรา 1 ใบ : เรียกการ์ดนั้นเข้าสนามทันที, ใช้การ์ดนั้นรวมฝูง/รวมร่างไม่ได้, เมื่อจบเทิร์น ถ้าการ์ดนั้นยังอยู่บนสนาม, ให้นำกลับขึ้นมือ. <br> • <span class="hlmanual">Manual</span> จ่าย 2 DP : ทิ้ง Creature จากมือ 1 ใบ : ค้นเด็ค > หา Creature 1 ใบที่ DP ตรงกับการ์ดที่ทิ้งขึ้นมือ > สับเด็ค > จั่วการ์ด 1 ใบ.` ,
+    ability: `<span style="color:#DC143C;">
+    เงื่อนไข : ใช้การ์ดใบนี้ได้ต่อเมื่อเด็คเราไม่มี Creature เผ่าอื่นนอกจาก 
+    มีเกราะหางหนาม และ/หรือ มีปีก 
+    </span>
+    <br> 
+    <span class="hlabi">Master Skill :</span> <br> 
+    • <span class="hlcont">Cont.</span> ตราบที่เรามีการ์ดบนมือมากกว่าคู่แข่ง, Creature ของเราปรับ 
+    AT+200/DF+100. <br> 
+    • <span class="hlmanual">Manual</span> จ่าย 2 DP + แสดง Creature จากมือเรา 1 ใบ : \
+    เรียกการ์ดนั้นเข้าสนามทันที, ใช้การ์ดนั้นรวมฝูง/รวมร่างไม่ได้, เมื่อจบเทิร์น ถ้าการ์ดนั้นยังอยู่บนสนาม, 
+    ให้นำกลับขึ้นมือ. <br> 
+    • <span class="hlmanual">Manual</span> จ่าย 2 DP : ทิ้ง Creature จากมือ 1 ใบ : ค้นเด็ค > 
+    หา Creature 1 ใบที่ DP ตรงกับการ์ดที่ทิ้งขึ้นมือ > สับเด็ค > จั่วการ์ด 1 ใบ.` ,
     image: "images/Fanmade/Boost2/Anya.jpg"
 },
 {

@@ -14,7 +14,7 @@ image: "images/StepNextMG/Berserk.jpg"
 },
 
 {
-id: "Blood Out",
+id: "2011NM-A030",
 nameTH: "กระอักเลือด",
 nameEN: "Blood Out",
 dp: 3,
@@ -170,7 +170,7 @@ image: "images/StepNextMG/Megatech Cycling.jpg"
 },
 
 {
-id: "Seal Creature",
+id: "2011NM-A005",
 nameTH: "ผนึกชีวธาตุ",
 nameEN: "Seal Creature",
 dp: 2,

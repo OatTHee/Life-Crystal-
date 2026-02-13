@@ -120,7 +120,7 @@ function showEditModeHint() {
     hint.className = 'edit-mode-hint';
     
     if (isMobile) {
-        hint.innerHTML = "💡 <b>Double Tap</b> ที่รูปเพื่อเพิ่มจนเต็ม";
+        hint.innerHTML = "💡 <b>กดแช่ที่การ์ด</b> ที่รูปเพื่อเพิ่มจนเต็ม";
     } else {
         hint.innerHTML = "💡 <b>Double Click</b> หรือ <b>คลิกขวา</b> เพื่อเพิ่มจนเต็ม";
     }

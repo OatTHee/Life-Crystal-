@@ -106,7 +106,11 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "สองขา",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> "โจมตีแน่วแน่" (เราสามารถสั่ง Creature ตัวนี้แม้มันจะมีสภาวะต่างปกติที่ทำให้ไม่สามารถโจมตีได้) <br> • <span class="hlauto">Auto</span> "ตื่นตัว" (เมื่อ Creature ตัวนี้ถูกกำหนดเป็นเป้าหมายอะไรก็ตาม Creature ตัวนี้ปรับค่า AT+200/DF+100 จนจบเทิร์น)`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlcont">Cont.</span> <span class="hlkw">"โจมตีแน่วแน่"</span> 
+        (เราสามารถสั่ง Creature ตัวนี้แม้มันจะมีสภาวะต่างปกติที่ทำให้ไม่สามารถโจมตีได้) <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[ตื่นตัว]</span> (เมื่อ Creature ตัวนี้ถูกกำหนดเป็นเป้าหมายอะไรก็ตาม 
+        Creature ตัวนี้ปรับค่า AT+200/DF+100 จนจบเทิร์น)`,
         image: "images/StepNext/Tyrannosaurus rex.jpg"
     },
     {
@@ -117,7 +121,10 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "สองขา",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> [ตื่นตัว] ( เมื่อ Creature ตัวนี้ถูกกำหนดเป็นเป้าหมายอะไรก็ตาม Creature ตัวนี้ปรับค่า AT+100/DF+100 จนจบเทิร์น ) <br> • <span class="hlcont">Cont.</span> [พร้อมรวมฝูงทุกรูปแบบ] ( เราสามารถสั่ง Creature ตัวนี้รวมฝูงได้ทุกรูปแบบในเทิร์นที่เข้าสนาม ยกเว้นเทิร์นแรกของเกม )`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[ตื่นตัว]</span> ( เมื่อ Creature ตัวนี้ถูกกำหนดเป็นเป้าหมายอะไรก็ตาม Creature ตัวนี้ปรับค่า AT+100/DF+100 จนจบเทิร์น ) <br> 
+        • <span class="hlcont">Cont.</span> <span class="hlkw">[พร้อมรวมฝูงทุกรูปแบบ]</span> 
+        (เราสามารถสั่ง Creature ตัวนี้รวมฝูงได้ทุกรูปแบบในเทิร์นที่เข้าสนาม ยกเว้นเทิร์นแรกของเกม)`,
         image: "images/StepNext/Saurolophus Osborni.jpg"
     },
     {
@@ -128,7 +135,11 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "สองขา",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> [พร้อมป้องกันทุกรูปแบบ] (เมื่อ Creature เผ่าสองขาของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature ดังกล่าวแล้วเข้ารับการโจมตีแทน) <br> • <span class="hlauto">Auto</span> เมื่อ Creature ตัวนี้เข้าสุสานจากสนาม : เราจั่วการ์ด 1 ใบ`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[พร้อมป้องกันทุกรูปแบบ]</span> ถูกแก้ไขเป็นดังนี้ เมื่อ Creature 
+    เผ่าเดียวกันกับการ์ดใบนี้ของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature 
+    ดังกล่าวแล้วเข้ารับการโจมตีแทน.<br>  
+        • <span class="hlauto">Auto</span> เมื่อ Creature ตัวนี้เข้าสุสานจากสนาม : เราจั่วการ์ด 1 ใบ`,
         image: "images/StepNext/Parasaurolophus walkeri.jpg"
     },
     {
@@ -139,7 +150,12 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "สองขา",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> [พร้อมป้องกันทุกรูปแบบ] (เมื่อ Creature เผ่าสองขาของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature ดังกล่าวแล้วเข้ารับการโจมตีแทน) <br> • <span class="hlcont">Cont.</span> [พร้อมรวมฝูงทุกรูปแบบ] (เราสามารถสั่ง Creature ตัวนี้รวมฝูงในเทิร์นที่เข้าสนามได้ ยกเว้นเทิร์นแรกของเกม)`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[พร้อมป้องกันทุกรูปแบบ]</span> ถูกแก้ไขเป็นดังนี้ เมื่อ Creature 
+    เผ่าเดียวกันกับการ์ดใบนี้ของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature 
+    ดังกล่าวแล้วเข้ารับการโจมตีแทน.<br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[พร้อมรวมฝูงทุกรูปแบบ]</span> 
+        (เราสามารถสั่ง Creature ตัวนี้รวมฝูงในเทิร์นที่เข้าสนามได้ ยกเว้นเทิร์นแรกของเกม)`,
         image: "images/StepNext/Lambeosaurus lambei.jpg"
     },
 	{
@@ -161,7 +177,11 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "คอยาว",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> {อาละวาด} (คู่ต่อสู้ที่ต่อสู้กับ Creature ตัวนี้ถูกทำลายทั้งหมดเมื่อ Creature ตัวนี้ต่อสู้สำเร็จ). <br> • <span class="hlauto">Auto</span> {พิโรธ > AT+100} (เมื่อมี Creature ที่เราควบคุมถูกทำลาย > Creature ตัวนี้ปรับค่า AT+100 จุด เป็นเวลาจนจบเกม). <br> <span class="hlred">*(ใส่ได้ 1 ใบในเด็ค)*</span>`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[อาละวาด]</span> (คู่ต่อสู้ที่ต่อสู้กับ Creature ตัวนี้ถูกทำลายทั้งหมดเมื่อ Creature ตัวนี้ต่อสู้สำเร็จ). <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[พิโรธ > AT+100]</span> (เมื่อมี 
+        Creature ที่เราควบคุมถูกทำลาย > Creature ตัวนี้ปรับค่า AT+100 จุด เป็นเวลาจนจบเกม). <br> 
+        <span class="hlmanual">*(ใส่ได้ 1 ใบในเด็ค)*</span>`,
         image: "images/StepNext/Mamenchisaurus.jpg"
     },
     {
@@ -194,7 +214,10 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "คอยาว",
-        ability: `<span class="hlabi">Skill :</span> <br> <span class="hlcont">Cont.</span> {รุกรับรอบตัว} (ขณะต่อสู้เราสามารถสั่ง Creature ตัวนี้ใช้ค่า AT หรือ DF ต่อสู้ก็ได้ หากใช้ค่า DF ต่อสู้ ค่า SH จะมีผลลดค่า AT ของคู่ต่อสู้ด้วย).`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        <span class="hlcont">Cont.</span> <span class="hlkw">[รุุกรับรอบตัว]</span> 
+        (ขณะต่อสู้เราสามารถสั่ง Creature ตัวนี้ใช้ค่า AT หรือ DF ต่อสู้ก็ได้ หากใช้ค่า DF ต่อสู้ ค่า SH จะมีผลลดค่า AT 
+        ของคู่ต่อสู้ด้วย).`,
         image: "images/StepNext/Saltasaurus.jpg"
     },
     {
@@ -205,7 +228,11 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "คอยาว",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> {อยู่รอดDF+100} (เมื่อมี Creature ที่เราควบคุมถูกทำลาย > Creature ตัวนี้ปรับค่า DF+100 จุด เป็นเวลาจนจบเกม). <br> • <span class="hlauto">Auto</span> {ป้องกันตัวเอง>AT+400} (เมื่อ Creature ตัวนี้ตกเป็นเป้าหมายจากการโจมตี > Creature ตัวนี้ปรับค่า AT+400 จุด เป็นเวลา 0 เทิร์น).`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[อยู่รอด > DF+100]</span> (เมื่อมี 
+        Creature ที่เราควบคุมถูกทำลาย > Creature ตัวนี้ปรับค่า DF+100 จุด เป็นเวลาจนจบเกม). <br> 
+        • <span class="hlauto">Auto</span> <span class="hlkw">[ป้องกันตนเอง > AT+400]</span>
+         (เมื่อ Creature ตัวนี้ตกเป็นเป้าหมายจากการโจมตี > Creature ตัวนี้ปรับค่า AT+400 จุด เป็นเวลา 0 เทิร์น).`,
         image: "images/StepNext/Shunosaurus.jpg"
     },
 	{
@@ -216,7 +243,9 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> <span class="hlauto">Auto</span> [หลบหลีกระดับ 4] เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 4 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตีเหล่านี้ได้`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        <span class="hlauto">Auto</span> <span class="hlkw">[หลบหลีกระดับ 4]</span>
+        เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 4 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตีเหล่านี้ได้`,
         image: "images/StepNext/Anurognathus.jpg"
     },
     {
@@ -227,7 +256,9 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> <span class="hlauto">Auto</span> [หลบหลีกระดับ 6] เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 6 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตีเหล่านี้ได้ <br> <span class="hlred">*(ใส่ได้ 1 ใบในเด็ค)*</span>`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        <span class="hlauto">Auto</span> <span class="hlkw">[หลบหลีกระดับ 6]</span> 
+        เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 6 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตีเหล่านี้ได้ <br> <span class="hlred">*(ใส่ได้ 1 ใบในเด็ค)*</span>`,
         image: "images/StepNext/Eudimorphodon.jpg"
     },
     {
@@ -249,7 +280,10 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> [พร้อมรวมฝูงทุกรูปแบบ] เราสามารถสั่ง Creature ตัวนี้รวมฝูงได้ทุกรูปแบบในเทิร์นที่พึ่งเข้าสนาม ยกเว้นเทิร์นแรกของเกม <br> • <span class="hlauto">Auto</span> [หลบหลีกระดับ 2] เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 2 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตี`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlcont">Cont.</span> <span class="hloneper">พร้อมรวมฝูงทุกรููปแบบ</span> เราสามารถสั่ง Creature ตัวนี้รวมฝูงได้ทุกรูปแบบ
+        ในเทิร์นที่พึ่งเข้าสนาม ยกเว้นเทิร์นแรกของเกม <br> 
+        • <span class="hlauto">Auto</span> <span class="hloneper">[หลบหลีกระดับ 2]</span> เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 2 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตี`,
         image: "images/StepNext/Nyctosaurus.jpg"
     },
     {
@@ -271,7 +305,13 @@ const C_StepNextData = [
         type: "Creature",
         set: "สเต็ปเน็ก",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> [พร้อมป้องกันทุกรูปแบบ] เราสามารถสั่ง Creature ตัวนี้ป้องกันได้ทุกรูปแบบในเทิร์นที่พึ่งเข้าสนาม ยกเว้นเทิร์นแรกของเกม <br> • <span class="hlauto">Auto</span> [หลบหลีกระดับ 3] เมื่อ Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 3 จุด หรือต่ำกว่า เราสามารถเลือกให้ไม่ตกเป็นเป้าหมายการโจมตีเหล่านี้ได้`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+         • <span class="hlauto">Auto</span> <span class="hloneper">[พร้อมป้องกันทุกรูปแบบ]</span> ถูกแก้ไขเป็นดังนี้ เมื่อ Creature 
+    เผ่าเดียวกันกับการ์ดใบนี้ของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature 
+    ดังกล่าวแล้วเข้ารับการโจมตีแทน.<br> 
+    • <span class="hlauto">Auto</span> <span class="hloneper">[หลบหลีกระดับ 3]</span> เมื่อ 
+    Creature ใบนี้ตกเป็นเป้าหมายการโจมตีจาก Creature ที่มี DP รวมแล้ว 3 จุด หรือต่ำกว่า เราสามารถเลือกให้
+    ไม่ตกเป็นเป้าหมายการโจมตีเหล่านี้ได้`,
         image: "images/StepNext/Sordes.jpg"
     },
 	{
@@ -282,7 +322,10 @@ const C_StepNextData = [
     type: "Creature",
     set: "สเต็ปเน็ก",
     clan: "มีเขา",
-    ability: `<span class="hlabi">Skill :</span> <br> <span class="hlcont">Cont.</span> [พร้อมป้องกันทุกรูปแบบ] เมื่อ Creature เผ่ามีเขา ของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature ดังกล่าวแล้วเข้ารับการโจมตีแทน`,
+    ability: `<span class="">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> <span class="hloneper">[พร้อมป้องกันทุกรูปแบบ]</span> ถูกแก้ไขเป็นดังนี้ เมื่อ Creature 
+    เผ่าเดียวกันกับการ์ดใบนี้ของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature 
+    ดังกล่าวแล้วเข้ารับการโจมตีแทน.`,
     image: "images/StepNext/Achelousaurus horneri.jpg"
 },
 
@@ -306,7 +349,13 @@ const C_StepNextData = [
     type: "Creature",
     set: "สเต็ปเน็ก",
     clan: "มีเขา",
-    ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> [เคียงข้างมาสเตอร์] เมื่อการ์ดมาสเตอร์ถูกโจมตี Creature ตัวนี้ปรับค่า AT และ DF เพิ่ม 300 <br> • <span class="hlmanual">Manual</span> [พร้อมป้องกันทุกรูปแบบ] เราสามารถสั่ง Creature ตัวนี้ป้องกันได้ทุกรูปแบบในเทิร์นที่พึ่งเข้าสนาม ยกเว้นเทิร์นแรกของเกม`,
+    ability: `<span class="hlabi">Skill :</span> <br> 
+    • <span class="hlauto">Auto</span> [เคียงข้างมาสเตอร์] 
+    ถูกแก้ไขเป็นดังนี้ : <span class="hlauto">Auto</span> เมื่อเราใช้ Master Skill สำเร็จ : 
+    การ์ดใบนี้ปรับค่า AT+300/DF+300. <br> 
+    • <span class="hlauto">Auto</span> <span class="hloneper">[พร้อมป้องกันทุกรูปแบบ]</span> ถูกแก้ไขเป็นดังนี้ เมื่อ Creature 
+    เผ่าเดียวกันกับการ์ดใบนี้ของเราตกเป็นเป้าหมายการโจมตี การ์ดใบนี้จะเข้าไปอยู่ใน Line เดียวกันกับ Creature 
+    ดังกล่าวแล้วเข้ารับการโจมตีแทน.`,
     image: "images/StepNext/Kosmoceratops.jpg"
 },
 {

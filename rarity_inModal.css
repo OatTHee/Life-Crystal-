@@ -10,14 +10,53 @@
 }
 
 /* สีข้อความระดับความหายาก */
-.text-silver-rare {
-    color: #a8a8a8;
+/* 1. Promo: สีรุ้งสดใส */
+.text-promo {
+    background: linear-gradient(90deg,rgb(107, 202, 239) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(0,0,0,0.2);
+    /* ใช้ shadow สีเข้มจางๆ เพื่อให้ตัดกับพื้นขาว */
+
 }
 
-.text-golden-rare {
-    color: #d4af37;
+/* 2. Silver Rare: เน้นขอบให้ชัดเพราะสีใกล้เคียงกับพื้นหลังขาว */
+.text-silver-rare {
+    background: linear-gradient(120deg, #cecece 0%, #ffffff 45%, #bbbbbb 65%, #d7d7d7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    /* เพิ่มเส้นขอบบางๆ สีเทาเข้มเพื่อให้ตัวอักษรไม่กลืนกับพื้นขาว */
+    /* ใส่เงาสีดำช่วยให้ลอยเด่นขึ้น */
+filter: 
+drop-shadow(0px 0px 1px #555) 
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+;
+}
+
+/* 3. Golden Rare: เน้นความหรูหรา */
+.text-golden-rare {
+    background: linear-gradient(120deg, #ffc655 0%, #fffac1 40%, #edb234 65%, #f89f06 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+
+    /* ใช้เงาสีน้ำตาลเข้ม/ทองแดง เพื่อให้สีทองดูอิ่มขึ้นบนพื้นขาว */
+filter: drop-shadow(0px 0px 1px #555) 
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4))
+drop-shadow(1px 1px 2px rgba(0,0,0,0.4));
 }

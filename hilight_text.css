@@ -48,3 +48,24 @@
     display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
     line-height: 1;
 }
+
+.hlkw {
+    color: #FFFFFF;
+    font-weight: meduim;
+    font-style: italic;     /* ตัวเอียง */
+    background-color: #750000;
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}
+
+.hlrm {
+    color: #f2ff00;
+    font-weight: meduim;
+    background-color: #06485d89;
+    padding: 2px 6px;        /* เพิ่มพื้นที่รอบข้อความเล็กน้อย */
+    border-radius: 4px;      /* ทำขอบมน */
+    display: inline-block;   /* เพื่อให้พื้นหลังครอบคลุมตัวอักษรสวยงาม */
+    line-height: 1;
+}

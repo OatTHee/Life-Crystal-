@@ -6,15 +6,20 @@
     nameEN: "Hybodus / Hybodus Red",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "สัตว์น้ำ",
+        rarity:"Promo",
+
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlauto">Auto</span> เมื่อ Creature คู่แข่งติด [สภาวะบาดเจ็บ], 
-    กำหนด Armor 1 ใบบน Creature คู่แข่งที่ติด [สภาวะบาดเจ็บ] : [ทำลาย] Armor ชิ้นนั้น. <br> 
-    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, หาก Master เราชื่อ "Chen", กำหนด 
-    Creature 1 เป้าหมาย : การ์ดนั้นติด [สภาวะบาดเจ็บ AT-300]. <br> 
-    • <span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Hybodus" ในสุสานเรา 1 
-    ใบ : นำการ์ดนี้จากนอกเกมกลับ [เอ็กซ์ตร้าเด็ค]`,
+    • <span class="hlauto">Auto</span> เมื่อ Creature คู่แข่งติด <span class="hlkw">[สภาวะบาดเจ็บ]</span>, 
+    กำหนด Armor 1 ใบบน Creature คู่แข่งที่ติด <span class="hlkw">[สภาวะบาดเจ็บ]</span> : 
+    <span class="hlkw">[ทำลาย]</span> Armor ชิ้นนั้น. <br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature 1 เป้าหมาย : การ์ดนั้นติด 
+    <span class="hlkw">[สภาวะบาดเจ็บ AT-100]</span>, แต่หาก Master เราชื่อ "Chen", 
+    ติด <span class="hlkw">[สภาวะบาดเจ็บ AT-300]</span> แทน. <br><br> 
+    <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Hybodus" ในสุสานเรา 1 
+    ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>
+    </span>`,
     image: "images/Fanmade/Boost5/Hybodus.png"
 },
 {
@@ -23,30 +28,36 @@
     nameEN: "Therizinosaurus / Shine Therizinosaurus",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "สองขา",
+    rarity:"Promo",
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature สองขา ของเรา 1 ใบ : 
-    สวม Armor สองขา 1 ใบจากมือ หรือ การ์ด "Brutal Fang" 1 ใบจากเด็คให้การ์ดที่เลือกทันที > ถ้าสวมจาก
-    เด็คให้สับเด็ค. <br> 
-    • <span class="hlauto">Auto</span> หาก Master เราชื่อ "Touch", เมื่อ Creature 
-    [Tyrant]/ [Tyranno]/ [Tyrannus] ของเราเข้าสนาม : จั่วการ์ด 1 ใบ. <br> 
-    • <span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] นำ "Therizinosaurus" ในสุสานเรา 1 ใบ ออกจากเกม : นำการ์ดนี้จากนอกเกมกลับ [เอ็กซ์ตร้าเด็ค]`,
+    • <span class="hlauto">Auto</span> เมื่อ Creature<span class="hlkw">[Tyrant]/[Tyranno]/
+    [Tyrannus]</span> ของเราเข้าสนาม : จั่วการ์ด 1 ใบ.
+<br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature เผ่าสองขา ของเรา 1 ใบ : 
+    สวมการ์ด <span class="hlkw">"Brutal Fang"</span> 1 ใบจากเด็คให้การ์ดที่เลือกทันที และ/หรือ หาก 
+    Master เราชื่อ <span class="hlkw">"Touch"</span>, สวม 
+    Armor เฉพาะเผ่าสองขา อีก 1 ใบจากมือให้การ์ดนั้นทันทีด้วย.`,
     image: "images/Fanmade/Boost5/Therizinosaurus.png"
 },
 {
     id: "FM-PRO6 D01 JU",
-    nameTH: "ดราวิดโธซอรัส",
+    nameTH: "ดราวิโดซอรัส",
     nameEN: "Dravidosaurus",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "มีเกราะหางหนาม",
+        rarity:"Promo",
+
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlcont">Cont.</span> การ์ดนี้บนสนามถือว่ามีคำว่า [Pelta] ในชื่อ. <br> 
+    • <span class="hlcont">Cont.</span> การ์ดนี้บนสนามถือว่ามีคำว่า <span class="hlkw">[Pelta]</span>
+     ในชื่อ. <br> 
     • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, สามารถแสดง Creature มีเกราะหางหนาม 
     ที่มี DP ไม่เกิน 3 จากมือเราได้ 1 ใบ : นำการ์ดนั้นเข้าสนามทันที. <br> 
-    • <span class="hlauto">Auto</span> เมื่อ Creature ที่มีคำว่า [Gastonia] หรือ [Pelta] ในชื่อของเรา
+    • <span class="hlauto">Auto</span> <span class="hloneper">ไม่ทำงานซ้ำซ้อน</span> 
+    เมื่อ Creature  <span class="hlkw">[Gastonia]</span> หรือ <span class="hlkw">[Pelta]</span> ของเรา
     ตกเป็นเป้าหมายการโจมตี : สร้างความเสียหายแก่ Creature ที่โจมตีตามค่า SH ของการ์ดนั้น.`,
     image: "images/Fanmade/Boost5/Dravidosaurus.png"
 },
@@ -56,16 +67,22 @@
     nameEN: "Aletopelta biibeyhallorum",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "มีเกราะหางหนาม",
+        rarity:"Promo",
+
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlcont">Cont.</span> จำนวนการ [ผลาญกอง] คู่แข่งจากผลสำแดงของเรา +1 นอกจากนั้น,
+    • <span class="hlcont">Cont.</span> จำนวนการ <span class="hlkw">[ผลาญกอง]</span> คู่แข่งจากผลสำแดงของเรา +1 นอกจากนั้น,
      Creature มีเกราะหางหนาม ของเรา SH + (200 x X) (X = จำนวนครั้งที่คู่แข่งถูก [ผลาญกอง] ในเทิร์นเรา) 
      (รีเซ็ตค่า SH นี้เมื่อเข้าเทิร์นเรา). 
-     <br> • <span class="hlcont">Cont.</span> Creature [Pelta] หรือ [Gastonia] ของเราได้รับ 
+     <br> • <span class="hlcont">Cont.</span> Creature <span class="hlkw">[Gastonia]</span> หรือ <span class="hlkw">[Pelta]</span>
+      ของเราได้รับ 
      Skill [รุกรับรอบตัว]. <br> 
-     • <span class="hlauto">Auto</span> เมื่อ Creature [Pelta] หรือ [Gastonia] ในชื่อตัวอื่นของเรา
-     เข้าสนาม : [ผลาญกอง] คู่แข่งทั้งหมด 2 ใบ.`,
+     • <span class="hlauto">Auto</span> เมื่อ Creature <span class="hlkw">[Gastonia]</span> หรือ <span class="hlkw">[Pelta]</span>
+      ในชื่อตัวอื่นของเรา
+     เข้าสนาม : [ผลาญกอง] คู่แข่งทั้งหมด 2 ใบ.
+     <br><br>
+     <span class="hlkw">Effect <span class="hlcont">Cont.</span> ของการ์ดนี้ทำงานเพียงใบเดียวบนสนามเรา</span>`,
     image: "images/Fanmade/Boost5/Aletopelta biibeyhallorum.png"
 },
 {
@@ -74,15 +91,20 @@
     nameEN: "Cedarpelta plicatospineus",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "มีเกราะหางหนาม",
+        rarity:"Promo",
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlcont">Cont.</span> จำนวนการ [ผลาญกอง] คู่แข่งจากผลสำแดงของเรา +1 นอกจากนั้น, 
+    • <span class="hlcont">Cont.</span> จำนวนการ <span class="hlkw">[ผลาญกอง]</span> คู่แข่งจากผลสำแดงของเรา +1 นอกจากนั้น, 
     Creature มีเกราะหางหนาม ของเรา SH + (200 x X) (X = จำนวนครั้งที่คู่แข่งถูก [ผลาญกอง] ในเทิร์นเรา) 
     (รีเซ็ตค่า SH นี้เมื่อเข้าเทิร์นเรา). <br> 
     • <span class="hlauto">Auto</span> [เทิร์นของเรา] เมื่อคู่แข่งถูก [ผลาญกอง] : เรารับ 1 DP. <br> 
     • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม : [สำรวจกอง (5)] > นำ Creature 
-    [Pelta] / [Gastonia] 1 ใบจากที่แสดงเข้าสนามทันที > การ์ดที่เหลือเรียงไว้ใต้เด็ค`,
+    <span class="hlkw">[Gastonia]</span> หรือ <span class="hlkw">[Pelta]</span> 1 ใบจากที่แสดงเข้าสนามทันที > การ์ดที่เหลือเรียงไว้ใต้เด็ค
+    <br><br>
+    <span class="hlkw">Effect <span class="hlcont">Cont.</span> ของการ์ดนี้ทำงานเพียงใบเดียว
+    บนสนามเรา</span>`,
+    
     image: "images/Fanmade/Boost5/Cedarpelta plicatospineus.png"
 },
 {
@@ -91,13 +113,18 @@
     nameEN: "Sinraptor",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "สองขา",
+        rarity:"Promo",
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlcont">Cont.</span> ตราบที่มี Creature ติด [สภาวะผิดปกติ], Creature [Raptor] 
-    ของเราสามารถโจมตีที่ค่า DF ของเป้าหมายได้. <br> 
-    • <span class="hlauto">Auto</span> เมื่อ Creature [Raptor] ของเราตกเป็นเป้าหมายการโจมตี : 
-    Creature ที่โจมตีนั้นติด [สภาวะบาดเจ็บ AT-200 / DF-200] หลังจบการต่อสู้.`,
+    • <span class="hlcont">Cont.</span> หากบนสนามมี Creature <span class="hlkw">[Raptor]</span> 
+    3 ใบขึ้นไป, การ์ดนี้รับ <span class="hlabi">Effect</span> <span class="hlkw">[Fast Run]</span> 
+    และ หากบนสนามมี Creature ติด <span class="hlkw">[สภาวะผิดปกติ]</span>, Creature 
+    <span class="hlkw">[Raptor]</span> ของเราสามารถเลือกโจมตีค่า DF ได้. <br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, หากสนามเราไม่มี Creature อื่นนอกจาก 
+    <span class="hlkw">[Raptor]</span>, เลือก Creature คู่แข่ง 1 ใบ : การ์ดนั้นติด 
+    <span class="hlkw">[สภาวะบาดเจ็บ AT/DF - (X x 200)]</span><br>
+    <span style="color:#DC143C;">(X = จำนวน Creature บนสนามเรา).</span>`,
     image: "images/Fanmade/Boost5/Sinraptor.png"
 },
 {
@@ -106,14 +133,20 @@
     nameEN: "Utharaptor / Plug Utharaptor",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "สองขา",
+        rarity:"Promo",
+
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlauto">Auto</span> [เทิร์นละครั้ง] เมื่อ Creature [Raptor] ของเราตกเป็นเป้าหมาย
+    • <span class="hlauto">Auto</span> <span class="hloneper">เทิร์นละครั้ง</span> เมื่อ 
+    Creature <span class="hlkw">[Raptor]</span> ของเราตกเป็นเป้าหมาย
     จากผลสำแดงของการ์ดคู่แข่ง : สามารถนำการ์ดที่ตกเป็นเป้าหมายเหล่านั้นทั้งหมดกลับขึ้นมือทันที. <br> 
-    • <span class="hlauto">Auto</span> เมื่อ Creature [Raptor] ที่ DP ไม่เกิน 2 ของเราขึ้นมือจาก
-    เด็ค / สนาม : สามารถนำ 1 ใบจากที่ขึ้นมือเหล่านั้นเข้าสนามทันที. 
-    <br> • <span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Utahraptor" ในสุสานเรา 1 ใบ : นำการ์ดนี้จากนอกเกมกลับ [เอ็กซ์ตร้าเด็ค]`,
+    • <span class="hlauto">Auto</span> เมื่อ Creature <span class="hlkw">[Raptor]</span> 
+    ที่ DP ไม่เกิน 2 ของเราขึ้นมือจากเด็ค / สนาม : สามารถนำ 1 ใบจากที่ขึ้นมือเหล่านั้นเข้าสนามทันที. 
+    <br><br> 
+    <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Utahraptor" ในสุสานเรา 1 
+    ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>
+    </span>`, 
     image: "images/Fanmade/Boost5/Utharaptor.png"
 },
 {
@@ -122,13 +155,16 @@
     nameEN: "Eoraptor",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "สองขา",
+        rarity:"Promo",
+
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlcont">Cont.</span> ตราบที่รวมฝูง, การ์ดนี้ได้รับ Effect [Fast Run] 
-    (การ์ดนี้สามารถใช้งานได้ตั้งแต่เทิร์นที่เข้าสนาม). <br> 
-    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม : ค้นเด็ค > หา Creature [Raptor] 1 ใบที่ 
-    DP ไม่เกิน 2 ขึ้นมือ > สับเด็ค.`,
+    • <span class="hlcont">Cont.</span> ตราบที่รวมฝูง, การ์ดนี้ได้รับ <span class="hlabi">Effect : </span>
+     <span class="hlkw">[Fast Run] 
+    (การ์ดนี้สามารถใช้งานได้ตั้งแต่เทิร์นที่เข้าสนาม)</span>. <br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม : สามารถทิ้งการ์ด 1 ใบ ถ้าทิ้ง, ค้นเด็ค > 
+    หา Creature <span class="hlkw">[Raptor]</span> 1 ใบที่ DP ไม่เกิน 2 ขึ้นมือ > สับเด็ค.`,
     image: "images/Fanmade/Boost5/Eoraptor.png"
 },
 {
@@ -137,14 +173,20 @@
     nameEN: "Tupuxuara / Neo Tupuxuara",
     dp: 1,
     type: "Boost_Creature",
-    set: "โดนใจรีเทิร์น2",
+    set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "มีปีก",
+        rarity:"Promo",
+
     ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlauto">Auto</span> เมื่อออกจากสนาม, หาก Master เราชื่อ "Keiko" : ค้นเด็ค > 
-    หาการ์ด "Tornado" 1 ใบขึ้นมือ จากนั้นสับเด็ค. <br> 
-    • <span class="hlauto">Auto</span> [นอกเกม] เมื่อ Creature ที่การ์ดนี้ทำการบูสตกสุสานจากสนาม, 
-    สามารถทิ้งการ์ด 1 ใบ : ค้นเด็ค > หา Magic มีปีก 1 ใบ ขึ้นมือได้ > สับเด็ค. <br> 
-    • <span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Tupuxuara" ในสุสานเรา 1 ใบ : นำการ์ดนี้จากนอกเกมกลับ [เอ็กซ์ตร้าเด็ค]`,
+    • <span class="hlauto">Auto</span> เมื่อออกจากสนาม, หาก Master เราชื่อ <span class="hlkw">"Keiko"</span> :
+     ค้นเด็ค > หาการ์ด <span class="hlkw">"Tornado"</span> 1 ใบขึ้นมือ จากนั้นสับเด็ค. <br> 
+    • <span class="hlauto">Auto</span> <span class="hlkw">[นอกเกม]</span> เมื่อ Creature ที่การ์ดนี้
+    ทำการบูสตกสุสานจากสนาม, สามารถทิ้งการ์ด 1 ใบ : ค้นเด็ค > หา Magic เฉพาะเผ่ามีปีก 1 ใบ ขึ้นมือได้ > 
+    สับเด็ค. 
+<br><br> 
+    <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Tupuxuara" ในสุสานเรา 1 
+    ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>
+    </span>`,
     image: "images/Fanmade/Boost5/Tupuxuara.png"
 },
 
@@ -156,14 +198,19 @@
     nameEN: "Chen",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "โดนใจรีเทิร์น2",
-    clan: "",
-    ability: `<span class="hlabi">Master Skill :</span> <br> 
-    • <span class="hlcont">Cont.</span> ผล [สภาวะบาดเจ็บที่มีผลลด AT] ของเราต่อ 
-    Creature คู่แข่งจะลด AT อีก 200 และทำลายการ์ดนั้นหาก AT = 0 หลังติด [สภาวะบาดเจ็บที่มีผลลด AT]. <br> 
-    • <span class="hlmanual">Manual</span> จ่าย 3 DP + ทิ้งการ์ด 2 ใบ : แสดงผลตามการ์ดที่ทีิ้งดังนี้ <br>
-(1) Creature เผ่าสัตว์น้ำ เลือก Creature คู่แข่ง 1 ใบ : การ์ดนั้นติด [สภาวะบาดเจ็บ AT-500] <br>
-(2) Creature เผ่าคอยาว เลือก Creature ในสุสานเรา 1 ใบ : [คืนชีพ] การ์ดนั้น.`,
+    set: "เปลี่ยนเกลือเป็นทอง2",
+    rarity:"Promo",
+    ability: `
+    <span style="color:#E8AB00;">ใช้การ์ดนี้ได้ต่อเมื่อเด็คเราไม่มี Creature อื่นนอกจากเผ่าสัตว์น้ำ และ/หรือคอยาว</span>
+    <br><br>
+    <span class="hlabi">Master Skill :</span> <br> 
+    • <span class="hlcont">Cont.</span> ผล <span class="hlkw">[สภาวะบาดเจ็บที่มีผลลด AT]</span> 
+    ของเราต่อ Creature คู่แข่งจะลด AT อีก 200 และทำลายการ์ดนั้นหาก AT = 0 หลังติด 
+    <span class="hlkw">[สภาวะบาดเจ็บที่มีผลลด AT].</span> <br> 
+    • <span class="hlmanual">Manual</span> จ่าย 3 DP + ทิ้งการ์ด 2 ใบ : แสดงผลตามการ์ดที่ทิ้งดังนี้ <br>
+(1) Creature เผ่าสัตว์น้ำ เลือก Creature คู่แข่ง 1 ใบ : การ์ดนั้นติด <span class="hlkw">
+[สภาวะบาดเจ็บ AT-500]</span> <br>
+(2) Creature เผ่าคอยาว เลือก Creature ในสุสานเรา 1 ใบ : <span class="hlkw">[คืนชีพ]</span> การ์ดนั้น.`,
     image: "images/Fanmade/Boost5/Chen.png"
 },
 {
@@ -172,12 +219,18 @@
     nameEN: "Keiko",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "โดนใจรีเทิร์น2",
-    clan: "",
-    ability: `<span class="hlabi">Master Skill :</span> <br> 
-    • <span class="hlcont">Cont.</span> หากสนามมี Field เผ่ามีปีก และ คู่แข่งไม่มี Creature ใน 
-    DF Line, Creature เราที่ [โจมตีข้ามไป DF Line ได้ (ยกเว้นจากผลของ Field )] จะสามารถโจมตีมาสเตอร์
-    ได้ แม้คู่แข่งมี Creature ใน AT Line. <br> 
+    set: "เปลี่ยนเกลือเป็นทอง2",
+    rarity:"Promo",
+    ability: `<span style="color:#E8AB00;">ใช้การ์ดนี้ได้ต่อเมื่อเด็คเราไม่มี Creature อื่นนอกจากเผ่ามีปีก และ/หรือสองขา</span>
+    <br><br>
+    <span class="hlabi">Master Skill :</span> <br> 
+    • <span class="hlcont">Cont.</span> หากสนามมี <span style="color:#E8AB00;">Field เฉพาะเผ่ามีปีก</span> 
+    และคู่แข่งไม่มี Creature ใน AT Line หรือ DF Line (Line ใด Line หนึ่ง), Creature เผ่ามีปีก ของเรา
+    สามารถโจมตีมาสเตอร์ได้ แม้คู่แข่งมี Creature อยู่ก็ตาม > หากโจมตีสำเร็จด้วยวิธีนี้, 
+    ความเสียหายจะเกิดแก่มาสเตอร์คู่แข่งได้ไม่เกิน 300 จุด <span style="color:#E8AB00;">(แต่หาก Creature 
+    นั้น <span class="hlkw">[โจมตีข้ามไป DF Line ได้]</span> ยกเว้นด้วยผลของ Field 
+    จะสร้างความเสียหายตามปกติ)</span>
+     <br><br> 
     • <span class="hlmanual">Manual</span> เลือกทำ 1 อย่าง <br> 
     ‣ แสดงการ์ดบนมือเรา 1 ใบ : นำการ์ดนั้นไปสลับกับบนสุดเด็คเรา. <br> 
     ‣ เทิร์นนี้, ผลสำแดงการ์ดเราที่สามารถระบุถึง Creature เผ่ามีปีก / เผ่าสองขา (ที่ใดก็ตาม) ได้, ถือว่าระบุถึง
@@ -190,16 +243,24 @@
     nameEN: "Shino",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "โดนใจรีเทิร์น2",
-    clan: "",
-    ability: `<span class="hlabi">Master Skill :</span> <br> 
-    <span class="hlabi">CP Charge :</span> <br> [การ์ดของเรา], [มีคำว่า [Megatech] ในชื่อ / 
-    Creature& สองขา ] [ร่ายสำเร็จ / เข้าสนามจากการเรียก] <br> เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้, 
-    หาก DP 4 ขึ้นไป +2 CP แทน. <br> 
-    <span class="hlabi">Skill :</span> <br> 
-    • <span class="hlcont">Cont.</span> Creature สองขา ของเราขณะทำการ [ป้องกัน] ปรับ AT+800 จนจบการต่อสู้. <br> 
-    • <span class="hlmanual">Manual</span> จ่าย 2 CP + ทิ้งการ์ด 1 ใบ : ค้นเด็ค > หาการ์ด [Megatech] 1 ใบขึ้นมือ > สับเด็ค. <br> 
-    • <span class="hlmanual">Manual</span> จ่าย 12 CP : แสดงผล [Ultimate M. Skill “เมกาเทค ดิ เอนด์”] ของการ์ดนี้ทันที แม้ใช้ไปแล้ว หรือยังไม่ถึงเทิร์นที่กำหนด >`,
+    set: "เปลี่ยนเกลือเป็นทอง2",
+    rarity:"Promo",
+    ability: `<span class="hlabi">CP Charge :</span> <br> 
+    <span class="hlkw">[การ์ดของเรา], [มีคำว่า [Megatech] ในชื่อ / Creature& สองขา ] [ร่ายสำเร็จ / 
+    เข้าสนามจากการเรียก]</span> <br> 
+    <span style="color:#FFF400;">เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้, หาก DP 4 ขึ้นไป +2 CP แทน.</span> 
+    <br><br> 
+    <span class="hlabi">Master Skill :</span> <br> 
+   • <span class="hlauto">Auto</span> Creature เผ่าสองขา ของเราเมื่อ <span class="hlkw">[ป้องกัน]</span>
+    : การ์ดนั้นปรับ <span style="color:#E8AB00;">AT+600 / DF+600</span> เป็นเวลา 1 เทิร์น.
+<br> 
+    • <span class="hlmanual">Manual</span> จ่าย 2 CP + ทิ้งการ์ด 1 ใบ + เลือกการ์ด <span class="hlkw">
+    [Megatech]</span>
+     ในสุสานเรา 1 ใบ : นำการ์ดนั้นกลับขึ้นมือ.
+<br> 
+    • <span class="hlmanual">Manual</span> จ่าย 10 CP : แสดงผล <span class="hlkw">[Ultimate 
+    M. Skill "เมกาเทค ดิ เอนด์"]</span> ของการ์ดนี้ทันที <span style="color:#E8AB00;">แม้ใช้ไปแล้ว 
+    หรือยังไม่ถึงเทิร์นที่กำหนด.</span>`,
     image: "images/Fanmade/Boost5/Shino.png"
 },
 {
@@ -208,20 +269,28 @@
     nameEN: "Touch",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "โดนใจรีเทิร์น2",
-    clan: "",
-    ability: `<span class="hlabi">Master Skill :</span> <br> 
+    set: "เปลี่ยนเกลือเป็นทอง2",
+    rarity:"Promo",
+    ability: `
     <span class="hlabi">CP Charge :</span> <br> 
-    [การ์ดของเรา], [Creature/Armor & สองขา ] [Action & [Tyrant] ในชื่อ] [ร่ายสำเร็จ / เข้าสนามจาก
-    การเรียก] <br> 
-    เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้, DP 4 ขึ้นไป +2 CP แทน, หากเป็นการ์ด [Tyranno]/[Tyrannus] ในชื่อ 
-    +3 CP แทน. <br> 
-    • <span class="hlmanual">Manual</span> จ่าย 5 CP : เรียก/ร่าย การ์ด [Tyrant]/[Tyranno]/
-    [Tyrannus] 1 ใบจากมือทันที (สามารถจ่าย LP 300 เพื่อเรียก/ร่าย จากสุสานได้)( CP Charge จะไม่ทำงาน). <br> 
-    • <span class="hlmanual">Manual</span> จ่าย 5 CP : แสดงผล [ Ultimate M.Skill ท่าไม้ตาย ! 
-    “ทัศนา คงกระพัน” ] ของการ์ดนี้ทันที แม้ใช้ไปแล้ว หรือยังไม่ถึงเทิร์นที่กำหนด.`,
+    <span class="hlkw">[การ์ดของเรา], [Creature/Armor & สองขา ] [Action & [Tyrant] ในชื่อ] [ร่ายสำเร็จ / เข้าสนามจาก
+    การเรียก]</span> <br> 
+    <span style="color:#FFF400;">เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้, DP 4 ขึ้นไป +2 CP แทน, 
+    หากเป็นการ์ด <span class="hlkw">[Tyrant]/[Tyranno]/[Tyrannus]</span> 
+    +3 CP แทน.</span> <br><br>
+    
+    <span class="hlabi">Master Skill :</span> <br> 
+    • <span class="hlmanual">Manual</span> จ่าย 5 CP : เรียก/ร่าย การ์ด <span class="hlkw">[Tyrant]/[Tyranno]/[Tyrannus]</span> 
+    1 ใบจากมือทันที <span style="color:#E8AB00;">(สามารถจ่าย LP 300 เพื่อเรียก/ร่าย จากสุสานได้)( 
+    <span class="hlabi">CP Charge</span> จะไม่ทำงาน).</span> <br> 
+    • <span class="hlmanual">Manual</span> จ่าย 5 CP : แสดงผล <span class="hlkw">
+    [ Ultimate M.Skill ท่าไม้ตาย ! 
+    “ทัศนา คงกระพัน” ]</span> ของการ์ดนี้ทันที <span style="color:#E8AB00;">แม้ใช้ไปแล้ว หรือยังไม่ถึงเทิร์น
+    ที่กำหนด.</span>`,
     image: "images/Fanmade/Boost5/Touch.png"
 },
+
+//////////////////////////////////////////////////////////////Extra_Dino/////////////////
 
 {
     id: "FM-PR06-EXC01 JU",
@@ -231,18 +300,25 @@
     type: "Fusion_Monster",
     set: "เปลี่ยนเกลือเป็นทอง2",
     clan: "สองขา, จักรกล",
-    ability: `= [ไม่ซ้ำซ้อน] [เอ็กซ์ตร้าเด็ค] เมื่อเริ่มเกม, หาก Master เรา ชื่อ "Shino" และเด็คเราไม่มี 
-    Creature เผ่าอื่นนอกเหนือจาก สองขา และเรายังไม่ใช้คอมมานเดอร์ไดโน, นำการ์ดนี้จาก [เอ็กซ์ตร้าเด็ค] มาเป็น 
-    [คอมมานเดอร์ไดโน] (วางที่คอมมานเดอร์โซน) = <br> 
+        rarity:"Promo",
+    ability: `<span class="hloneper">ไม่ซ้ำซ้อน</span> <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]
+    </span> <span style="color:#FFF400;">เมื่อเริ่มเกม, หาก Master เรา ชื่อ <span class="hlkw">
+    "Shino"</span> และเด็คเราไม่มี 
+    Creature เผ่าอื่นนอกเหนือจากเผ่าสองขา และเรายังไม่ใช้คอมมานเดอร์ไดโน, นำการ์ดนี้จาก <span style="color:#E8AB00;">
+    [เอ็กซ์ตร้าเด็ค]</span> มาเป็น 
+    <span class="hlkw">[คอมมานเดอร์ไดโน]</span> (วางที่คอมมานเดอร์โซน)</span>
+    <br><br> 
     <span class="hlabi">Shin Commander :</span> <br> 
-    • <span class="hlcont">Cont.</span> [เริ่มเกม] ถ้าการ์ดนี้เป็น [คอมมานเดอร์ไดโน], เกมนี้การ์ด 
-    [Megatech] ของเราถือว่าเป็นการ์ดเฉพาะ เผ่าจักรกลไม่ว่าอยู่ที่ใดก็ตาม <br> 
-    • <span class="hlcont">Cont.</span> ถ้าจะ [คอมมานเดอร์คอล] การ์ดนี้ต้องจ่าย 4 CP จาก Master เรา
-    เพิ่มเติมด้วย <br> 
+    • <span class="hlcont">Cont.</span> [เริ่มเกม] ถ้าการ์ดนี้เป็น <span class="hlkw">[คอมมานเดอร์ไดโน]</span>, เกมนี้การ์ด 
+    <span class="hlkw">[Megatech]</span> ของเราถือว่าเป็นการ์ดเฉพาะ เผ่าจักรกล ไม่ว่าอยู่ที่ใดก็ตาม <br> 
+    • <span class="hlcont">Cont.</span> ถ้าจะ 
+    <span class="hlkw">[คอมมานเดอร์คอล]</span> การ์ดนี้ต้องจ่าย 2 CP จาก Master เรา
+    เพิ่มเติมด้วย <br><br> 
     <span class="hlabi">Effect :</span> <br> 
     • <span class="hlauto">Auto</span> ทำลาย Armor ทั้งหมดบน Creature ที่การ์ดนี้โจมตี
     หลังจบการต่อสู้ <br>
-    • <span class="hlauto">Auto</span> เมื่อตกสุสานจากสนาม > เลือก Magic [Megatech] ในสุสานเรา 1 ใบ
+    • <span class="hlauto">Auto</span> เมื่อตกสุสานจากสนาม > เลือก Magic <span class="hlkw">
+    [Megatech]</span> ในสุสานเรา 1 ใบ
      : นำการ์ดนั้นขึ้นมือ.`
     ,
     image: "images/Fanmade/Boost5/Megatech T Rex.png"

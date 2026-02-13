@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="deck_builder.css?v=1.1">
     <link rel="stylesheet" href="hilight_text.css"> 
     <link rel="stylesheet" href="totop.css"> 
-    <link rel="stylesheet" href="rarity_inModal.css"> 
+    <link rel="stylesheet" href="rarity_inModal.css?v=1.1"> 
     <link rel="stylesheet" href="collection_style.css"> 
     <link rel="stylesheet" href="responsive.css?v=1.1"> 
 	<link rel="stylesheet" href="showcase_mode.css?v=1.1"> 
@@ -168,16 +168,23 @@
 
         /* Ability Box Colors */
         .ability-box.type-Creature { background: #E6DEB8; border-left-color: #6B6450; }
-        .ability-box.type-Boost_Creature { background: #fffffddd; border-left-color: #ad8d0c; }
+        .ability-box.type-Boost_Creature {font-style: normal; color: #ffffff;
+             background: #090909dd; border-left-color: #e6b800; }
 
         .ability-box.type-Action { background: #ffe4e5; border-left-color: #bc1f1f; }
         .ability-box.type-Action_Field { background: #fbffda; border-left-color: #9bb700cb; }
         .ability-box.type-Armor { background: #d7ebff; border-left-color: #0088ff; }
         .ability-box.type-Field { background: #e6ffe6; border-left-color: #4caf50; }
         .ability-box.type-Master { background: #fff8e1; border-left-color: #ffc107; }
-        .ability-box.type-Fusion_Monster { background: #EBE5FF; border-left-color: #1F1F3D; }
-        .ability-box.type-Illusion { background: #bfc0ff; border-left-color: #5903ed; }
+        .ability-box.type-Fusion_Monster {font-style: normal; color: #ffffff;
+             background: #000000d0; border-left-color: #6a38ff; }        .ability-box.type-Illusion { background: #bfc0ff; border-left-color: #5903ed; }
         .ability-box.type-Armored_Dino { background: #EBE5FF; border-left-color: #2d3a46; }
+        .ability-box.type-Boost_Master { 
+            background: #000000d0;
+            color:#ffffff; 
+            border-left-color: #ff8800;
+             }
+
 
 
         /* --- 5. SIDE PANEL STRUCTURE --- */
@@ -412,6 +419,8 @@ body::before {
                 <option value="">ทุกความหายาก</option>
                 <option value="Silver_Rare">Silver Rare (แรร์เงิน)</option>
                 <option value="Golden_Rare">Golden Rare (แรร์ทอง)</option>
+                <option value="Promo">การ์ดฟอยล์โปรโม</option>
+
             </select>
 
             <select id="setFilter">
@@ -429,7 +438,7 @@ body::before {
                 <option value="โดนใจรีเทิร์น">แฟนเมด : โดนใจรีเทิร์น</option>	
                 <option value="บูสมาสเตอร์1รีอาร์ท">แฟนเมด : รีอาร์ทชุุดบููสมาสเตอร์ 1</option>
                 <option value="คู่หูเพลิงน้ำแข็ง">แฟนเมด : คู่หูเพลิงน้ำแข็ง</option>
-                <option value="โดนใจรีเทิร์น2">แฟนเมด : โดนใจรีเทิร์น2</option>	
+                <option value="เปลี่ยนเกลือเป็นทอง2">แฟนเมด : เปลี่ยนเกลือเป็นทอง2</option>	
 
             </select>
             
@@ -719,18 +728,18 @@ body::before {
     <script src="card_data/C_Newmaster.js"></script>
     <script src="card_data/MG_Newmaster.js"></script>	
     <script src="card_data/MS_newmaster.js"></script>
-	<script src="card_data/MG_Stepnext.js"></script>
+	<script src="card_data/MG_Stepnext.js?v=1.1"></script>
     <script src="card_data/ReEnigma.js"></script>
-	<script src="card_data/C_StepNext.js"></script>
+	<script src="card_data/C_StepNext.js?v=1.1"></script>
 	<script src="card_data/MG_AR1.js"></script>
 	<script src="card_data/Armored_Dino.js"></script>
 	
-    <script src="card_data/fanmade_BoostMaster2.js"></script>
+    <script src="card_data/fanmade_BoostMaster2.js?v=1.1"></script>
 	<script src="card_data/fanmade_Reart1.js"></script>
     <script src="card_data/fanmade_Boost3.js"></script>
     <script src="card_data/fanmade_Boost4.js"></script>
-    <script src="card_data/fanmade_Boost5.js"></script>
-    <script src="card_data/fanmade_icefire.js"></script>
+    <script src="card_data/fanmade_Boost5.js?v=1.1"></script>
+    <script src="card_data/fanmade_icefire.js?v=1.1"></script>
     
     <script src="small_script.js?v=1.1"></script>	
     <script src="deck_builder_logic.js?v=1.1"></script>
@@ -738,9 +747,9 @@ body::before {
     <script src="collection_logic.js?v=1.1"></script>
     <script src="save_deck_logic.js"></script>
     <script src="untap_logic.js"></script>
-    <script src="quickadd_logic.js"></script>
+    <script src="quickadd_logic.js?v=1.1"></script>
     <script src="dynamic_bg.js"></script>    
-    <script src="main.js"></script>
+    <script src="main.js?v=1.1"></script>
     <script src="clan_identity_logic.js"></script>
     
 </body>

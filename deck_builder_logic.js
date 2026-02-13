@@ -97,8 +97,18 @@ function renderCards(cards) {
         cardDiv.className = 'card';
         cardDiv.setAttribute('data-card-id', card.id);
 
-            let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}&w=300&output=webp&q=80`;
+////////////////////////////////////////////////////
+// 1. กำหนดเลขเวอร์ชั่น (เปลี่ยนเลขนี้ทุกครั้งที่มีการอัปรูปใหม่เข้า Server เช่น 1, 2, 3...)
+const imgVersion = "1.1"; 
 
+// 2. เติม ?v=... ต่อท้าย URL ต้นฉบับ
+// เช็คก่อนว่า URL เดิมมี ? อยู่แล้วไหม เพื่อเลือกใช้ & หรือ ?
+const separator = card.image.includes('?') ? '&' : '?';
+const versionedImageUrl = `${card.image}${separator}v=${imgVersion}`;
+
+// 3. ส่ง URL ที่มีเวอร์ชั่นไปให้ wsrv.nl
+let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(versionedImageUrl)}&w=300&output=webp&q=80`;
+///////////////////////////////////////
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;
         

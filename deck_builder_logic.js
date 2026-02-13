@@ -163,7 +163,7 @@ let cardImgDisplay = `https://cdn.statically.io/img/oatthee.github.io/Life-Cryst
         if (isIllegalByCommander) cardDiv.classList.add('disabled-card');
 
 const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
-const optimizedImageUrl = `https://wsrv.nl/?url=${encodeURIComponent(fullImgUrl)}&w=300&output=webp&q=80`;
+const optimizedImageUrl = `https://cdn.statically.io/img/oatthee.github.io/Life-Crystal-/${card.image}?w=300&f=webp`;
         cardDiv.innerHTML = `
             <img src="${optimizedImageUrl}"
             onerror="this.src='${card.image}'; this.onerror=null;"

@@ -1,8 +1,21 @@
+const IMAGE_ASSET_VERSION = "1.2";
+
 let isUnsaved = false;
 let isHistogramOpen = false; // ตัวแปรเก็บสถานะเปิด/ปิดแผนภูมิ
 let currentEditingDeckId = null;
 let isEditMode = false; // สำหรับ Mobile Edit Mode
 let lastTap = 0;        // สำหรับตรวจจับ Double Tap (ต้องอยู่ข้างนอก)
+
+function getSmartCardImageUrl(originalPath) {
+    // 1. ตรวจสอบว่ามี ? ใน URL หรือยัง
+    const separator = originalPath.includes('?') ? '&' : '?';
+    
+    // 2. สร้าง URL ต้นฉบับที่พ่วง Version เข้าไป (หลอก GitHub / Browser)
+    const versionedUrl = `${originalPath}${separator}v=${IMAGE_ASSET_VERSION}`;
+    
+    // 3. ส่งเข้า wsrv.nl โดยพ่วง &nocache=1 เข้าไปด้วย (หลอก Proxy)
+    return `https://wsrv.nl/?url=${encodeURIComponent(versionedUrl)}&w=300&output=webp&q=80&nocache=1`;
+}
 
 // ฟังก์ชันสำหรับอัปเดตสถานะปุ่ม "ทุกใบ" โดยไม่วาดรูปใหม่ (ป้องกันการกระพริบ)
 function updateAllButtonStates() {
@@ -99,10 +112,7 @@ function renderCards(cards) {
 
 ////////////////////////////////////////////////////
 // เปลี่ยนเลขนี้เมื่อมีการอัปเดตรูปภาพชุดใหญ่
-const IMAGE_VERSION = "20240516_v1"; 
-
-// ตอนเรียกใช้
-let cardImgDisplay = `https://wsrv.nl/?url=${encodeURIComponent(card.image)}?v=${IMAGE_VERSION}&w=300&output=webp&q=80`;
+let cardImgDisplay = getSmartCardImageUrl(card.image);
 ///////////////////////////////////////
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;

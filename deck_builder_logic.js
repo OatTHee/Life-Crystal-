@@ -161,7 +161,16 @@ function renderCards(cards) {
 const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
 //แปลงรูปเพื่อความเร็ว
 const imgVersion = "1.2";
-const optimizedImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(window.location.origin + '/' + card.image)}&w=300&output=webp&q=80&v=2`;
+// 1. สร้าง Path ที่ถูกต้อง (รวมชื่อ Repo: Life-Crystal- เข้าไปด้วย)
+// ลอจิก: เอา URL ปัจจุบัน ตัด 'index.html' ออก แล้วต่อด้วย path รูป
+const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+const fullAbsoluteUrl = new URL(card.image, baseUrl).href;
+
+// 2. ลบ 'https://' ออกเพื่อให้ Weserv ชอบ (Optional แต่แนะนำ)
+const cleanUrl = fullAbsoluteUrl.replace(/^https?:\/\//, '');
+
+// 3. สร้าง URL สำหรับ Weserv (เพิ่ม &n=-1 เพื่อแก้ปัญหาภาพกลับหัวในบางกรณี)
+const optimizedImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(cleanUrl)}&w=300&output=webp&q=80&we=1&n=-1`;
         cardDiv.innerHTML = `
             <img src="${optimizedImageUrl}"
             onerror="this.src='${card.image}'; this.onerror=null;"

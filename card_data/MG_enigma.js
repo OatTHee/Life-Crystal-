@@ -261,7 +261,7 @@ const MG_enigmaData = [
         set: "อินิกม่า",
         clan: "มีปีก",
         ability: `<span class="hlabi">Effect :</span> <br> Creature ที่มีค่าร่าย 2 หรือต่ำกว่าที่คู่ต่อสู้ควบคุมไม่สามารถสั่งการได้ (2 เทิร์น) <br> • ทิ้ง Creature เผ่ามีปีก 2 ใบ : นำการ์ดใบนี้กลับขึ้นมือ`,
-        image: "images/EnigmaMG/Winged Reptiles's Trick.jpg"
+        image: "images/EnigmaMG/Winged_Reptiles_Trick.jpg"
     },
     {
         id: "AC039 MG",
@@ -383,7 +383,7 @@ const MG_enigmaData = [
         set: "อินิกม่า",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> นำ Creature ที่เข้าสุสานในเทิร์นนี้ทั้งหมดสับเข้า Deck จากนั้นเปิดการ์ดบนสุด X ใบ (X=จำนวนที่สับเข้า) เลือก Creature 1 ใบเข้าสนาม`,
-        image: "images/EnigmaMG/Victim's Legacy.jpg"
+        image: "images/EnigmaMG/Victim_Legacy.jpg"
     },
 	 {
         id: "AC050 MG",

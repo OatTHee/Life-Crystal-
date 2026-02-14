@@ -1,5 +1,3 @@
-const IMAGE_ASSET_VERSION = "1.2";
-
 let isUnsaved = false;
 let isHistogramOpen = false; // ตัวแปรเก็บสถานะเปิด/ปิดแผนภูมิ
 let currentEditingDeckId = null;
@@ -100,8 +98,6 @@ function renderCards(cards) {
         cardDiv.className = 'card';
         cardDiv.setAttribute('data-card-id', card.id);
 
-////////////////////////////////////////////////////
-let cardImgDisplay = `https://cdn.statically.io/img/oatthee.github.io/Life-Crystal-/${card.image}?w=300&f=webp`;///////////////////////////////////////
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;
         
@@ -163,7 +159,9 @@ let cardImgDisplay = `https://cdn.statically.io/img/oatthee.github.io/Life-Cryst
         if (isIllegalByCommander) cardDiv.classList.add('disabled-card');
 
 const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
-const optimizedImageUrl = `https://cdn.statically.io/img/oatthee.github.io/Life-Crystal-/${card.image}?w=300&f=webp`;
+//แปลงรูปเพื่อความเร็ว
+const imgVersion = "1.2";
+const optimizedImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(window.location.origin + '/' + card.image)}&w=300&output=webp&q=80&v=2`;
         cardDiv.innerHTML = `
             <img src="${optimizedImageUrl}"
             onerror="this.src='${card.image}'; this.onerror=null;"

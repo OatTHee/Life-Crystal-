@@ -222,7 +222,7 @@ image: "images/StepNextMG/Super Incendiary Bomb.jpg"
 },
 
 {
-id: "Tyrant's Stomp",
+id: "Tyrant_Stomp",
 nameTH: "ไทแรนท์กระทืบ",
 nameEN: "Tyrant's Stomp",
 dp: 3,
@@ -231,7 +231,7 @@ set: "สเต็ปเน็ก",
 clan: "",
 ability:`<span class="hlabi">Skill :</span> <br> <span class="hlmanual">Manual</span> เลือก Unit บนสนามที่กำลังต่อสุ้กับ Creature ที่เลือก 1 ตัว > หาก Unit ดังกล่าวมี DP ค่าเรียกเท่ากับหรือต่ำกว่า Creature ดังกล่าว, ทำลาย Creature ดังกล่าว.`
 ,
-image: "images/StepNextMG/Tyrant's Stomp.jpg"
+image: "images/StepNextMG/Tyrant_Stomp.jpg"
 },
 
 {

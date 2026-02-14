@@ -851,13 +851,13 @@ body.panel-open .add-to-deck-btn {
     bottom: 8px;          /* ระยะห่างจากขอบล่าง */
     left: 50%;            /* กึ่งกลางซ้าย */
     transform: translateX(-50%); /* ดึงกลับให้กึ่งกลางเป๊ะ */
-    background: #212120;  /* สีแดงตามโจทย์ */
+    background: #ff0000bb;  /* สีแดงตามโจทย์ */
     color: white;
     padding: 2px 10px;    /* ทรงสี่เหลี่ยมมุมมน */
     border-radius: 6px;   /* มุมมน */
-    font-size: 14px;      /* ขนาดตัวอักษร */
+    font-size: 20px;      /* ขนาดตัวอักษร */
     font-weight: bold;
-    border: 1.5px solid rgba(255,255,255,0.9);
+    border: 2.5px solid rgba(255,255,255,0.9);
     z-index: 10;
     box-shadow: 0 2px 6px rgba(0,0,0,0.6);
     white-space: nowrap;

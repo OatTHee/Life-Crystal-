@@ -1056,29 +1056,24 @@ function sortDeck() {
 	isUnsaved = true;
 }
 
-		// =========================================================
-//  FIXED EXPORT FUNCTION (แก้ปัญหา Tainted Canvas / CORS)
-// =========================================================
-
 async function exportToPNG() {
-    // 1. สร้าง Container ที่บังคับขนาดเป็น HD 1920x1080
     const exportArea = document.createElement('div');
+    // บังคับความกว้าง 1920px สูงยืดหยุ่น (Min 1080px)
     exportArea.style.width = '1920px';
-    exportArea.style.height = '1080px';
+    exportArea.style.minHeight = '1080px';
     exportArea.style.position = 'fixed';
     exportArea.style.left = '-9999px';
     exportArea.style.top = '0';
-    exportArea.style.backgroundColor = '#1a1c20';
+    exportArea.style.backgroundColor = '#121417';
     exportArea.style.display = 'flex';
     exportArea.style.flexDirection = 'column';
-    exportArea.style.padding = '40px';
+    exportArea.style.padding = '50px';
     exportArea.style.boxSizing = 'border-box';
     exportArea.style.color = '#fff';
     exportArea.style.fontFamily = "'Kanit', sans-serif";
     
     const deckName = document.getElementById('deckNameInput').value || 'My Dinomaster Deck';
 
-    // ฟังก์ชันช่วยจัดกลุ่มการ์ด
     const getGroupedCards = (cardList) => {
         const groups = {};
         cardList.forEach(c => {
@@ -1088,18 +1083,11 @@ async function exportToPNG() {
         return Object.values(groups);
     };
 
-    // แยกกลุ่มตามประเภท
     const starterList = myDeck.filter(c => c.isCommander || c.type === "Master" || c.type === "Boost_Master");
     const extraTypes = ["Boost_Creature", "Fusion_Monster", "Illusion"];
     const extraList = myDeck.filter(c => extraTypes.includes(c.type));
-    const mainList = myDeck.filter(c => 
-        !c.isCommander && 
-        c.type !== "Master" && 
-        c.type !== "Boost_Master" && 
-        !extraTypes.includes(c.type)
-    );
+    const mainList = myDeck.filter(c => !c.isCommander && c.type !== "Master" && c.type !== "Boost_Master" && !extraTypes.includes(c.type));
 
-    // คำนวณสถิติ
     const MainTypes = ["Creature", "Action", "Armor", "Field"];
     const typeCounts = { "Creature": 0, "Action": 0, "Armor": 0, "Field": 0 };
     mainList.forEach(c => { if (MainTypes.includes(c.type)) typeCounts[c.type]++; });
@@ -1110,40 +1098,41 @@ async function exportToPNG() {
         if(type === "Action") color = "#e74c3c";
         if(type === "Armor") color = "#3498db";
         if(type === "Field") color = "#2ecc71";
-        return `<span style="margin-right: 30px; font-size: 24px;">${type}: <b style="color: ${color};">${typeCounts[type]}</b></span>`;
+        return `<span style="margin-left: 30px; font-size: 26px;">${type}: <b style="color: ${color}; font-size: 32px;">${typeCounts[type]}</b></span>`;
     }).join('');
 
-    // วางโครงสร้าง HTML ภายใน (จัดแบบ HD แนวนอน)
     exportArea.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #34495e; padding-bottom: 15px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #f1c40f; padding-bottom: 20px; margin-bottom: 30px;">
             <div>
-                <h1 style="margin:0; font-size: 56px; color: #fff;">${deckName}</h1>
-                <p style="margin:0; font-size: 24px; color: #f1c40f;">Dinomaster Trading Card Game</p>
+                <h1 style="margin:0; font-size: 70px;">${deckName}</h1>
+                <p style="margin:0; font-size: 28px; color: #f1c40f;">DINOMASTER TRADING CARD GAME</p>
             </div>
             <div style="text-align: right;">
-                <div style="margin-bottom: 5px;">${statsHTML}</div>
-                <div style="font-size: 28px; color: #fff;">Total: <b>${myDeck.length}</b> Cards</div>
+                <div style="display: flex;">${statsHTML}</div>
+                <div style="font-size: 30px; margin-top: 10px;">TOTAL: <b>${myDeck.length}</b> CARDS</div>
             </div>
         </div>
         
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; overflow: hidden;">
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
-                <div style="color: #f1c40f; font-size: 22px; font-weight: bold; margin-bottom: 10px; border-left: 5px solid #f1c40f; padding-left: 10px;">STARTER / COMMANDER</div>
-                <div id="gridStarter" style="display: flex; gap: 15px;"></div>
-            </div>
+        <div style="display: flex; flex-direction: column; gap: 40px;">
+            <section>
+                <div style="font-size: 26px; margin-bottom: 15px; color: #f1c40f; border-left: 6px solid #f1c40f; padding-left: 15px;">STARTER / COMMANDER</div>
+                <div id="gridStarter" style="display: grid; grid-template-columns: repeat(15, 1fr); gap: 12px;"></div>
+            </section>
 
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; flex: 1;">
-                <div style="color: #f1c40f; font-size: 22px; font-weight: bold; margin-bottom: 10px; border-left: 5px solid #f1c40f; padding-left: 10px;">MAIN DECK (${mainList.length})</div>
-                <div id="gridMain" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px;"></div>
-            </div>
+            <section>
+                <div style="font-size: 26px; margin-bottom: 15px; color: #f1c40f; border-left: 6px solid #f1c40f; padding-left: 15px;">MAIN DECK (${mainList.length})</div>
+                <div id="gridMain" style="display: grid; grid-template-columns: repeat(15, 1fr); gap: 12px;"></div>
+            </section>
 
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
-                <div style="color: #f1c40f; font-size: 22px; font-weight: bold; margin-bottom: 10px; border-left: 5px solid #f1c40f; padding-left: 10px;">EXTRA DECK (${extraList.length})</div>
-                <div id="gridExtra" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
-            </div>
+            <section>
+                <div style="font-size: 26px; margin-bottom: 15px; color: #f1c40f; border-left: 6px solid #f1c40f; padding-left: 15px;">EXTRA DECK (${extraList.length})</div>
+                <div id="gridExtra" style="display: grid; grid-template-columns: repeat(15, 1fr); gap: 12px;"></div>
+            </section>
         </div>
 
-        <div style="text-align:center; margin-top:15px; color:#555; font-size:18px;">Generated by Life Crystal Builder | Dinomaster TCG</div>
+        <div style="margin-top: auto; padding-top: 50px; text-align: center; color: #444; font-size: 22px;">
+            Life-Crystal
+        </div>
     `;
 
     document.body.appendChild(exportArea);
@@ -1151,24 +1140,20 @@ async function exportToPNG() {
     const renderGroupedToGrid = (cardList, gridId, showBadge = true) => {
         const grid = document.getElementById(gridId);
         const grouped = getGroupedCards(cardList);
-        
+
         grouped.forEach(card => {
             const wrap = document.createElement('div');
             wrap.style.position = 'relative';
             wrap.style.width = '100%';
-
-            // ใช้ภาพที่ย่อมาแล้วพอเหมาะสำหรับ HD (300px) เพื่อความรวดเร็วแต่ยังคมชัด
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            const fullAbsoluteUrl = new URL(card.image, baseUrl).href;
-            const cleanUrl = fullAbsoluteUrl.replace(/^https?:\/\//, '');
-            const optimizedExportUrl = `https://images.weserv.nl/?url=${encodeURIComponent(cleanUrl)}&w=300&output=webp&q=90`;
+            wrap.style.paddingBottom = '10px'; // เว้นที่ให้ Badge ด้านล่าง
 
             wrap.innerHTML = `
-                <img src="${optimizedExportUrl}" crossorigin="anonymous" style="display:block; width:100%; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
+                <img src="${card.image}" crossorigin="anonymous" style="display:block; width:100%; border-radius: 6px; border: 1px solid #333;">
                 ${showBadge ? `
-                    <div style="position: absolute; bottom: -5px; right: -5px; background: #ff4757; color: white; 
-                                padding: 2px 10px; border-radius: 12px; font-weight: bold; font-size: 18px; 
-                                border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">x${card.count}</div>` : ""}
+                    <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); 
+                                background: #e74c3c; color: white; padding: 2px 12px; border-radius: 6px; 
+                                font-weight: bold; font-size: 18px; border: 2px solid #fff; 
+                                z-index: 10; white-space: nowrap;">x${card.count}</div>` : ""}
             `;
             grid.appendChild(wrap);
         });
@@ -1178,30 +1163,25 @@ async function exportToPNG() {
     renderGroupedToGrid(mainList, 'gridMain', true);
     renderGroupedToGrid(extraList, 'gridExtra', true);
 
-    // รอโหลดรูปภาพ
     const images = exportArea.getElementsByTagName('img');
     await Promise.all(Array.from(images).map(img => new Promise(res => { 
-        if(img.complete) res(); 
-        else { img.onload = res; img.onerror = res; }
+        if(img.complete) res(); else { img.onload = res; img.onerror = res; }
     })));
 
     try {
         const canvas = await html2canvas(exportArea, {
             useCORS: true,
-            backgroundColor: '#1a1c20',
-            scale: 1, // ขนาดเราเป็น 1920px อยู่แล้ว ไม่ต้องคูณเพิ่ม
-            logging: false,
-            width: 1920,
-            height: 1080
+            backgroundColor: '#121417',
+            scale: 1.5,
+            width: 1920
         });
 
         const link = document.createElement('a');
-        link.download = `Deck_${deckName.replace(/\s+/g, '_')}_HD.jpg`;
-        // ใช้ JPEG คุณภาพ 0.9 สำหรับไฟล์ที่มีคุณภาพแต่ขนาดไม่หนักเกินไป
-        link.href = canvas.toDataURL('image/jpeg', 0.9);
+        link.download = `Deck_${deckName}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 1);
         link.click();
     } catch (err) {
-        console.error("Export Error:", err);
+        console.error(err);
     } finally {
         exportArea.remove();
     }

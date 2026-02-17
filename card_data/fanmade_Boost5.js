@@ -1,46 +1,4 @@
 	const Boost5Data = [
-
-{
-    id: "FM-PRO6 D08 JU",
-    nameTH: "ไฮโบดัส / ไฮโบดัส เรด",
-    nameEN: "Hybodus / Hybodus Red",
-    dp: 1,
-    type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
-    clan: "สัตว์น้ำ",
-        rarity:"Promo",
-
-    ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlauto">Auto</span> เมื่อ Creature คู่แข่งติด <span class="hlkw">[สภาวะบาดเจ็บ]</span>, 
-    กำหนด Armor 1 ใบบน Creature คู่แข่งที่ติด <span class="hlkw">[สภาวะบาดเจ็บ]</span> : 
-    <span class="hlkw">[ทำลาย]</span> Armor ชิ้นนั้น. <br> 
-    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature 1 เป้าหมาย : การ์ดนั้นติด 
-    <span class="hlkw">[สภาวะบาดเจ็บ AT-100]</span>, แต่หาก Master เราชื่อ "Chen", 
-    ติด <span class="hlkw">[สภาวะบาดเจ็บ AT-300]</span> แทน. <br><br> 
-    <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Hybodus" ในสุสานเรา 1 
-    ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>
-    </span>`,
-    image: "images/Fanmade/Boost5/Hybodus.png"
-},
-{
-    id: "FM-PRO6 D09 JU",
-    nameTH: "เทอริซิโนซอรัส / ไชน์ เทอริซิโนซอรัส",
-    nameEN: "Therizinosaurus / Shine Therizinosaurus",
-    dp: 1,
-    type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
-    clan: "สองขา",
-    rarity:"Promo",
-    ability: `<span class="hlabi">Effect :</span> <br> 
-    • <span class="hlauto">Auto</span> เมื่อ Creature<span class="hlkw">[Tyrant]/[Tyranno]/
-    [Tyrannus]</span> ของเราเข้าสนาม : จั่วการ์ด 1 ใบ.
-<br> 
-    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature เผ่าสองขา ของเรา 1 ใบ : 
-    สวมการ์ด <span class="hlkw">"Brutal Fang"</span> 1 ใบจากเด็คให้การ์ดที่เลือกทันที และ/หรือ หาก 
-    Master เราชื่อ <span class="hlkw">"Touch"</span>, สวม 
-    Armor เฉพาะเผ่าสองขา อีก 1 ใบจากมือให้การ์ดนั้นทันทีด้วย.`,
-    image: "images/Fanmade/Boost5/Therizinosaurus.png"
-},
 {
     id: "FM-PRO6 D01 JU",
     nameTH: "ดราวิโดซอรัส",
@@ -86,7 +44,7 @@
     image: "images/Fanmade/Boost5/Aletopelta biibeyhallorum.png"
 },
 {
-    id: "FM-PRO4 D01 JU",
+    id: "FM-PRO4 D03 JU",
     nameTH: "ซีดาร์เพลต้า พลิคาโตสปินัส",
     nameEN: "Cedarpelta plicatospineus",
     dp: 1,
@@ -108,7 +66,7 @@
     image: "images/Fanmade/Boost5/Cedarpelta plicatospineus.png"
 },
 {
-    id: "FM-PRO4 D01 JU",
+    id: "FM-PRO4 D04 JU",
     nameTH: "ซินแรปเตอร์",
     nameEN: "Sinraptor",
     dp: 1,
@@ -189,6 +147,50 @@
     </span>`,
     image: "images/Fanmade/Boost5/Tupuxuara.png"
 },
+{
+    id: "FM-PRO6 D08 JU",
+    nameTH: "ไฮโบดัส / ไฮโบดัส เรด",
+    nameEN: "Hybodus / Hybodus Red",
+    dp: 1,
+    type: "Boost_Creature",
+    set: "เปลี่ยนเกลือเป็นทอง2",
+    clan: "สัตว์น้ำ",
+        rarity:"Promo",
+
+    ability: `<span class="hlabi">Effect :</span> <br> 
+    • <span class="hlauto">Auto</span> เมื่อ Creature คู่แข่งติด <span class="hlkw">[สภาวะบาดเจ็บ]</span>, 
+    กำหนด Armor 1 ใบบน Creature คู่แข่งที่ติด <span class="hlkw">[สภาวะบาดเจ็บ]</span> : 
+    <span class="hlkw">[ทำลาย]</span> Armor ชิ้นนั้น. <br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature 1 เป้าหมาย : การ์ดนั้นติด 
+    <span class="hlkw">[สภาวะบาดเจ็บ AT-100]</span>, แต่หาก Master เราชื่อ "Chen", 
+    ติด <span class="hlkw">[สภาวะบาดเจ็บ AT-300]</span> แทน. <br><br> 
+    <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Hybodus" ในสุสานเรา 1 
+    ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>
+    </span>`,
+    image: "images/Fanmade/Boost5/Hybodus.png"
+},
+{
+    id: "FM-PRO6 D09 JU",
+    nameTH: "เทอริซิโนซอรัส / ไชน์ เทอริซิโนซอรัส",
+    nameEN: "Therizinosaurus / Shine Therizinosaurus",
+    dp: 1,
+    type: "Boost_Creature",
+    set: "เปลี่ยนเกลือเป็นทอง2",
+    clan: "สองขา",
+    rarity:"Promo",
+    ability: `<span class="hlabi">Effect :</span> <br> 
+    • <span class="hlauto">Auto</span> เมื่อ Creature<span class="hlkw">[Tyrant]/[Tyranno]/
+    [Tyrannus]</span> ของเราเข้าสนาม : จั่วการ์ด 1 ใบ.
+<br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature เผ่าสองขา ของเรา 1 ใบ : 
+    สวมการ์ด <span class="hlkw">"Brutal Fang"</span> 1 ใบจากเด็คให้การ์ดที่เลือกทันที และ/หรือ หาก 
+    Master เราชื่อ <span class="hlkw">"Touch"</span>, สวม 
+    Armor เฉพาะเผ่าสองขา อีก 1 ใบจากมือให้การ์ดนั้นทันทีด้วย.<br>
+        <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Therizinosaurus" ในสุสานเรา 1 
+    ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>
+    </span>`,
+    image: "images/Fanmade/Boost5/Therizinosaurus.png"
+},
 
 ///////////////////////////////
 
@@ -208,9 +210,10 @@
     ของเราต่อ Creature คู่แข่งจะลด AT อีก 200 และทำลายการ์ดนั้นหาก AT = 0 หลังติด 
     <span class="hlkw">[สภาวะบาดเจ็บที่มีผลลด AT].</span> <br> 
     • <span class="hlmanual">Manual</span> จ่าย 3 DP + ทิ้งการ์ด 2 ใบ : แสดงผลตามการ์ดที่ทิ้งดังนี้ <br>
-(1) Creature เผ่าสัตว์น้ำ เลือก Creature คู่แข่ง 1 ใบ : การ์ดนั้นติด <span class="hlkw">
+<span style="color:#E8AB00;">(1) Creature เผ่าสัตว์น้ำ ║</span> เลือก Creature คู่แข่ง 1 ใบ : การ์ดนั้นติด <span class="hlkw">
 [สภาวะบาดเจ็บ AT-500]</span> <br>
-(2) Creature เผ่าคอยาว เลือก Creature ในสุสานเรา 1 ใบ : <span class="hlkw">[คืนชีพ]</span> การ์ดนั้น.`,
+<span style="color:#E8AB00;">(2) Creature เผ่าคอยาว ║</span> นำ Creature เผ่าสัตว์น้ำในสุสานเรา 1 ใบกลับ
+เข้าเด็ค ถ้านำกลับเข้าเด็ค, เลือก Creature ในสุสานเรา 1 ใบ : <span class="hlkw">[คืนชีพ]</span> การ์ดนั้น.`,
     image: "images/Fanmade/Boost5/Chen.png"
 },
 {

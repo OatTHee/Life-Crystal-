@@ -91,7 +91,7 @@ const MG_enigmaData = [
         id: "AC023 MG",
         nameTH: "ควบคุมมนตรา",
         nameEN: "Magic Control",
-        dp: 0,
+        dp: "X",
         type: "Action",
         set: "อินิกม่า",
         clan: "",

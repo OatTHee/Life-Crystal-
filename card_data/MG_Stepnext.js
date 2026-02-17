@@ -199,7 +199,7 @@ image: "images/StepNextMG/Shocking Stunner.jpg"
 id: "Steal Power",
 nameTH: "ขโมยพลัง",
 nameEN: "Steal Power",
-dp: "ไร้DP",
+dp: "X",
 type: "Action",
 set: "สเต็ปเน็ก",
 clan: "",

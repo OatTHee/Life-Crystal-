@@ -32,6 +32,7 @@
 	<link rel="stylesheet" href="showcase_mode.css?v=1.1"> 
     <link rel="stylesheet" href="bottom_nav.css"> 
     <link rel="stylesheet" href="quickadd.css"> 
+    <link rel="stylesheet" href="modal_button.css"> 
 
     <style>
         /* --- 1. Global Styles --- */
@@ -65,27 +66,29 @@
             color: #07357D;
         }
         
-        /* --- 2. Search & Controls (Sticky System) --- */
+/* --- 2. Search & Controls (Smart Layout System) --- */
         .controls {
+            width: 100% !important;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            padding: 15px 20px;
-            background: rgba(35, 35, 35, 0.952);
-            opacity: 95% ; 
+            flex-direction: column; /* เปลี่ยนเป็นแนวตั้ง: ช่องค้นหาอยู่บน, Filter อยู่ล่าง */
+            gap: 15px; /* ระยะห่างระหว่างบรรทัด */
+            padding: 20px; /* ระยะขอบด้านใน */
+            background: #00000070; /* พื้นหลัง */
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            border-bottom: 2px solid #ff9f43;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            
+            /* การยึดติดด้านบน */
             position: -webkit-sticky;
             position: sticky;
             top: 0; 
-            z-index: 900;
-            margin: 0 -20px 30px -20px; 
-            border-bottom: 2px solid #ff9f43;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 2000;
+            
+            /* จัดการระยะขอบซ้ายขวาให้พอดีจอ */
+            margin: 0 -20px 30px 0px; 
+            box-sizing: border-box; /* สำคัญมาก: เพื่อไม่ให้ padding ดันจนล้น */
         }
-
         /* --- 3. Card & Container --- */
         #cardContainer {
             width: 100%;
@@ -299,6 +302,12 @@
     height: auto;            /* รักษาอัตราส่วนรูปภาพ */
 }
 
+    #resetBtn {
+        grid-column: span 2; 
+        background-color: #e74c3c;
+        color: white;
+    }
+
 /*untap*/
 
 /* สไตล์ปุ่ม Export Untap แบบสีทอง */
@@ -357,10 +366,18 @@ body::before {
 
     </style>
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XQW68Z4JG2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-XQW68Z4JG2');
+</script>
 <body>
 
-    <div id="main-wrapper">
+<div id="main-wrapper">
         
        <h1 class="main-title">
     <span>ฐานข้อมูลการ์ด Dinomaster</span>        
@@ -370,85 +387,123 @@ body::before {
         <button id="backToTop" title="Go to top">
             <img src="images/button1.png" alt="Back to Top">
         </button>
+       <div class="banlist-selector-container" style="margin: 10px 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
+    <label style="font-size: 14px; font-weight: bold; color: #f1c40f; display:block; margin-bottom:5px;">
+        <i class="fa-solid fa-scale-balanced"></i> เลือกฟอร์แมต Banlist:
+    </label>
+    <select id="banlistFormatSelect" onchange="changeBanlistFormat(this.value)" 
+            style="width: 100%; padding: 8px; border-radius: 4px; background: #1a1a1a; color: white; border: 1px solid #555; font-family: 'Kanit', sans-serif;">
+        <option value="None">กำลังโหลด...</option>
+    </select>
+            <button id="limitedSearch" onclick="limitedSearch()">การ์ดที่โดนจำกัด</button>
 
-        <div class="controls" id="searchBar">
-            <input type="text" id="searchInput" placeholder="ค้นหาชื่อการ์ด (ไทย / EN)...">
+</div>
 
-            <select id="typeFilter">
-                <option value="">ทุกประเภท</option>
-                <option value="Creature">ครีเจอร์</option>
-                <option value="Action">แอคชั่น</option>
-                <option value="Armor">อาร์เมอร์</option>
-                <option value="Field">พื้นที่</option>
-                <option value="Illusion">อิลูชั่น</option>
-                <option value="Master">มาสเตอร์</option>
-                <option value="Boost_Creature">บูสครีเจอร์</option>
-                <option value="Boost_Master">บูสมาสเตอร์</option>
-                <option value="Fusion_Monster">มอนสเตอร์ฟิวชั่น</option>
-                <option value="Armored_Dino">ครีเจอร์ติดเกราะ</option>
-            </select>
-            
-            <select id="dpFilter">
-                <option value="">(ไม่เลือก DP)</option>
-                <option value="1">DP : 1</option>
-                <option value="2">DP : 2</option>
-                <option value="3">DP : 3</option>
-                <option value="4">DP : 4</option>
-                <option value="5">DP : 5</option>
-                <option value="6">DP : 6</option>
-                <option value="7">DP : 7</option>
-                <option value="8">DP : 8</option>
-                <option value="ไร้DP">การ์ดไร้ DP</option>
-            </select>
-            
-            <select id="clanFilter">
-                <option value="">(ไม่เลือกเผ่า)</option>
-                <option value="สองขา">เผ่าสองขา</option>
-                <option value="มีเกราะหางหนาม">เผ่ามีเกราะ</option>
-                <option value="สัตว์น้ำ">เผ่าสัตว์น้ำ</option>
-                <option value="มีเขา">เผ่ามีเขา</option>
-                <option value="มีปีก">เผ่าปีก</option>
-                <option value="คอยาว">เผ่าคอยาว</option>
-                <option value="จักรกล">เผ่าจักรกล</option>
+<div class="controls" id="searchBar">
+    <input type="text" id="searchInput" placeholder="ค้นหาชื่อการ์ด (ไทย / EN)...">
 
-            </select>
+    <div class="filter-grid">
+        <select id="typeFilter">
+            <option value="">ทุกประเภท</option>
+            <option value="Creature">ครีเจอร์</option>
+            <option value="Action">แอคชั่น</option>
+            <option value="Armor">อาร์เมอร์</option>
+            <option value="Field">พื้นที่</option>
+            <option value="Illusion">อิลูชั่น</option>
+            <option value="Master">มาสเตอร์</option>
+            <option value="Boost_Creature">บูสครีเจอร์</option>
+            <option value="Boost_Master">บูสมาสเตอร์</option>
+            <option value="Fusion_Monster">มอนสเตอร์ฟิวชั่น</option>
+            <option value="Armored_Dino">ครีเจอร์ติดเกราะ</option>
+        </select>
 
-            <select id="rarityFilter">
-                <option value="">ทุกความหายาก</option>
-                <option value="Silver_Rare">Silver Rare (แรร์เงิน)</option>
-                <option value="Golden_Rare">Golden Rare (แรร์ทอง)</option>
-                <option value="Promo">การ์ดฟอยล์โปรโม</option>
+        <select id="clanFilter">
+            <option value="">(ไม่เลือกเผ่า)</option>
+            <option value="สองขา">เผ่าสองขา</option>
+            <option value="มีเกราะหางหนาม">เผ่ามีเกราะ</option>
+            <option value="สัตว์น้ำ">เผ่าสัตว์น้ำ</option>
+            <option value="มีเขา">เผ่ามีเขา</option>
+            <option value="มีปีก">เผ่าปีก</option>
+            <option value="คอยาว">เผ่าคอยาว</option>
+            <option value="จักรกล">เผ่าจักรกล</option>
+        </select>
 
-            </select>
+        <select id="rarityFilter">
+            <option value="">ทุกความหายาก</option>
+            <option value="Silver_Rare">Silver Rare (แรร์เงิน)</option>
+            <option value="Golden_Rare">Golden Rare (แรร์ทอง)</option>
+            <option value="Promo">การ์ดฟอยล์โปรโม</option>
+        </select>
 
-            <select id="setFilter">
-                <option value="">ทุกชุด</option>
-                <option value="ออริจินอล">ภาค 1 : ออริจินอล</option>
-                <option value="อินิกม่า">ภาค 2 : อินิกม่า</option>
-				<option value="คาแร็คเตอร์">ภาค 2.5 : คาแร็คเตอร์</option>
-                <option value="นิวมาสเตอร์">ภาค 3 : นิวมาสเตอร์</option>
-				<option value="สเต็ปเน็ก">ภาค 4 : สเต็ปเน็ก</option>
-				<option value="รีอินิกม่า">ภาค 5 : รีอินิกม่า</option>
-				<option value="AR1">ภาค 6 : AR1</option>
-				
-                <option value="บููสมาสเตอร์2">แฟนเมด : บููสมาสเตอร์ รีอินิกม่า</option>				
-                <option value="เปลี่ยนเกลือเป็นทอง">แฟนเมด : เปลี่ยนเกลือเป็นทอง</option>				
-                <option value="โดนใจรีเทิร์น">แฟนเมด : โดนใจรีเทิร์น</option>	
-                <option value="บูสมาสเตอร์1รีอาร์ท">แฟนเมด : รีอาร์ทชุุดบููสมาสเตอร์ 1</option>
-                <option value="คู่หูเพลิงน้ำแข็ง">แฟนเมด : คู่หูเพลิงน้ำแข็ง</option>
-                <option value="เปลี่ยนเกลือเป็นทอง2">แฟนเมด : เปลี่ยนเกลือเป็นทอง2</option>	
+        <select id="setFilter">
+            <option value="">ทุกชุด</option>
+            <option value="ออริจินอล">ภาค 1 : ออริจินอล</option>
+            <option value="อินิกม่า">ภาค 2 : อินิกม่า</option>
+            <option value="คาแร็คเตอร์">ภาค 2.5 : คาแร็คเตอร์</option>
+            <option value="นิวมาสเตอร์">ภาค 3 : นิวมาสเตอร์</option>
+            <option value="สเต็ปเน็ก">ภาค 4 : สเต็ปเน็ก</option>
+            <option value="รีอินิกม่า">ภาค 5 : รีอินิกม่า</option>
+            <option value="AR1">ภาค 6 : AR1</option>
+            <option value="บููสมาสเตอร์2">แฟนเมด : บููสมาสเตอร์ รีอินิกม่า</option>            
+            <option value="เปลี่ยนเกลือเป็นทอง">แฟนเมด : เปลี่ยนเกลือเป็นทอง</option>              
+            <option value="โดนใจรีเทิร์น">แฟนเมด : โดนใจรีเทิร์น</option>   
+            <option value="บูสมาสเตอร์1รีอาร์ท">แฟนเมด : รีอาร์ทชุุดบููสมาสเตอร์ 1</option>
+            <option value="คู่หูเพลิงน้ำแข็ง">แฟนเมด : คู่หูเพลิงน้ำแข็ง</option>
+            <option value="เปลี่ยนเกลือเป็นทอง2">แฟนเมด : เปลี่ยนเกลือเป็นทอง2</option> 
+        </select>
 
-            </select>
-            
-            <button id="resetBtn" onclick="resetFilters()">ล้างการค้นหา</button>
-            
-            <button id="mobileEditModeBtn" onclick="toggleMobileDeckMode()">
-                <span id="editIcon">➕</span> <span id="editText">เพิ่มการ์ดลงเด็ค</span>
-            </button>
-        </div>
+        <button id="resetBtn" onclick="resetFilters()">ล้างการค้นหา</button>
+        
+    </div>
+
+    <div class="dp-filter-wrapper">
+        <span style="color: #00d656; font-size: 14px; font-weight: bold; width: 100%; display: block; margin-bottom: 5px;">ค้นหาตาม DP</span>
+        
+        <select id="dpFilter" style="display: none;">
+            <option value="">All</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="X">X</option>
+            <option value="ไร้DP">ไร้ DP</option>
+        </select>
+
+        <div id="dp-crystal-bar" class="dp-crystal-container"></div>
+    </div>
+    </div>
+        
 
         <div id="cardContainer"></div>
-    </div> 
+		<div id="deckShowcaseOverlay" class="showcase-overlay" style="display:none;">
+    <div class="showcase-content">
+        <div class="showcase-header">
+            <h2 id="showcaseTitle">ชื่อเด็ค</h2>
+
+										
+		<button onclick="openHandSimulator()"> จั่ว
+</button>
+
+ <button onclick="exportToPNG()" title="ส่งออกเป็นรูปภาพ">
+                  <i class="fa-solid fa-camera"></i>
+         </button>
+
+<button onclick="toggleShowcaseEdit()">แก้ไข</button>
+
+										
+            <button onclick="closeDeckShowcase()" class="btn-close-showcase">✖</button>
+        </div>
+        <div id="showcaseBody">
+            </div>
+    </div>
+	
+</div>
+</div> 
 
     
     <div id="deckSidePanel" class="side-panel">
@@ -507,12 +562,13 @@ body::before {
                        
 </div>
 			
-                <div class="deck-section-label">STARTER (Master & Commander)</div>
+                <div class="deck-section-label">STARTER (Master/ Boost Master/ Commander)</div>
                 <div id="starterContainer" class="deck-grid starter-zone"></div>
 
                 <div class="deck-section-label main-deck-label">
-                    <span>Main Deck <span id="mainDeckCounter">(0/60)</span></span>
-                    <span id="typeHistogramBtn" style="cursor:pointer; margin-left:8px; display:inline-block; transition:0.3s;">▼</span>
+                    Main Deck <span><span id="mainDeckCounter">(0/60)</span>
+                    <span id="typeHistogramBtn" style="cursor: pointer; margin-left: 8px; display: inline-block; transition: 0.3s; transform: rotate(180deg);">▼</span>
+                </span>
                 </div>
                 
                 <div id="typeHistogramPanel" class="histogram-panel"></div>
@@ -520,7 +576,7 @@ body::before {
                 <div id="deckContainer" class="deck-grid"></div>
 
                 <div class="deck-section-label extra-deck-label">
-                    EXTRA DECK <span id="extraDeckCounter">(0/15)</span>
+                    Extra Deck <span id="extraDeckCounter">(0/15)</span>
                 </div>
                 <div id="extraDeckContainer" class="deck-grid"></div>
             </div>
@@ -546,29 +602,7 @@ body::before {
 		
 		
 		
-		<div id="deckShowcaseOverlay" class="showcase-overlay" style="display:none;">
-    <div class="showcase-content">
-        <div class="showcase-header">
-            <h2 id="showcaseTitle">ชื่อเด็ค</h2>
 
-										
-		<button onclick="openHandSimulator()"> จั่ว
-</button>
-
- <button onclick="exportToPNG()" title="ส่งออกเป็นรูปภาพ">
-                  <i class="fa-solid fa-camera"></i>
-         </button>
-
-<button onclick="toggleShowcaseEdit()">แก้ไข</button>
-
-										
-            <button onclick="closeDeckShowcase()" class="btn-close-showcase">✖</button>
-        </div>
-        <div id="showcaseBody">
-            </div>
-    </div>
-	
-</div>
 		
 		
 		
@@ -587,17 +621,30 @@ body::before {
         </div>
     </div>
 
+
+
     <div id="imageModal" class="modal" onclick="closeModalOutside(event)">
+        <button class="modal-nav-btn prev-btn" onclick="navigateModal(-1)" aria-label="Previous Card">
+        <img src="images/modal_button/bl.png" alt="Previous">
+    </button>
+
         <div class="modal-content-wrapper" onclick="event.stopPropagation()">
             <span class="close" onclick="closeModal()">&times;</span>
+
             <div class="modal-img-side">
+                
                 <img id="modalImg" src="">
             </div>
             <div class="modal-info-side" id="modalInfo"></div>
+
         </div>
+        <button class="modal-nav-btn next-btn" onclick="navigateModal(1)" aria-label="Next Card">
+        <img src="images/modal_button/br.png" alt="Next">
+    </button>
     </div>
     
 <nav class="bottom-navbar">
+
     <div class="nav-left" onclick="openInfoModal()">
         <span class="dev-name">
             <img src="logo.png", width="20"></i> Dev by <strong>@Oat Dinomaster Playground
@@ -712,7 +759,9 @@ body::before {
     </div>
 </div>
 
-
+            <button id="mobileEditModeBtn" onclick="toggleMobileDeckMode()">
+                <span id="editIcon">➕</span> <span id="editText">เพิ่มการ์ดลงเด็ค</span>
+            </button>
 
 
 
@@ -721,27 +770,30 @@ body::before {
     <script src="card_data/C_original.js"></script>
     <script src="card_data/MG_original.js"></script>
     <script src="card_data/C_Enigma.js"></script>
-    <script src="card_data/MG_enigma.js"></script>
+    <script src="card_data/MG_enigma.js?v=1.1"></script>
 	<script src="card_data/Character.js"></script>
     <script src="card_data/C_Newmaster.js"></script>
     <script src="card_data/MG_Newmaster.js"></script>	
     <script src="card_data/MS_newmaster.js"></script>
-	<script src="card_data/MG_Stepnext.js?v=1.1"></script>
+	<script src="card_data/MG_Stepnext.js?v=1.2"></script>
     <script src="card_data/ReEnigma.js"></script>
 	<script src="card_data/C_StepNext.js?v=1.1"></script>
 	<script src="card_data/MG_AR1.js"></script>
-	<script src="card_data/Armored_Dino.js"></script>
+	<script src="card_data/Armored_Dino.js?v=1.1"></script>
 	
     <script src="card_data/fanmade_BoostMaster2.js?v=1.1"></script>
 	<script src="card_data/fanmade_Reart1.js"></script>
     <script src="card_data/fanmade_Boost3.js"></script>
     <script src="card_data/fanmade_Boost4.js"></script>
-    <script src="card_data/fanmade_Boost5.js?v=1.1"></script>
+    <script src="card_data/fanmade_Boost5.js?v=1.2"></script>
     <script src="card_data/fanmade_icefire.js?v=1.1"></script>
     
+        <script src="banlist_data.js"></script>	
+
     <script src="small_script.js?v=1.1"></script>	
     <script src="deck_builder_logic.js?v=1.4.1"></script>
-	    <script src="handsimulate_logic.js"></script>
+    <script src="Showcase_logic.js"></script>	
+	<script src="handsimulate_logic.js"></script>
     <script src="collection_logic.js?v=1.1"></script>
     <script src="save_deck_logic.js"></script>
     <script src="untap_logic.js"></script>
@@ -749,6 +801,8 @@ body::before {
     <script src="dynamic_bg.js"></script>    
     <script src="main.js?v=1.1"></script>
     <script src="clan_identity_logic.js"></script>
+    <script src="ai_deck.js"></script>	
+
     
 </body>
 </html>

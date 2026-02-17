@@ -6,6 +6,8 @@ const Armored_DinoData = [
     nameEN: "Armored Brachiosaurus",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "คอยาว",
         image: "images/Armored_Dino/Armored_Brachiosaurus.png"
@@ -16,6 +18,8 @@ const Armored_DinoData = [
     nameEN: "Armored Giganotosaurus",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "สองขา",
         image: "images/Armored_Dino/Armored_Giganotosaurus.png"
@@ -26,6 +30,8 @@ const Armored_DinoData = [
     nameEN: "Armored Jugaloceratops",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "มีเขา",
         image: "images/Armored_Dino/Armored_Jugaloceratops.png"
@@ -36,6 +42,8 @@ const Armored_DinoData = [
     nameEN: "Armored Mamenchisaurus",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "คอยาว",
         image: "images/Armored_Dino/Armored_Mamenchisaurus.png"
@@ -46,6 +54,8 @@ const Armored_DinoData = [
     nameEN: "Armored Stegosaurus",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "มีเกราะหางหนาม",
         image: "images/Armored_Dino/Armored_Stegosaurus.png"
@@ -56,6 +66,8 @@ const Armored_DinoData = [
     nameEN: "Armored Stegosaurus",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "มีเกราะหางหนาม",
         image: "images/Armored_Dino/Armored_Stegosaurus2.png"
@@ -66,8 +78,21 @@ const Armored_DinoData = [
     nameEN: "Armored Stegosaurus",
     dp: "ไร้DP",
     type: "Armored_Dino",
+        rarity:"Golden_Rare",
+
     set: "นิวมาสเตอร์",
     clan: "มีเกราะหางหนาม",
-        image: "images/Armored_Dino/Armored_Stegosaurus3.jpg"
+        image: "images/Armored_Dino/Armored_Stegosaurus3.png"
+},
+{
+    id: "Armored Triceratops",
+    nameTH: "อาร์เมอร์ ไทรเซราทอปส์",
+    nameEN: "Armored Triceratops",
+    dp: "ไร้DP",
+    type: "Armored_Dino",
+    rarity:"Golden_Rare",
+    set: "นิวมาสเตอร์",
+    clan: "มีเกราะหางหนาม",
+        image: "images/Armored_Dino/Armored_Triceratops.png"
 },
 ];

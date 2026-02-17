@@ -31,9 +31,37 @@ function handleQuickMultiAdd(e, card) {
     if (e.cancelable) e.preventDefault();
     e.stopPropagation();
 
-    // 1. ตรวจสอบโควตาสูงสุดของการ์ดใบนี้
+    // --- ส่วนตรวจสอบเผ่า (Clan) ก่อนเริ่มทำงานส่วนอื่น เพื่อให้ alert ครั้งเดียว ---
+    const commander = myDeck.find(c => c.isCommander);
+    if (commander && card.type === "Creature") {
+        const targetClans = Array.isArray(card.clan) ? card.clan : [card.clan];
+        const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
+        const isSameClan = targetClans.some(clan => commClans.includes(clan));
+
+        if (!isSameClan) {
+            alert(`เด็คนี้มี ${commander.nameTH} เป็นคอมมานเดอร์ ใส่ได้เฉพาะเผ่า ${commClans.join(', ')} เท่านั้น!`);
+            return; // หยุดการทำงานทันที
+        }
+    }
+
+    // 1. ตรวจสอบโควตาสูงสุดของการ์ดใบนี้ (รวมกฎ Banlist และกฎประเภทการ์ด)
     let maxLimit = 3;
-    if (card.type === "Master" || card.type === "Boost_Master") maxLimit = 1;
+    
+    // ดึงข้อมูล Banlist ปัจจุบัน
+    const format = (typeof banlistData !== 'undefined') ? (banlistData[currentBanlistFormat] || banlistData["None"]) : null;
+    const cardId = String(card.id);
+
+    if (format) {
+        if (format.banned.includes(cardId)) {
+            maxLimit = 0; // ถ้าโดนแบน ให้ Max เป็น 0
+        } else if (format.limited.includes(cardId)) {
+            maxLimit = 1; // ถ้าโดนจำกัด ให้ Max เป็น 1
+        } else if (card.type === "Master" || card.type === "Boost_Master") {
+            maxLimit = 1; // กฎปกติประเภทการ์ด
+        }
+    } else if (card.type === "Master" || card.type === "Boost_Master") {
+        maxLimit = 1;
+    }
 
     // 2. นับจำนวนปัจจุบันในเด็ค (ใช้ myDeck จากไฟล์หลัก)
     const currentCount = myDeck.filter(c => String(c.id) === String(card.id)).length;
@@ -42,18 +70,26 @@ function handleQuickMultiAdd(e, card) {
     const spaceLeft = maxLimit - currentCount;
 
     if (spaceLeft <= 0) {
+        // ถ้า maxLimit เป็น 0 (โดนแบน) หรือเต็มโควตาแล้ว ให้แสดง Feedback "MAX!"
         showQuickFeedback(e, "MAX!", "#ff4757");
+        
+        // เรียกใช้ canAddCardToDeck เพื่อพ่น Alert แจ้งเหตุผล (Banned/Limit) เพียงครั้งเดียว
+        if (typeof canAddCardToDeck === 'function') {
+            canAddCardToDeck(card);
+        }
         return;
     }
 
     // 4. วนลูปเพิ่มการ์ดตามจำนวนที่ว่าง
     let addedCount = 0;
     for (let i = 0; i < spaceLeft; i++) {
-        // ใช้ canAddCardToDeck เช็ค Logic Commander/Master ซ้ำอีกรอบเพื่อความชัวร์
-        if (typeof canAddCardToDeck === 'function' && canAddCardToDeck(card)) {
+        // ส่ง silent = true (i > 0) เพื่อไม่ให้ Alert เด้งซ้ำซ้อนในการวนลูป
+        if (typeof canAddCardToDeck === 'function' && canAddCardToDeck(card, i > 0)) {
             const isFusion = card.type && card.type.includes('Fusion_Monster');
             myDeck.push({ ...card, isExtra: isFusion, isCommander: false });
             addedCount++;
+        } else {
+            break; // ถ้าติดเงื่อนไขอื่น (เช่น Master ซ้ำ) ให้หยุดลูปทันที
         }
     }
 
@@ -63,13 +99,11 @@ function handleQuickMultiAdd(e, card) {
         isUnsaved = true;
 
         // 6. อัปเดต UI แบบ "ไม่กระพริบ"
-        // อัปเดตตัวเลขปุ่มทุกใบในหน้าคลังการ์ด (ใช้ฟังก์ชันที่เราเตรียมไว้ในไฟล์หลัก)
         if (typeof updateAllButtonStates === 'function') {
             updateAllButtonStates();
         }
 
         // อัปเดตแถบรายการในเด็ค (Side Panel)
-        // ถ้า updateDeckUI ของคุณไม่มีการเรียก renderCards ให้ใช้ตัวนี้ได้เลย
         if (typeof updateDeckUI === 'function') {
             updateDeckUI(); 
         }
@@ -81,7 +115,6 @@ function handleQuickMultiAdd(e, card) {
         const startImg = cardDiv ? cardDiv.querySelector('.card-img-btn') : null;
         if (startImg && typeof animateFly === 'function') {
             const safeId = String(card.id).replace(/\s+/g, '-');
-            // บินไปที่ Selector ของรายการการ์ดในเด็ค หรือถ้าไม่เจอก็บินไปที่ปุ่มเปิดเด็ค
             const targetSelector = `.target-card-${safeId}`;
             requestAnimationFrame(() => {
                 animateFly(startImg, targetSelector);
@@ -120,9 +153,9 @@ function showEditModeHint() {
     hint.className = 'edit-mode-hint';
     
     if (isMobile) {
-        hint.innerHTML = "💡 <b>กดแช่ที่การ์ด</b> ที่รูปเพื่อเพิ่มจนเต็ม";
+        hint.innerHTML = "💡 <b>กดแช่ที่การ์ด</b> ที่รูปเพื่อเพิ่มทีละ 3 ใบ";
     } else {
-        hint.innerHTML = "💡 <b>Double Click</b> หรือ <b>คลิกขวา</b> เพื่อเพิ่มจนเต็ม";
+        hint.innerHTML = "💡<b>คลิกขวา</b> เพื่อเพิ่มทีละ 3 ใบ";
     }
 
     document.body.appendChild(hint);

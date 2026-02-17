@@ -77,51 +77,70 @@ function closeSidePanel() {
     
 }
 
-// ปรับ toggleSidePanel ให้ฉลาดขึ้น
+
+// ปรับ toggleSidePanel ให้ฉลาดขึ้นและกว้างขึ้น
 function toggleSidePanel() {
     const sidePanel = document.getElementById('deckSidePanel');
-    // อ้างอิง ID Wrapper หลักของคุณ
     const mainWrapper = document.getElementById("main-wrapper");
-    
-
 
     if (!sidePanel) return;
 
-    // เช็คขนาดหน้าจอ
     const isMobile = window.innerWidth <= 768;
     const isOpen = sidePanel.classList.toggle('open');
 
     if (!isMobile) {
         /* --- ระบบสำหรับ PC (ดันหน้าจอ) --- */
         if (isOpen) {
+            // ดึงพาเนลออกมาให้สุดขอบขวา
             sidePanel.style.right = "0";
             if (mainWrapper) {
-                // ดัน Padding หรือ Margin ตามที่คุณตั้งค่าไว้ใน CSS
-                mainWrapper.style.paddingRight = "570px"; 
+                // ดันพื้นที่คลังการ์ดหลบไปทางซ้าย (700px + ระยะห่าง 20px)
+                mainWrapper.style.paddingRight = "720px"; 
             }
             document.body.classList.add('panel-open');
         } 
         else {
-            sidePanel.style.right = "-550px";
+            // ซ่อนพาเนลไปทางขวา (ต้องติดลบเท่ากับความกว้างใหม่ใน CSS)
+            sidePanel.style.right = "-700px";
             if (mainWrapper) {
                 mainWrapper.style.paddingRight = "20px"; // กลับไปค่า Default
             }
             document.body.classList.remove('panel-open');
         }
-            } else {
+    } else {
         /* --- ระบบสำหรับมือถือ (เลื่อนทับ) --- */
-        // ล้างค่า Style ของ PC ออกให้หมดเพื่อให้ CSS Media Query คุมแทน
         sidePanel.style.right = ""; 
         if (mainWrapper) {
             mainWrapper.style.paddingRight = "";
             mainWrapper.style.width = "";
         }
-        // การเลื่อน เปิด-ปิด จะใช้ Class .open ที่คุมโดย responsive.css
     }
 
-    if (!sidePanel.classList.contains('panel open')) {
-        showEditModeHint(); // <--- เพิ่มบรรทัดนี้: แสดงเมื่อเปิดแผงจัดเด็ค 
-        }
+    if (sidePanel.classList.contains('open')) {
+        if (typeof showEditModeHint === 'function') showEditModeHint();
+    }
+    renderCards(currentFilteredCards);
+
+}
+
+// ฟังก์ชันสลับสถานะไอคอนและคลาสหลัก
+function toggleDeckPanel() {
+    const panel = document.getElementById('deckSidePanel');
+    const body = document.body;
+
+    if (!panel) return;
+
+    // เรียกใช้ฟังก์ชันหลักเพื่อจัดการเรื่องขนาดและการดันหน้าจอ
+    toggleSidePanel();
+
+    // อัปเดตไอคอนที่ปุ่มกด
+    const icon = panel.querySelector('.triangle-icon');
+    if (icon) {
+        icon.innerText = panel.classList.contains('open') ? "▶" : "◀";
+    }
+
+    // สั่งให้ Grid คำนวณใหม่เพื่อให้การ์ดจัดเรียงตัวถูกต้อง
+    window.dispatchEvent(new Event('resize'));
 }
 
 // --- Info Modal Logic ---
@@ -142,3 +161,4 @@ window.addEventListener('click', function(event) {
         modal.style.display = 'none';
     }
 });
+

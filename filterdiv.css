@@ -23,8 +23,55 @@ input:focus, select:focus {
 }
 
 #searchInput {
-    width: 300px;
-}
+            width: 100%; 
+            height: 45px; /* เพิ่มความสูงให้กดง่าย */
+            padding: 0 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Kanit', sans-serif;
+            box-sizing: border-box; /* ป้องกันขอบล้น */
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: #ff9f43;
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 159, 67, 0.4);
+        }
+
+        /* จัดระเบียบปุ่ม Filter ด้านล่างให้เป็น Grid */
+        .filter-grid {
+            display: grid;
+            /* เทคนิค Grid: จัด auto ตามความกว้างหน้าจอ (ขั้นต่ำ 140px ต่อช่อง) */
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* สั่งให้ Dropdown และปุ่มทุกอันขยายเต็มช่อง Grid ของตัวเอง */
+        .filter-grid select, 
+        .filter-grid button {
+            width: 100%;
+            height: 42px;
+            padding: 0 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #1e272e;
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        .filter-grid select:hover {
+            border-color: #ff9f43;
+        }
 
 /* --- 2. ปุ่มทั่วไป (ใช้คลาสเจาะจงเพื่อไม่ให้กระทบปุ่ม +- ในเด็ค) --- */
 /* ปุ่มมาตรฐาน เช่น ปุ่มค้นหา หรือปุ่มอื่นๆ */
@@ -196,6 +243,10 @@ button:not(.qty-btn):hover {
     height: 100%;
     object-fit: contain; /* ใช้ contain เพื่อให้เห็นครบทั้งใบ และขยายจนติดขอบด้านใดด้านหนึ่ง */
     display: block;
+    /* กำหนดให้ค่า opacity มีการเปลี่ยนแปลงแบบนุ่มนวลในเวลา 0.25 วินาที */
+    transition: opacity 0.25s ease-in-out; 
+    /* ตั้งค่าเริ่มต้นให้มองเห็นชัดเจน */
+    opacity: 1;
 }
 
 /* ฝั่งข้อมูล (ฝั่งขวา) */
@@ -238,15 +289,23 @@ button:not(.qty-btn):hover {
 
 /* 2. กำหนดให้แถบคันหาลอยติดขอบบน */
 .filter-section {
-    position: -webkit-sticky; /* สำหรับ Safari */
+    width: 100% !important;
+    position: -webkit-sticky;
     position: sticky;
-    top: 0;           /* ระยะที่ต้องการให้ติดขอบบน */
-    z-index: 1000;    /* มั่นใจว่าลอยทับรูปการ์ดแน่นอน */
-    background-color: #F7F7FC; /* สีเดียวกับพื้นหลังเว็บ */
+    top: 0;
+    z-index: 1000;
+    background-color: #F7F7FC; /* สีเดิมที่คุณต้องการ */
     padding: 15px 10px;
     margin: 0;
     border-bottom: 2px solid #ddd;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* เพิ่มเงาให้ดูเหมือนลอยเหนือการ์ด */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    
+    /* --- จุดที่แก้ไขเพื่อป้องกันการโดนบีบจนเละ --- */
+    display: flex;
+    flex-direction: column; /* จัดช่องค้นหาไว้บน Dropdown ไว้ล่าง */
+    gap: 12px;             /* ระยะห่างระหว่างแถว */
+    box-sizing: border-box;
+    transition: padding 0.4s ease; /* ให้ขยับนุ่มนวลเวลา Side Panel เปิด */
 }
 
 /* ปรับให้ส่วนหัวเว็บบนสุดไม่ขยับ (ถ้ามี) หรือปรับตำแหน่งตามความเหมาะสม */
@@ -257,4 +316,67 @@ header {
 
 #cardContainer {
     padding-top: 20px; /* เพิ่มพื้นที่ด้านบนไม่ให้การ์ดชุดแรกจมหายไปใต้แถบคันหา */
+}
+
+/* Container จัดเรียงแนวนอน */
+
+/* Container สำหรับ DP Filter (หลอดคริสตัล) */
+.dp-filter-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* จัดชิดซ้าย */
+        }
+
+.dp-crystal-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ดีไซน์ปุ่มวงกลมคริสตัล */
+.dp-crystal-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%; /* ทำเป็นวงกลม */
+    border: 2px solid #145a32; /* ขอบเขียวเข้ม */
+    
+    /* ไล่สีจากล่าง (เขียวเข้ม) ขึ้นบน (ขาว) ตามโจทย์ */
+    background: linear-gradient(0deg, #0b3d0b 0%, #27ae60 60%, #ffffff 120%);
+    
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black; /* เงาตัวหนังสือให้อ่านง่ายบนสีขาว */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    
+    /* Drop Shadow */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 -3px 5px rgba(0,0,0,0.3);
+    
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+/* สถานะเมื่อเอาเมาส์ชี้ */
+.dp-crystal-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 10px rgba(46, 204, 113, 0.4); /* เรืองแสงสีเขียว */
+}
+
+/* สถานะเมื่อถูกเลือก (Active) */
+.dp-crystal-btn.active {
+    border: 2px solid #ffd900; /* ขอบทอง */
+    box-shadow: 0 0 15px #ffd900; /* เรืองแสงทอง */
+    transform: scale(1.15);
+    background: linear-gradient(0deg, #1e8449 0%, #2ecc71 50%, #f1c40f 120%); /* เปลี่ยนสีเล็กน้อย */
+}
+
+/* ปุ่ม Reset (X) หรือ ไร้ DP */
+.dp-crystal-btn.special {
+    background: linear-gradient(0deg, #555 0%, #999 60%, #ccc 120%);
+    border-color: #333;
 }

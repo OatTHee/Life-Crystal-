@@ -1,38 +1,43 @@
 #backToTop {
-  display: block;      /* กำหนดเป็น block */
-  position: fixed;     /* ให้ปุ่มลอยตามการ scroll */
-  bottom: 80px;        /* ห่างจากขอบล่าง */
-  right: 30px;         /* ห่างจากขอบขวา */
-  z-index: 99;         /* ให้อยู่เหนือเลเยอร์อื่น */
+  display: block;
+  position: fixed;
+  bottom: 80px;
+  right: 30px; /* ระยะเริ่มต้นเมื่อปิดพาเนล */
+  z-index: 850; /* ปรับให้สูงกว่า Panel เล็กน้อยหรือใกล้เคียงเพื่อให้เห็นชัด */
   border: none;
   outline: none;
-  background-color: transparent; /* ให้พื้นหลังปุ่มใสเพื่อโชว์รูปวงกลม */
+  background-color: transparent;
   cursor: pointer;
   padding: 0;
-  width: 60px;         /* ปรับขนาดตามความเหมาะสมของรูป */
-  opacity: 0;          /* เริ่มต้นให้โปร่งใส (ซ่อนไว้) */
-  transition: opacity 0.4s; /* เอฟเฟกต์ Fade In/Out */
+  width: 60px;
+  opacity: 0;
   visibility: hidden;
+  /* เพิ่ม right เข้าไปใน transition เพื่อให้ปุ่มเลื่อนไถลตามพาเนล */
+  transition: opacity 0.4s, right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.4s;
+}
+
+/* --- จุดที่เพิ่ม: เมื่อเปิด Side Panel ให้เลื่อนปุ่มมาทางซ้าย --- */
+body.panel-open #backToTop {
+  /* ความกว้างพาเนล 700px + ระยะห่างเดิม 30px = 730px */
+  right: 730px; 
 }
 
 #backToTop img {
-  width: 100%;         /* ให้รูปขยายเต็มปุ่ม */
+  width: 100%;
   height: auto;
 }
 
 #backToTop.show {
-  opacity: 1;          /* เมื่อเลื่อนลงมาให้แสดงผล */
+  opacity: 1;
   visibility: visible;
 }
 
-/* เพิ่มเอฟเฟกต์เมื่อเอาเมาส์ไปชี้ (Hover) */
 #backToTop:hover {
-  transform: scale(1.1); /* ขยายขนาดขึ้น 10% */
-  filter: brightness(1.1); /* เพิ่มความสว่างขึ้นเล็กน้อย */
-  transition: transform 0.2s ease-in-out; /* ให้การขยายดูนุ่มนวล */
+  transform: scale(1.1);
+  filter: brightness(1.1);
+  transition: transform 0.2s ease-in-out;
 }
 
-/* เอฟเฟกต์ตอนกด (Active) */
 #backToTop:active {
-  transform: scale(0.95); /* ย่อขนาดลงเล็กน้อยตอนคลิก ให้ความรู้สึกเหมือนกดปุ่มจริง */
+  transform: scale(0.95);
 }

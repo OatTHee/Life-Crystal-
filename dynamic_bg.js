@@ -73,3 +73,35 @@ function updateDynamicBackground() {
         searchBar.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
     }
 }
+function bindHistogramEvent() {
+    const toggleBtn = document.getElementById('typeHistogramBtn'); // เปลี่ยน ID ให้ตรงกับ HTML ของคุณ
+    if (toggleBtn) {
+        toggleBtn.onclick = () => {
+            isHistogramOpen = !isHistogramOpen;
+            renderTypeHistogram(isHistogramOpen);
+        };
+    }
+
+    const triangle = document.getElementById('typeHistogramBtn');
+    
+    if (triangle) {
+        triangle.onclick = (e) => {
+            e.stopPropagation(); // กัน Error เวลาคลิกซ้อน
+            
+            // 1. สลับสถานะตัวแปร (มีอยู่แล้ว)
+            isHistogramOpen = !isHistogramOpen;
+            
+            // 2. สั่งวาด/ซ่อน Histogram (มีอยู่แล้ว)
+            renderTypeHistogram();
+
+            // 3. สั่งหมุนสามเหลี่ยมตามสถานะ isHistogramOpen
+            // ถ้าเปิด (true) ให้หมุน 180 องศา (ชี้ขึ้น) 
+            // ถ้าปิด (false) ให้หมุน 0 องศา (ชี้ลง)
+            if (isHistogramOpen) {
+                triangle.style.transform = "rotate(180deg)";
+            } else {
+                triangle.style.transform = "rotate(0deg)";
+            }
+        };
+    }
+}

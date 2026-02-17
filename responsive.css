@@ -54,7 +54,7 @@
        - ปกติบนมือถือ: ซ่อนปุ่มทั้งหมด 
        - เมื่อเข้า Edit Mode: โชว์เฉพาะปุ่ม .add-to-deck-btn และซ่อนปุ่ม +- (.qty-control)
     */
-    .card .card-controls {
+    .card-controls {
         display: none !important; /* ซ่อนไว้ก่อนในสภาวะปกติ */
     }
 
@@ -186,3 +186,85 @@
 /* --- 6. Menu Logic (คงเดิม) --- */
 .menu { display: flex; flex-direction: column; gap: 12px; padding: 10px; }
 .menu-row { display: flex; gap: 8px; align-items: center; }
+
+/* --- จัดระเบียบ Filter Bar บนมือถือ --- */
+@media (max-width: 768px) {
+    /* จัดเรียง Container หลักเป็นแนวตั้ง */
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    /* 1. ช่องค้นหาเต็มความกว้าง */
+    #searchInput {
+        width: 100% !important;
+        box-sizing: border-box;
+        margin: 0 !important;
+    }
+
+    /* 2. จัด Dropdown เป็นตาราง 2 คอลัมน์ (ซ้าย-ขวา) ประหยัดที่ */
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* แบ่งครึ่ง */
+        gap: 8px;
+        width: 100%;
+    }
+
+    /* ให้ Dropdown และปุ่ม Reset เต็มช่องของตัวเอง */
+    .filter-grid select, 
+    .filter-grid button {
+        width: 100% !important;
+        margin: 0 !important;
+        height: 40px; /* ความสูงมาตรฐานให้กดง่าย */
+    }
+
+    /* ปุ่ม Reset ให้กินพื้นที่เต็ม 2 ช่องด้านล่างสุด */
+    #resetBtn {
+        grid-column: span 2; 
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    /* 3. ปรับแถบ DP ให้เลื่อนแนวนอนได้ (ไม่กินที่แนวตั้ง) */
+    .dp-filter-wrapper {
+        display: block !important; /* ยกเลิก Flex เพื่อจัด Layout เอง */
+        width: 100%;
+    }
+
+    .dp-crystal-container {
+        display: flex;
+        flex-wrap: nowrap !important; /* ห้ามขึ้นบรรทัดใหม่ */
+        overflow-x: auto; /* ให้เลื่อนซ้ายขวาได้ */
+        padding-bottom: 10px; /* เว้นที่ให้ Scrollbar นิดหน่อย */
+        gap: 8px;
+        justify-content: flex-start !important; /* เริ่มจากซ้าย */
+        -webkit-overflow-scrolling: touch; /* เลื่อนลื่นๆ บน iOS */
+    }
+    
+    /* ปรับขนาดปุ่มคริสตัลให้เล็กลงนิดหน่อยบนมือถือ */
+    .dp-crystal-btn {
+        flex-shrink: 0; /* ห้ามหดตัว */
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+/* --- วางไว้บรรทัดล่างสุดของ responsive.css --- */
+
+@media screen and (max-width: 768px) {
+    
+    /* สั่งซ่อนปุ่มทุกปุ่มที่มี class modal-nav-btn ที่อยู่ใน #imageModal */
+    #imageModal .modal-nav-btn,
+    #imageModal button.modal-nav-btn {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        pointer-events: none !important;
+    }
+    
+}
+}

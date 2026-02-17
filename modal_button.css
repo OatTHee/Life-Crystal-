@@ -1,0 +1,47 @@
+/* --- ปุ่มนำทางใน Modal (แบบรูปภาพ) --- */
+
+#imageModal .modal-nav-btn {
+    /* ใช้ fixed เพื่อยึดตำแหน่งเทียบกับ 'หน้าจอ' โดยตรง ไม่ใช่กล่อง Modal */
+    position: fixed !important; 
+    top: 50%;
+    transform: translateY(-50%);
+    
+    /* สไตล์พื้นฐาน (เหมือนเดิม) */
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    z-index: 10001; /* ต้องสูงกว่า z-index ของ Modal (ปกติ 9999-10000) */
+    
+    /* ขนาดปุ่ม */
+    width: 60px; 
+    height: auto;
+    
+    padding: 0;
+    user-select: none;
+}
+
+/* ปรับระยะห่างจากขอบจอ (ตรงนี้คือจุดที่แก้ไขครับ) */
+#imageModal .prev-btn {
+    /* ขยับออกจากซ้าย 8% ของหน้าจอ (หรือจะใส่เป็น px เช่น 100px ก็ได้) */
+    left: 8% !important; 
+}
+
+#imageModal .next-btn {
+    /* ขยับออกจากขวา 8% ของหน้าจอ */
+    right: 8% !important; 
+}
+
+/* ปรับรูปภาพข้างในปุ่ม */
+#imageModal .modal-nav-btn img {
+    width: 100%;
+    display: block;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); /* เพิ่มเงาเข้มขึ้นเพื่อให้เห็นชัดบนพื้นหลัง */
+    transition: all 0.2s ease;
+}
+
+/* เอฟเฟกต์ตอนชี้เมาส์ */
+#imageModal .modal-nav-btn:hover img {
+    transform: scale(1.2); /* ขยายใหญ่ขึ้นอีกนิด */
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); /* เรืองแสงสีทอง */
+}

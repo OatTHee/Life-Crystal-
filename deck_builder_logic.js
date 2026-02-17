@@ -28,6 +28,17 @@ function updateAllButtonStates() {
         let btnText = ""; 
         let btnColor = "#28a745"; 
 
+        // --- 1. คำนวณ Limit ตาม Banlist (แทรกตรงนี้) ---
+        let dynamicMaxLimit = 3; // ค่าเริ่มต้นคือ 3
+        if (typeof banlistData !== 'undefined' && typeof currentBanlistFormat !== 'undefined') {
+            const format = banlistData[currentBanlistFormat] || banlistData["None"];
+            if (format.banned.includes(String(card.id))) {
+                dynamicMaxLimit = 0; // ถ้าแบน ให้ Limit เป็น 0
+            } else if (format.limited.includes(String(card.id))) {
+                dynamicMaxLimit = 1; // ถ้าจำกัด ให้ Limit เป็น 1
+            }
+        }
+
         // เช็คเงื่อนไข Commander/Master/Limit (ยกมาจาก Logic renderCards ของคุณ)
         let isIllegalByCommander = false;
         const isArmor = card.nameTH && card.nameTH.includes("Armor");
@@ -54,7 +65,11 @@ function updateAllButtonStates() {
                 btnText = (String(card.id) === String(activeBoostMaster.id)) ? "เพิ่มแล้ว 1 / 1" : "มี Boost Master อื่นแล้ว";
             } else { btnText = `+ เพิ่ม (0 / 1)`; }
         } else {
-            const maxLimit = 3;
+            // --- แก้ไขตรงนี้: ใช้ dynamicMaxLimit แทนเลข 3 ---
+            const maxLimit = dynamicMaxLimit;
+            
+            // กรณีโดนแบน (maxLimit = 0): จะเข้าเงื่อนไข 0 >= 0 -> เป็นจริง -> ปุ่มเทา ข้อความ "ใส่ครบแล้ว 0 / 0"
+            // กรณี Limit 1: จะแสดงผลเป็น x / 1
             if (countInDeck >= maxLimit) {
                 isDisabled = true;
                 btnText = `ใส่ครบแล้ว ${countInDeck} / ${maxLimit}`;
@@ -92,11 +107,20 @@ function renderCards(cards) {
     const activeBoostMaster = myDeck.find(c => c.type === "Boost_Master");
     const commander = myDeck.find(c => c.isCommander);
 
+    // ตรวจสอบสถานะการเปิดแผงจัดเด็ค/แก้ไข (ย้ายมาเช็คตรงนี้เพื่อให้ใช้ได้ทั่วถึง)
+    const sidePanel = document.getElementById('deckSidePanel');
+    const isPcEditing = sidePanel && sidePanel.classList.contains('open');
+    const isMobileEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
+    const showBadges = isPcEditing || isMobileEditMode;
+
     // แก้ไข: เติมวงเล็บครอบ (card, index)
     cards.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.setAttribute('data-card-id', card.id);
+        
+        // --- [สำคัญ] ต้องใส่ relative เพื่อให้ badge ที่เป็น absolute เกาะอยู่ที่มุมการ์ดนี้ ---
+        cardDiv.style.position = 'relative';
 
         // --- Logic เช็คเผ่าไม่ตรง Commander ---
         let isIllegalByCommander = false;
@@ -112,20 +136,75 @@ function renderCards(cards) {
             }
         }
 
+        // --- 1. คำนวณ Limit และเช็คการแบนล่วงหน้า ---
+        let dynamicMaxLimit = 3;
+        let isPermanentlyBanned = false;
+        let isBanlistLimited = false; // ตัวแปรใหม่: เช็คว่าโดนลิมิตจาก Banlist หรือไม่
+        
+        if (typeof banlistData !== 'undefined' && typeof currentBanlistFormat !== 'undefined') {
+            const format = banlistData[currentBanlistFormat] || banlistData["None"];
+            const cardIdStr = String(card.id);
+            
+            if (format.banned.includes(cardIdStr)) {
+                isPermanentlyBanned = true;
+                dynamicMaxLimit = 0;
+            } else if (format.limited.includes(cardIdStr)) {
+                dynamicMaxLimit = 1;
+                isBanlistLimited = true; // ✅ เป็น Limit จาก Banlist ให้โชว์ Badge
+            } else if (format.limit_if_no_commander && format.limit_if_no_commander.includes(cardIdStr)) {
+                // เช็คเงื่อนไขพิเศษ (ถ้าไม่มีคอมให้ลิมิต 1)
+                const hasCommander = typeof myDeck !== 'undefined' && myDeck.some(c => c.isCommander);
+                if (!hasCommander) {
+                    dynamicMaxLimit = 1;
+                    isBanlistLimited = true; // ✅ เป็น Limit จากเงื่อนไข Banlist ให้โชว์ Badge
+                }
+            }
+        }
+
+        // กฎ Master / Boost Master (กำหนด Max เป็น 1 แต่ "ไม่" นับว่าเป็น Banlist Limit)
+        if (card.type === "Master" || card.type === "Boost_Master") {
+            dynamicMaxLimit = 1;
+            // ❌ ไม่ต้อง set isBanlistLimited = true
+        }
+
+        // --- 2. สร้าง Badge Html (ถ้าอยู่ในโหมดแก้ไข) ---
+        let badgeHtml = '';
+        if (showBadges) {
+            // สไตล์พื้นฐานของ Badge
+            const badgeStyle = "position: absolute; top: 0; left: 0; width: 50px; height: 50px; z-index: 800; pointer-events: none;";
+            
+            if (isPermanentlyBanned) {
+                badgeHtml = `<img src="images/icon_ban.png" 
+                             style="${badgeStyle}" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+                             alt="Banned">
+                             <div style="display:none; ${badgeStyle} background:rgba(255,0,0,0.8); color:white; font-weight:bold; align-items:center; justify-content:center; border-radius:4px 0 4px 0; font-size:12px;">BAN</div>`;
+            } 
+            // แก้ไขตรงนี้: เช็ค isBanlistLimited แทน dynamicMaxLimit === 1
+            else if (isBanlistLimited) { 
+                badgeHtml = `<img src="images/icon_limit1.png" 
+                             style="${badgeStyle}" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+                             alt="Limit 1">
+                             <div style="display:none; ${badgeStyle} background:rgba(218, 165, 32, 0.9); color:white; font-weight:bold; align-items:center; justify-content:center; border-radius:4px 0 4px 0; font-size:14px; border:2px solid white;">1</div>`;
+            }
+        }
+
         // --- Logic การคำนวณจำนวนและสถานะปุ่ม ---
-        // เช็คจาก ID (ใช้ String เพื่อความชัวร์)
         const countInDeck = myDeck.filter(c => String(c.id) === String(card.id)).length;
         let isDisabled = false;
         let btnText = ""; 
         let btnColor = "#28a745"; // สีเขียวตั้งต้น
 
-        if (isIllegalByCommander) {
+        if (isPermanentlyBanned) {
+            isDisabled = true;
+            btnText = "โดนแบน (BANNED)";
+            btnColor = "#b0b0b0";
+        } else if (isIllegalByCommander) {
             isDisabled = true;
             btnText = "เผ่าไม่ตรงกับ Commander";
             btnColor = "#b0b0b0";
-        } 
-        // กรณีเป็นการ์ดประเภท Master
-        else if (card.type === "Master") {
+        } else if (card.type === "Master") {
             if (activeMaster) {
                 isDisabled = true;
                 btnColor = "#b0b0b0";
@@ -133,9 +212,7 @@ function renderCards(cards) {
             } else {
                 btnText = `+ เพิ่ม (0 / 1)`;
             }
-        }
-        // กรณีเป็นการ์ดประเภท Boost_Master
-        else if (card.type === "Boost_Master") {
+        } else if (card.type === "Boost_Master") {
             if (activeBoostMaster) {
                 isDisabled = true;
                 btnColor = "#b0b0b0";
@@ -143,10 +220,8 @@ function renderCards(cards) {
             } else {
                 btnText = `+ เพิ่ม (0 / 1)`;
             }
-        }
-        // กรณีการ์ดปกติอื่นๆ (Action, Creature, Armor, Field)
-        else {
-            const maxLimit = 3;
+        } else {
+            const maxLimit = dynamicMaxLimit;
             if (countInDeck >= maxLimit) {
                 isDisabled = true;
                 btnText = `ใส่ครบแล้ว ${countInDeck} / ${maxLimit}`;
@@ -156,22 +231,17 @@ function renderCards(cards) {
             }
         }
 
-        if (isIllegalByCommander) cardDiv.classList.add('disabled-card');
+        if (isIllegalByCommander || isPermanentlyBanned) cardDiv.classList.add('disabled-card');
 
-const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
-//แปลงรูปเพื่อความเร็ว
-const imgVersion = "1.2";
-// 1. สร้าง Path ที่ถูกต้อง (รวมชื่อ Repo: Life-Crystal- เข้าไปด้วย)
-// ลอจิก: เอา URL ปัจจุบัน ตัด 'index.html' ออก แล้วต่อด้วย path รูป
-const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-const fullAbsoluteUrl = new URL(card.image, baseUrl).href;
-
-// 2. ลบ 'https://' ออกเพื่อให้ Weserv ชอบ (Optional แต่แนะนำ)
-const cleanUrl = fullAbsoluteUrl.replace(/^https?:\/\//, '');
-
-// 3. สร้าง URL สำหรับ Weserv (เพิ่ม &n=-1 เพื่อแก้ปัญหาภาพกลับหัวในบางกรณี)
-const optimizedImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(cleanUrl)}&w=300&output=webp&q=80&we=1&n=-1`;
+        const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
+        const imgVersion = "1.2";
+        const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const fullAbsoluteUrl = new URL(card.image, baseUrl).href;
+        const cleanUrl = fullAbsoluteUrl.replace(/^https?:\/\//, '');
+        const optimizedImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(cleanUrl)}&w=300&output=webp&q=80&we=1&n=-1`;
+        
         cardDiv.innerHTML = `
+            ${badgeHtml}
             <img src="${optimizedImageUrl}"
             onerror="this.src='${card.image}'; this.onerror=null;"
             class="card-img-btn" style="cursor: zoom-in;" loading="lazy" width="150" height="210">
@@ -187,198 +257,195 @@ const optimizedImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(cl
         // Event Listeners
         cardDiv.querySelector('.card-img-btn').onclick = (e) => {
             e.stopPropagation();
-            // แก้ไข: ส่ง 'card' ทั้ง Object เข้าไปแทน 'card.id' เพื่อแก้บั๊กรูป Artwork
             openModal(card); 
         };
 
         const addBtn = cardDiv.querySelector('.add-to-deck-btn');
         addBtn.onclick = (e) => {
             e.stopPropagation();
-            // แนะนำ: ถ้าเปลี่ยน handleAddToDeck ให้รับ card object จะลดโอกาสบั๊กได้มากกว่ารับ id
+            if (typeof canAddCardToDeck === 'function' && !canAddCardToDeck(card)) {
+                return; 
+            }
             handleAddToDeck(e, card); 
         };
         
-        // 1. ฟังก์ชันตัวกลางสำหรับเพิ่มการ์ดแบบรวดเร็ว (Quick Add)
-        const performQuickAdd = (e) => {
-            if (isDisabled) {
-                showFeedback(e, "MAX!", "#ff4757");
-                return;
-            }
-            let limit = (card.type === "Master" || card.type === "Boost_Master") ? 1 : 3;
-            let currentInDeck = myDeck.filter(c => String(c.id) === String(card.id)).length;
-            let amountToAdd = limit - currentInDeck;
-
-            if (amountToAdd > 0) {
-                for (let i = 0; i < amountToAdd; i++) {
-                    handleAddToDeck(e, card); 
-                }
-                showFeedback(e, `+${amountToAdd}`, "#f1c40f");
-            } else {
-                showFeedback(e, "FULL", "#ff4757");
-            }
-        };
-
-// --- ส่วนจัดการ Event แบบแยกโหมด (Browsing vs Editing) ---
+        // ... (Logic Event Listeners อื่นๆ คงเดิม) ...
+        // --- ส่วนจัดการ Event แบบแยกโหมด (Click vs Long Press) ---
         const cardImg = cardDiv.querySelector('.card-img-btn');
-        let clickTimer = null;
-        let isDoubleTapping = false; // ตัวแปรล็อคสถานะชั่วคราว
+        let pressTimer = null;
+        let isLongPress = false;
 
-        cardImg.onclick = (e) => {
-            e.stopPropagation();
-
-            // 1. เช็คสถานะ: PC เปิด Side Panel อยู่หรือไม่ OR Mobile อยู่ในโหมดจัดเด็คหรือไม่
+        const startPress = (e) => {
             const sidePanel = document.getElementById('deckSidePanel');
             const isPcEditing = sidePanel && sidePanel.classList.contains('open');
-            // สมมติว่า toggleMobileDeckMode() มีการเปลี่ยนสถานะ isMobileEditing
-            const isMobileEditMode = (typeof isMobileEditing !== 'undefined') ? isMobileEditing : false;
+            const isMobileEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
+            
+            if (!isPcEditing && !isMobileEditMode) return;
 
-            const isInEditingMode = isPcEditing || isEditMode;
-
-            // --- กรณีที่ 1: โหมดส่องการ์ด (Browsing) ---
-            if (!isInEditingMode) {
-                if (clickTimer) clearTimeout(clickTimer);
-                clickTimer = null;
-                openModal(card); // เปิดทันที ไม่หน่วงเวลา
-                return;
-            }
-
-            // --- กรณีที่ 2: โหมดจัดเด็ค (Editing) ---
-            if (clickTimer === null) {
-                clickTimer = setTimeout(() => {
-                    openModal(card);
-                    clickTimer = null;
-                }, 250);
-            } else {
-                clearTimeout(clickTimer);
-                clickTimer = null;
+            isLongPress = false;
+            pressTimer = setTimeout(() => {
+                isLongPress = true; 
+                if (navigator.vibrate) navigator.vibrate(50); 
+                
                 if (typeof handleQuickMultiAdd === 'function') {
                     handleQuickMultiAdd(e, card);
                 }
+            }, 500); 
+        };
+
+        const cancelPress = () => {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
             }
         };
 
-        // 2. คลิกขวา (PC) - ทำงานเฉพาะตอนเปิด Side Panel เท่านั้น
+        cardImg.addEventListener('mousedown', startPress);
+        cardImg.addEventListener('mouseup', cancelPress);
+        cardImg.addEventListener('mouseleave', cancelPress);
+
+        cardImg.addEventListener('touchstart', (e) => {
+            startPress(e);
+        }, { passive: true });
+        
+        cardImg.addEventListener('touchend', cancelPress);
+        cardImg.addEventListener('touchmove', cancelPress); 
+
+        cardImg.onclick = (e) => {
+            e.stopPropagation();
+            if (isLongPress) {
+                isLongPress = false; 
+                return;
+            }
+            openModal(card);
+        };
+
         cardImg.oncontextmenu = (e) => {
             const sidePanel = document.getElementById('deckSidePanel');
             if (sidePanel && sidePanel.classList.contains('open')) {
                 e.preventDefault();
                 e.stopPropagation();
-                if (clickTimer) clearTimeout(clickTimer);
-                clickTimer = null;
+                cancelPress();
+                
                 if (typeof handleQuickMultiAdd === 'function') {
                     handleQuickMultiAdd(e, card);
                 }
             }
-            // ถ้าไม่เปิด Panel คลิกขวาจะขึ้นเมนู Browser ปกติ หรือไม่ทำอะไร
         };
 
- // --- 2. การจัดการ Double Tap (Mobile) ---
-cardImg.addEventListener('touchstart', (e) => {
-            // ถ้าไม่เปิดโหมดจัดเด็ค ปล่อยผ่าน
-            if (typeof isEditMode === 'undefined' || !isEditMode) return; 
-
-            const now = Date.now();
-            const TIMESPAN = 350; 
-
-            if (now - lastTap < TIMESPAN && now - lastTap > 0) {
-                // --- ตรวจพบ Double Tap ---
-                isDoubleTapping = true; // ล็อคไว้ไม่ให้ onclick เปิด Modal
-                
-                if (clickTimer) {
-                    clearTimeout(clickTimer);
-                    clickTimer = null;
-                }
-                
-                if (e.cancelable) e.preventDefault(); 
-                
-                if (typeof handleQuickMultiAdd === 'function') {
-                    handleQuickMultiAdd(e, card);
-                }
-                
-                lastTap = 0;
-
-                // ปลดล็อคหลังจากผ่านไปครู่หนึ่ง
-                setTimeout(() => { isDoubleTapping = false; }, 500);
-            } else {
-                lastTap = now;
-            }
-        }, { passive: false });
-
         container.appendChild(cardDiv);
-    });
+    }); 
 
     window.scrollTo(0, scrollPos);
-
 }
-
-
-function toggleDeckPanel() {
-    const panel = document.getElementById('deckSidePanel');
-    const body = document.body;
-
-    if (!panel) return;
-
-    panel.classList.toggle('open');
-    
-    // บังคับสลับ Class ที่ body เพื่อให้ Grid เปลี่ยนจาก 6 เป็น 4
-    if (panel.classList.contains('open')) {
-        body.classList.add('panel-open');
-    } else {
-        body.classList.remove('panel-open');
-    }
-
-    // อัปเดตไอคอน
-    const icon = panel.querySelector('.triangle-icon');
-    if (icon) {
-        icon.innerText = panel.classList.contains('open') ? "▶" : "◀";
-    }
-
-    // สั่งให้ Grid คำนวณใหม่ทันที
-    window.dispatchEvent(new Event('resize'));
-}
-
-// และต้องเรียกฟังก์ชันอัปเดต UI ทันทีเพื่อให้ตัวเลขที่ปุ่มมุมขวาบนตรงกับความจริง
 // 1. ฟังก์ชันช่วยเช็คเงื่อนไข (แยกออกมาข้างนอก)
-function canAddCardToDeck(targetCard) {
-    
-    // 1. ปรับปรุงกฎ Master: แยกเช็ค Master และ Boost_Master ออกจากกันเด็ดขาด
+function canAddCardToDeck(targetCard, silent = false) {
+    // 1. ดึงข้อมูล Banlist
+    const format = (typeof banlistData !== 'undefined') ? (banlistData[currentBanlistFormat] || banlistData["None"]) : null;
+    const cardId = String(targetCard.id);
+
+    // --- ส่วนคำนวณ Limit จำนวนการ์ด (คงเดิม) ---
+    let maxLimit = 3;
+    if (typeof getCardMaxLimit === 'function') {
+        maxLimit = getCardMaxLimit(targetCard);
+    } else {
+        if (targetCard.type === "Master" || targetCard.type === "Boost_Master") maxLimit = 1;
+    }
+
+    const totalCount = myDeck.filter(c => String(c.id) === cardId).length;
+
+    if (maxLimit === 0) {
+        if (!silent) alert(`🚫 การ์ดใบนี้ถูก "BANNED" ใน${format ? format.name : 'ฟอร์แมตปัจจุบัน'}\nไม่สามารถใส่ในเด็คได้`);
+        return false;
+    }
+
+    if (totalCount >= maxLimit) {
+        if (!silent) {
+            if (maxLimit === 1) {
+                // เช็คว่าเป็นกฎ Limit_if_no_commander หรือไม่
+                if (format && format.limit_if_no_commander && format.limit_if_no_commander.includes(cardId)) {
+                    const hasCommander = myDeck.some(c => c.isCommander);
+                    if (!hasCommander) {
+                        alert(`⚠️ การ์ดใบนี้ Limit 1 ใบ หากยังไม่ตั้ง Commander!\n(ตั้ง Commander ก่อนเพื่อใส่เพิ่ม)`);
+                    } else {
+                        alert(`⚠️ การ์ดใบนี้ใส่ได้เพียง 1 ใบเท่านั้น`);
+                    }
+                } else {
+                    alert(`⚠️ การ์ดใบนี้ใส่ได้เพียง 1 ใบเท่านั้น`);
+                }
+            } else {
+                alert(`ใส่การ์ดชื่อซ้ำกันได้ไม่เกิน ${maxLimit} ใบต่อเด็ค`);
+            }
+        }
+        return false;
+    }
+
+    // --- 2. (อัปเดตใหม่) เช็คการ์ดขัดแย้ง (Conflict Groups) รองรับ A, B, C... ---
+    if (format && format.conflict_groups) {
+        for (const groupObj of format.conflict_groups) {
+            // 2.1 ดึงชื่อกลุ่มทั้งหมดออกมา (groupA, groupB, groupC, ...)
+            const allGroupKeys = Object.keys(groupObj).filter(k => k.startsWith('group'));
+            
+            // 2.2 หาว่าการ์ดที่เราจะเพิ่ม (targetCard) อยู่ในกลุ่มไหน
+            let myGroupKey = null;
+            for (const key of allGroupKeys) {
+                if (groupObj[key].includes(cardId)) {
+                    myGroupKey = key;
+                    break;
+                }
+            }
+
+            // ถ้าการ์ดที่จะเพิ่ม ไม่อยู่ในกฎข้อนี้เลย ก็ข้ามไปดูข้อถัดไป
+            if (!myGroupKey) continue;
+
+            // 2.3 ถ้าเจอว่าอยู่ในกลุ่มใดกลุ่มหนึ่ง ให้เช็คว่าในเด็คมี "กลุ่มอื่น" ปนอยู่ไหม
+            // กลุ่มอื่น = key ทั้งหมด ที่ไม่ใช่ myGroupKey
+            const otherGroupKeys = allGroupKeys.filter(k => k !== myGroupKey);
+
+            for (const otherKey of otherGroupKeys) {
+                const forbiddenIds = groupObj[otherKey];
+                
+                // ตรวจสอบว่าในเด็คมี ID ใดๆ ที่อยู่ในรายการต้องห้ามนี้หรือไม่
+                const conflictCard = myDeck.find(c => forbiddenIds.includes(String(c.id)));
+                
+                if (conflictCard) {
+                    if (!silent) alert(`❌ ผิดกฎการจัดเด็ค: ${groupObj.message || "ห้ามใส่ร่วมกัน"}\n(เนื่องจากมี ${conflictCard.nameEN || conflictCard.id} อยู่ในเด็คแล้ว)`);
+                    return false;
+                }
+            }
+        }
+    }
+    // ----------------------------------------------------
+
+    // 3. กฎ Master/Boost Master (คงเดิม)
     if (targetCard.type === "Master") {
-        const hasSameMaster = myDeck.some(c => c.type === "Master");
-        if (hasSameMaster) {
-            alert("คุณมี Master ในเด็คแล้ว (ใส่ได้เพียงใบเดียว)");
+        const hasAnyMaster = myDeck.some(c => c.type === "Master");
+        if (hasAnyMaster) {
+            if (!silent) alert("คุณมี Master ในเด็คแล้ว (ใส่ได้เพียงประเภทละ 1 ใบ)");
             return false;
         }
     } else if (targetCard.type === "Boost_Master") {
-        const hasSameBoostMaster = myDeck.some(c => c.type === "Boost_Master");
-        if (hasSameBoostMaster) {
-            alert("คุณมี Boost Master ในเด็คแล้ว (ใส่ได้เพียงใบเดียว)");
+        const hasAnyBoostMaster = myDeck.some(c => c.type === "Boost_Master");
+        if (hasAnyBoostMaster) {
+            if (!silent) alert("คุณมี Boost Master ในเด็คแล้ว (ใส่ได้เพียงประเภทละ 1 ใบ)");
             return false;
         }
     }
-	
-    // หา Commander ในเด็ค (ถ้ามี)
-    const commander = myDeck.find(c => c.isCommander);
 
-    // เงื่อนไขที่ 1: เช็คเผ่า (เฉพาะ Creature)
+    // 4. เงื่อนไข Commander: เช็คเผ่า (คงเดิม)
+    const commander = myDeck.find(c => c.isCommander);
     if (commander && targetCard.type === "Creature") {
         const targetClans = Array.isArray(targetCard.clan) ? targetCard.clan : [targetCard.clan];
         const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
         
         const isSameClan = targetClans.some(clan => commClans.includes(clan));
         if (!isSameClan) {
-            alert(`เด็คนี้มี ${commander.nameTH} เป็นคอมมานเดอร์ ใส่ได้เฉพาะเผ่า ${commClans.join(', ')} เท่านั้น!`);
+            if (!silent) alert(`เด็คนี้มี ${commander.nameTH} เป็นคอมมานเดอร์\nใส่ได้เฉพาะเผ่า ${commClans.join(', ')} เท่านั้น!`);
             return false;
         }
     }
 
-    // เงื่อนไขที่ 2: เช็คจำนวนซ้ำ (รวม Commander + ในเด็ค ห้ามเกิน 3)
-    const totalCount = myDeck.filter(c => c.id === targetCard.id).length;
-    if (totalCount >= 3) {
-        alert("ใส่การ์ดชื่อซ้ำกันรวมแล้วไม่เกิน 3 ใบ (นับรวม Commander)");
-        return false;
-    }
-
-    return true; // ผ่านทุกเงื่อนไข
+    return true; 
 }
 
 // 2. ฟังก์ชันหลักในการกดเพิ่มการ์ด
@@ -616,42 +683,47 @@ function changeQty(cardId, delta, index = null) {
 	isUnsaved = true;
 }
 
-// ฟังก์ชันหลักที่ระบบชอบเรียกหา
+// Update UI
 
 function updateDeckUI() {
-    // 1. (ลบออก) ไม่ตั้งค่า isUnsaved = true ที่นี่ เพราะมันจะทำให้ส้มตลอดเวลา
-    // เราจะไปตั้ง true เฉพาะในฟังก์ชัน addToDeck หรือ removeFromDeck แทน
-
-    // 2. Auto-save ลง LocalStorage
+    // 1. Auto-save
     saveDeckToLocalStorage();
     
-    // 3. อัปเดตส่วนแสดงผลต่างๆ
-    renderAllDeckItems();
-    updateTotalCounterOnly();
-    bindHistogramEvent();
-    updateDynamicBackground(); 
+    // 2. อัปเดตส่วนแสดงผลหลัก
+    if (typeof renderAllDeckItems === 'function') renderAllDeckItems();
+    if (typeof updateTotalCounterOnly === 'function') updateTotalCounterOnly();
+
+    // 3. เรียกใช้ฟังก์ชันเจ้าปัญหา (ใส่ Check เพื่อไม่ให้ Error ค้าง)
+    if (typeof bindHistogramEvent === 'function') {
+        bindHistogramEvent();
+    } else {
+        console.warn("⚠️ ไม่พบฟังก์ชัน bindHistogramEvent");
+    }
+
+    if (typeof updateDynamicBackground === 'function') {
+        updateDynamicBackground(); 
+    } else {
+        console.warn("⚠️ ไม่พบฟังก์ชัน updateDynamicBackground");
+    }
     
+    // 4. อัปเดตกราฟ Histogram
     if (typeof renderTypeHistogram === 'function') {
         renderTypeHistogram(isHistogramOpen); 
     }
 
-   // if (typeof renderCards === 'function') {
-   //     renderCards(currentFilteredCards);
-  //  }
-
-  if (typeof updateAllButtonStates === 'function') {
-        updateAllButtonStates(); // อัปเดตแค่เลขปุ่ม หน้าจอจะไม่กระพริบ
+    // 5. อัปเดตสถานะปุ่ม
+    if (typeof updateAllButtonStates === 'function') {
+        updateAllButtonStates();
     }
 
-const saveBtn = document.querySelector('.btn-save-main'); 
+    // 6. อัปเดตปุ่มบันทึก (Save Button)
+    const saveBtn = document.querySelector('.btn-save-main'); 
     if (saveBtn) {
-        if (isUnsaved) {
-            saveBtn.classList.add('unsaved'); // เปิดไฟสีส้มกะพริบ
-            if (!saveBtn.innerText.includes('*')) {
-                saveBtn.innerText = "บันทึก";
-            }
+        if (typeof isUnsaved !== 'undefined' && isUnsaved) {
+            saveBtn.classList.add('unsaved');
+            saveBtn.innerText = "บันทึก*"; 
         } else {
-            saveBtn.classList.remove('unsaved'); // ปิดไฟสีส้ม กลับเป็นสีเขียว
+            saveBtn.classList.remove('unsaved');
             saveBtn.innerText = "บันทึก"; 
         }
     }
@@ -1057,6 +1129,16 @@ function sortDeck() {
 }
 
 async function exportToPNG() {
+    const btn = document.querySelector('button[onclick="exportToPNG()"]'); 
+// 1. เปลี่ยนจาก innerText เป็น innerHTML เพื่อเก็บ <i> tag ไว้ด้วย
+const originalContent = btn ? btn.innerHTML : ''; 
+
+if(btn) {
+    // 2. แสดงสถานะโหลด (ยังคงไอคอนไว้หรือเปลี่ยนเป็นข้อความชั่วคราวก็ได้)
+    btn.innerHTML = '⏳ กำลังสร้างรูป...'; 
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+}
     const exportArea = document.createElement('div');
     // บังคับความกว้าง 1920px สูงยืดหยุ่น (Min 1080px)
     exportArea.style.width = '1920px';
@@ -1137,18 +1219,40 @@ async function exportToPNG() {
 
     document.body.appendChild(exportArea);
 
+    // --- ฟังก์ชันหลักที่แก้ไขให้ฉลาดขึ้น ---
     const renderGroupedToGrid = (cardList, gridId, showBadge = true) => {
         const grid = document.getElementById(gridId);
         const grouped = getGroupedCards(cardList);
+
+        // เช็คว่าเป็น Localhost หรือไม่
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const currentBase = window.location.origin + window.location.pathname.replace('index.html', '');
 
         grouped.forEach(card => {
             const wrap = document.createElement('div');
             wrap.style.position = 'relative';
             wrap.style.width = '100%';
-            wrap.style.paddingBottom = '10px'; // เว้นที่ให้ Badge ด้านล่าง
+            wrap.style.paddingBottom = '10px';
+
+            let finalImageUrl = "";
+
+            if (isLocalhost) {
+                // 1. ถ้าอยู่บนเครื่องตัวเอง (Local) ให้ใช้ path ตรงๆ เลย (เร็วและไม่ติด CORS)
+                finalImageUrl = card.image;
+            } else {
+                // 2. ถ้าอยู่บนเว็บจริง (GitHub) ให้ใช้ Proxy เพื่อย่อรูป (ประหยัดเน็ตและแรม)
+                let cardImgPath = card.image;
+                if (cardImgPath.startsWith('/')) cardImgPath = cardImgPath.substring(1);
+                
+                // เช็คว่า path เป็น http อยู่แล้วหรือเป็น relative path
+                const absoluteImgUrl = cardImgPath.startsWith('http') ? cardImgPath : currentBase + cardImgPath;
+                const cleanUrl = absoluteImgUrl.replace(/^https?:\/\//, '');
+                
+                finalImageUrl = `https://images.weserv.nl/?url=${encodeURIComponent(cleanUrl)}&w=300&output=webp&q=85&il`;
+            }
 
             wrap.innerHTML = `
-                <img src="${card.image}" crossorigin="anonymous" style="display:block; width:100%; border-radius: 6px; border: 1px solid #333;">
+                <img src="${finalImageUrl}" crossorigin="anonymous" style="display:block; width:100%; border-radius: 6px; border: 1px solid #333;">
                 ${showBadge ? `
                     <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); 
                                 background: #e74c3c; color: white; padding: 2px 12px; border-radius: 6px; 
@@ -1158,6 +1262,7 @@ async function exportToPNG() {
             grid.appendChild(wrap);
         });
     };
+    // ------------------------------------
 
     renderGroupedToGrid(starterList, 'gridStarter', false);
     renderGroupedToGrid(mainList, 'gridMain', true);
@@ -1172,18 +1277,24 @@ async function exportToPNG() {
         const canvas = await html2canvas(exportArea, {
             useCORS: true,
             backgroundColor: '#121417',
-            scale: 1.5,
+            scale: 1, // ใช้ 1 ก็พอสำหรับ Local Test (ถ้าอยากชัดมากให้ปรับเป็น 1.5 หรือ 2 ตอนขึ้นเว็บจริง)
             width: 1920
         });
 
         const link = document.createElement('a');
         link.download = `Deck_${deckName}.jpg`;
-        link.href = canvas.toDataURL('image/jpeg', 1);
+        link.href = canvas.toDataURL('image/jpeg', 0.9);
         link.click();
     } catch (err) {
         console.error(err);
     } finally {
-        exportArea.remove();
+    exportArea.remove();
+    if(btn) {
+        // 3. คืนค่าด้วย innerHTML ไอคอน <i class="fa-solid fa-camera"></i> จะกลับมาแสดงผล
+        btn.innerHTML = originalContent; 
+        btn.disabled = false;
+        btn.style.opacity = "1";
+            }
     }
 }
 
@@ -1398,383 +1509,6 @@ function getDeckCoverURL() {
     return coverCard ? coverCard.image : (myDeck[0] ? myDeck[0].image : '');
 }
 
-
-
-///////////////////////ฟังก์ชั่นแผนภูมิ///////////////////////
-// --- 1. ฟังก์ชันเปิด/ปิดกราฟ ---
-const histogramBtn = document.getElementById('typeHistogramBtn');
-const histogramPanel = document.getElementById('typeHistogramPanel');
-
-histogramBtn.onclick = (e) => {
-    e.stopPropagation(); // ป้องกันบั๊คคลิกแล้วปิดทันที
-    const isOpen = histogramPanel.classList.toggle('open');
-    histogramBtn.style.transform = isOpen ? "rotate(180deg)" : "rotate(0deg)";
-    if (isOpen) renderTypeHistogram();
-};
-
-// --- 2. ฟังก์ชันปิดเมื่อคลิกที่ใดก็ตาม (ป้องกันบั๊ค) ---
-document.addEventListener('click', (e) => {
-    if (histogramPanel.classList.contains('open') && !histogramPanel.contains(e.target)) {
-        histogramPanel.classList.remove('open');
-        histogramBtn.style.transform = "rotate(0deg)";
-    }
-});
-
-// --- 3. ฟังก์ชันคำนวณและวาดกราฟ ---
-function bindHistogramEvent() {
-    const btn = document.getElementById('typeHistogramBtn');
-    if (btn) {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            isHistogramOpen = !isHistogramOpen; // สลับสถานะตัวแปร global
-            renderTypeHistogram(); // สั่งวาดตามสถานะใหม่
-        };
-    }
-}
-
-// แก้ไขบรรทัดแรกของฟังก์ชัน
-function renderTypeHistogram(forceRender = false) {
-    const histogramPanel = document.getElementById('typeHistogramPanel');
-    const histogramBtn = document.getElementById('typeHistogramBtn');
-    if (!histogramPanel || !histogramBtn) return;
-
-    // ตรวจสอบว่าควรแสดงผลไหม
-    if (isHistogramOpen || forceRender) {
-        histogramPanel.classList.add('open');
-        histogramBtn.style.transform = "rotate(180deg)";
-    } else {
-        histogramPanel.classList.remove('open');
-        histogramBtn.style.transform = "rotate(0deg)";
-        return; 
-    }
-
-    // --- ส่วนคำนวณ Logic (นับจำนวนจริง) ---
-    const mainDeckCards = myDeck.filter(c => {
-        const type = c.type || "";
-        return !type.includes('Fusion_Monster') && !type.includes('Armored_Dino') && !type.includes('Master')
-        && !type.includes('Boost_Creature')&& !type.includes('Illusion');
-    });
-
-    let totalCount = 0;
-    const stats = {};
-    mainDeckCards.forEach(card => {
-        // ดึงจำนวนจริงจาก card.count (สำคัญมากสำหรับ Real-time)
-        const count = card.count || 1; 
-        const type = card.type || "Other";
-        stats[type] = (stats[type] || 0) + count;
-        totalCount += count;
-    });
-
-    // --- ส่วนสร้าง HTML กราฟ ---
-    const colorMap = { 
-        'Creature': '#f7d08bfb', 
-        'Action': '#ff6b63', 
-        'Armor': '#adbbed', 
-        'Field': '#71e391' 
-    };
-
-    let html = `<div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; margin-bottom: 10px; font-size: 11px; color:#bdc3c7; display:flex; justify-content:space-between;">
-                    <span>สถิติ Main Deck</span>
-                    <span>รวม: ${totalCount} ใบ</span>
-                </div>`;
-
-    if (totalCount > 0) {
-        // เรียงลำดับชื่อประเภท และวาดแถบกราฟ
-        Object.keys(stats).sort().forEach(type => {
-            const count = stats[type];
-            const percentage = (count / totalCount) * 100;
-            const color = colorMap[type] || '#3498db';
-            
-            html += `
-                <div class="histogram-row">
-                    <div class="histogram-label">${type}</div>
-                    <div class="histogram-bar-container">
-                        <div class="histogram-bar-fill" style="width: ${percentage}%; background: ${color};"></div>
-                    </div>
-                    <div class="histogram-count">${count}</div>
-                </div>`;
-        });
-    } else {
-        html += '<p style="color:#666; text-align:center; font-size:12px; margin: 10px 0;">ไม่มีการ์ดใน Main Deck</p>';
-    }
-    
-    histogramPanel.innerHTML = html;
-}
-
-
-
-
-//////////////Global_Histogram_Logic/////////////
-document.addEventListener('click', (e) => {
-    const panel = document.getElementById('typeHistogramPanel');
-    const btn = document.getElementById('typeHistogramBtn');
-    
-    if (!isHistogramOpen || !panel || !btn) return;
-
-    // ตรวจสอบว่าจุดที่คลิกยังอยู่ในหน้าเว็บไหม (ถ้าไม่อยู่แสดงว่ามันคือปุ่มที่เพิ่งโดน Re-render ไป)
-    const isTargetStillInDoc = document.contains(e.target);
-    
-    const isClickInsidePanel = panel.contains(e.target);
-    const isClickOnBtn = btn.contains(e.target);
-
-    // ถ้าคลิกข้างนอกจริงๆ (และไม่ใช่การคลิกปุ่มที่หายไป) ถึงจะปิด
-    if (!isClickInsidePanel && !isClickOnBtn && isTargetStillInDoc) {
-        isHistogramOpen = false;
-        renderTypeHistogram();
-    }
-});
-
-
-/////////////////////////////////////Deck Showcase//////////////
-
-
-
-function openDeckShowcase() {
-    const overlay = document.getElementById('deckShowcaseOverlay');
-    const body = document.getElementById('showcaseBody');
-    const title = document.getElementById('showcaseTitle');
-    
-    if (!overlay || !body) return;
-
-isShowcaseEditMode = false;
-
-    // ดึงชื่อเด็คจาก Input
-    const deckName = document.getElementById('deckNameInput').value || "Unnamed Deck";
-    title.innerText = deckName;
-    
-    // 1. แยกกลุ่มการ์ด
-    const starterList = myDeck.filter(c => 
-        c.isCommander === true || 
-        c.type === "Master" || 
-        c.type === "Boost_Master"
-    );
-    const extraList = myDeck.filter(c => !c.isCommander && ["Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion"].includes(c.type));
-    
-    const mainList = myDeck.filter(c => 
-        !starterList.includes(c) && 
-        !extraList.includes(c)
-    );
-
-    // 2. ฟังก์ชันนับจำนวนซ้ำเพื่อโชว์เลข x2, x3
-    const getGrouped = (list) => {
-        return list.reduce((acc, card) => {
-            if (!acc[card.id]) {
-                acc[card.id] = { ...card, count: 0 };
-            }
-            acc[card.id].count++;
-            return acc;
-        }, {});
-    };
-
-    // 3. สร้างส่วนของสรุปตัวเลข (Stats Bar)
-    let finalHtml = `
-    <div style="position: sticky; top: 0; background: #1e1e2e; padding: 15px; border-radius: 12px; color: white; margin-bottom: 10px; display: flex; justify-content: space-around; border-bottom: 3px solid #6c5ce7; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
-        <div style="text-align:center;">
-            <span style="display:block; font-size:12px; color:#aaa;">STARTER</span>
-            <span style="font-size:20px; font-weight:bold; color:#ff9f43;">${starterList.length > 0 ? 1 : 0}</span>
-        </div>
-        <div style="text-align:center;">
-            <span style="display:block; font-size:12px; color:#aaa;">MAIN DECK</span>
-            <span style="font-size:20px; font-weight:bold; color:#00d2d3;">${mainList.length} <small style="font-size:12px; color:#666;">/ 60</small></span>
-        </div>
-        <div style="text-align:center;">
-            <span style="display:block; font-size:12px; color:#aaa;">EXTRA DECK</span>
-            <span style="font-size:20px; font-weight:bold; color:#54a0ff;">${extraList.length} <small style="font-size:12px; color:#666;">/ 15</small></span>
-        </div>
-    </div>`;
-
-    // 4. แทรกปุ่ม Toggle และ Dashboard สถิติ (เรียกใช้ฟังก์ชันที่คุณต้องการเพิ่ม)
-    finalHtml += `
-    <div style="text-align: right; margin-bottom: 15px;">
-        <button id="toggleMonitorBtn" onclick="toggleMonitor()" 
-                style="background: #6c5ce7; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: 'Kanit', sans-serif; font-size: 14px;">
-            📊 ดูสถิติเด็ค
-        </button>
-    </div>
-	
-    ${getDeckStatsHTML()} 
-    `;
-
-// --- 5. วนลูปสร้าง Section การ์ด (เวอร์ชันเสถียร) ---
-    const sections = [
-        { name: "STARTER / COMMANDER", data: getGrouped(starterList) },
-        { name: "MAIN DECK", data: getGrouped(mainList) },
-        { name: "EXTRA DECK", data: getGrouped(extraList) }
-    ];
-
-    sections.forEach(sec => {
-        const cards = Object.values(sec.data);
-        if (cards.length > 0) {
-            finalHtml += `<h3 style="color:#ff9f43; margin-top:30px; border-left: 4px solid #ff9f43; padding-left:10px; font-size:20px;">${sec.name}</h3>`;
-            finalHtml += `<div class="showcase-grid" id="grid-${sec.name.replace(/\s/g, '')}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px;">`;
-            
-            cards.forEach(card => {
-                const isStarter = sec.name === "STARTER / COMMANDER";
-                const countBadge = !isStarter 
-                    ? `<div class="showcase-count-badge" style="position: absolute; top: -5px; right: -5px; background: #ff4757; color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; z-index: 2;">x${card.count}</div>` 
-                    : "";
-
-                const imageUrl = card.image + (card.image.includes('?') ? '&' : '?') + 'not-tainted=1';
-
-finalHtml += `
-    <div class="showcase-card" 
-         data-card-id="${card.id}" 
-         style="position: relative; cursor: pointer; transition: opacity 0.2s;"> 
-        <img src="${imageUrl}" 
-             onclick="if(!window.isShowcaseEditMode) { typeof openModal === 'function' ? openModal('${card.id}') : showCardModal('${card.id}') }"
-             crossorigin="anonymous" 
-             onerror="this.removeAttribute('crossorigin'); this.src='${card.image}';"
-             style="width:100%; border-radius:8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: block;">
-        ${countBadge}
-        
-        <div class="showcase-controls" style="display: ${window.isShowcaseEditMode ? 'flex' : 'none'}; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border-radius: 20px; padding: 2px 10px; gap: 15px; border: 1px solid rgba(255,255,255,0.3); z-index:10;">
-            <div class="showcase-ctrl-btn minus" style="color:white; font-size:20px; font-weight:bold; cursor:pointer;" onclick="event.stopPropagation(); handleShowcaseUpdate('${card.id}', 'remove')">−</div>
-            <div class="showcase-ctrl-btn plus" style="color:white; font-size:20px; font-weight:bold; cursor:pointer;" onclick="event.stopPropagation(); handleShowcaseUpdate('${card.id}', 'add')">+</div>
-        </div>
-    </div>`;
-            });
-            finalHtml += `</div>`;
-        }
-    });
-
-    // แสดงผลลัพธ์
-    body.innerHTML = finalHtml;
-    overlay.style.display = 'block';
-    document.body.style.overflow = 'hidden'; 
-}
-
-function closeDeckShowcase() {
-    document.getElementById('deckShowcaseOverlay').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-//////////////////แผนภูมิละเอียด//////////
-
-function getDeckStatsHTML() {
-    const stats = {
-        type: {},
-        dp: { "0-2": 0, "3-4": 0, "5+": 0 }
-    };
-
-    myDeck.forEach(card => {
-        // นับประเภท (ไม่รวมใบที่เป็น Commander ถ้าคุณแยกไว้)
-        stats.type[card.type] = (stats.type[card.type] || 0) + 1;
-
-        // นับ DP (ถ้าเป็นการ์ด Creature)
-        if (card.type === "Creature") {
-            const dp = parseInt(card.dp);
-            if (dp <= 2) stats.dp["1-2"]++;
-            else if (dp <= 4) stats.dp["3-4"]++;
-            else stats.dp["5+"]++;
-        }
-    });
-    return stats;
-}
-
-
-// ฟังก์ชันสำหรับสลับการแสดงผลหน้า Dashboard สถิติ
-function toggleMonitor() {
-    const monitor = document.getElementById('deckMonitor');
-    const btn = document.getElementById('toggleMonitorBtn');
-    
-    if (monitor.style.display === 'none' || monitor.style.display === '') {
-        monitor.style.display = 'flex'; // หรือใช้ 'block' ตามความเหมาะสม
-        btn.innerText = "📊 ซ่อนสถิติเด็ค";
-        btn.style.background = "#ff4757"; // เปลี่ยนเป็นสีแดงตอนเปิด
-    } else {
-        monitor.style.display = 'none';
-        btn.innerText = "📊 ดูสถิติเด็ค";
-        btn.style.background = "#6c5ce7"; // กลับเป็นสีม่วงตอนปิด
-    }
-}
-
-function getDeckStatsHTML() {
-    // 1. กรองเฉพาะ Creature ใน Main Deck เพื่อนำมานับเผ่า
-    const creatureCards = myDeck.filter(c => 
-        c.type === "Creature" && 
-        !c.isCommander && 
-        !["Fusion_Monster", "Armored_Dino", "Boost_Creature"].includes(c.type)
-    );
-    
-    // 2. กำหนดคู่สีตามเผ่า
-    const clanColorMap = {
-        "สองขา": "#e74c3c",          // แดง
-        "คอยาว": "#9b59b6",          // ม่วง
-        "มีปีก": "#3498db",            // ฟ้า
-        "มีเขา": "#f1c40f",          // เหลือง
-        "สัตว์น้ำ": "#2980b9",        // น้ำเงิน
-        "มีเกราะหางหนาม": "#27ae60",  // เขียว
-        "จักรกล": "#95a5a6",         // เทา
-        "ไม่ระบุเผ่า": "#444444"      // สีเริ่มต้นกรณีไม่มีข้อมูล
-    };
-
-    // 3. นับจำนวนตามเผ่า
-    const clanCounts = {};
-    creatureCards.forEach(c => {
-        const clan = c.clan || "ไม่ระบุเผ่า";
-        clanCounts[clan] = (clanCounts[clan] || 0) + 1;
-    });
-
-    const totalCreatures = creatureCards.length || 1;
-    const sortedClans = Object.entries(clanCounts).sort((a, b) => b[1] - a[1]);
-
-    // 4. สร้าง conic-gradient สำหรับ Donut Chart
-    let currentPercent = 0;
-    const gradientSlices = sortedClans.map((clan) => {
-        const clanName = clan[0];
-        const color = clanColorMap[clanName] || "#ffffff"; 
-        const percent = (clan[1] / totalCreatures) * 100;
-        const start = currentPercent;
-        currentPercent += percent;
-        return `${color} ${start}% ${currentPercent}%`;
-    }).join(", ");
-
-    // 5. ข้อมูล DP Curve (ปรับปรุงให้นับ DP 0 และโชว์ครบ 0-8)
-    const dpCurve = new Array(9).fill(0); 
-    creatureCards.forEach(c => {
-        const val = parseInt(c.dp) || 0; 
-        if(val >= 0 && val <= 8) dpCurve[val]++;
-    });
-    const maxCount = Math.max(...dpCurve, 1); 
-
-    return `
-    <div id="deckMonitor" style="display:none; background: rgba(20, 20, 35, 0.95); border: 1px solid #6c5ce7; border-radius: 15px; padding: 25px; margin-bottom: 25px; flex-wrap: wrap; gap: 30px; justify-content: space-around; animation: fadeIn 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        
-        <div style="text-align: center; min-width: 200px;">
-            <h4 style="color:#00cec9; margin:0 0 15px 0;">🐾 Creature Clans</h4>
-            <div style="position: relative; width: 130px; height: 130px; margin: 0 auto 15px auto; border-radius: 50%; 
-                        background: conic-gradient(${gradientSlices || "#444 0% 100%"}); display: flex; align-items: center; justify-content: center;">
-                <div style="width: 80px; height: 80px; background: #141423; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <span style="font-size: 20px; font-weight: bold; color: white;">${creatureCards.length}</span>
-                    <span style="font-size: 9px; color: #888;">CREATURES</span>
-                </div>
-            </div>
-            <div style="text-align: left; font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                ${sortedClans.map((clan) => {
-                    const color = clanColorMap[clan[0]] || "#ffffff";
-                    return `
-                    <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        <span style="color:${color};">●</span> ${clan[0]}: ${clan[1]}
-                    </div>`;
-                }).join('')}
-            </div>
-        </div>
-
-        <div style="min-width: 250px; flex-grow: 1;">
-            <h4 style="color:#ff9f43; margin:0 0 15px 0;">📊 DP Curves (Creature)</h4>
-            <div style="display: flex; align-items: flex-end; height: 100px; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid #444;">
-                ${dpCurve.map((count, i) => `
-                    <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
-                        <div style="width: 100%; background: linear-gradient(to top, #08ba2f, #1cff54); height: ${(count/maxCount)*80}px; border-radius: 4px 4px 0 0; position:relative; transition: height 0.5s ease;">
-                            <span style="position:absolute; top:-20px; width:100%; text-align:center; font-size:11px; font-weight:bold; color:#a29bfe;">${count > 0 ? count : ''}</span>
-                        </div>
-                        <span style="font-size:10px; color:#aaa; margin-top:8px;">DP${i}</span>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    </div>`;
-}
-
 //////////////////
 
 // ฟังก์ชันจัดการการกดปุ่มคอลเล็คชั่น
@@ -1900,6 +1634,93 @@ function handleShowcaseUpdate(cardId, action) {
         // เอฟเฟกต์ Feedback
         cardEl.style.opacity = newTotalCount === 0 ? "0.4" : "1";
     });
+}
+// ฟังก์ชันสำหรับวาดกราฟสถิติประเภทการ์ด
+// ฟังก์ชันสำหรับวาดกราฟสถิติประเภทการ์ด (เวอร์ชั่นอัปเดต: นับเฉพาะ Main Deck)
+function renderTypeHistogram() {
+    const panel = document.getElementById('typeHistogramPanel');
+    if (!panel) return;
+
+    if (!isHistogramOpen) {
+        panel.classList.remove('open');
+        return;
+    }
+
+    panel.classList.add('open');
+
+    // 1. ข้อมูลพื้นฐาน
+    const targetTypes = ['Creature', 'Action', 'Armor', 'Field'];
+    const mainDeckCards = myDeck.filter(card => targetTypes.includes(card.type));
+    const totalMainCards = mainDeckCards.length;
+
+    // 2. แผนผังสี (Constants)
+    const typeColors = {
+        'Creature': '#f1c40f', // สีเหลือง (พื้นฐานกรณีไม่มีเผ่า)
+        'Action': '#e74c3c',   // สีแดง
+        'Armor': '#3498db',    // สีน้ำเงิน
+        'Field': '#2ecc71'     // สีเขียว
+    };
+
+    const clanColorMap = {
+        "สองขา": "#e74c3c", "คอยาว": "#9b59b6", "มีปีก": "#3fbffa",
+        "มีเขา": "#f1c40f", "สัตว์น้ำ": "#1a46e6", "มีเกราะหางหนาม": "#27ae60",
+        "จักรกล": "#95a5a6", "ไม่ระบุเผ่า": "#444444"
+    };
+
+    // 3. สร้าง HTML
+    let html = `
+
+        <div class="histogram-container">
+    `;
+
+    if (totalMainCards === 0) {
+        html += `<p style="text-align:center; color:#7f8c8d; font-size: 14px;">ยังไม่มีการ์ดในเด็ค</p>`;
+    } else {
+        targetTypes.forEach(type => {
+            const cardsInType = mainDeckCards.filter(c => c.type === type);
+            const count = cardsInType.length;
+            const percentage = (count / totalMainCards) * 100;
+            
+            let barBackground = typeColors[type]; // สีพื้นฐาน
+
+            // --- พิเศษ: คำนวณ Multi-color สำหรับ Creature ---
+            if (type === 'Creature' && count > 0) {
+                const clanStats = {};
+                cardsInType.forEach(c => {
+                    const clan = c.clan || "ไม่ระบุเผ่า";
+                    clanStats[clan] = (clanStats[clan] || 0) + 1;
+                });
+
+                let currentPos = 0;
+                const gradientParts = [];
+                const sortedClans = Object.entries(clanStats).sort((a, b) => b[1] - a[1]);
+
+                sortedClans.forEach(([clanName, clanCount]) => {
+                    const clanPercent = (clanCount / count) * 100;
+                    const color = clanColorMap[clanName] || clanColorMap["ไม่ระบุเผ่า"];
+                    gradientParts.push(`${color} ${currentPos}% ${currentPos + clanPercent}%`);
+                    currentPos += clanPercent;
+                });
+                
+                barBackground = `linear-gradient(to right, ${gradientParts.join(', ')})`;
+            }
+
+            html += `
+                <div class="hist-row">
+                    <div class="hist-label">
+                        <span style="font-size:12px;">${type} :</span>
+                        <span style="font-size:12px;">${count}</span>
+                    </div>
+                    <div class="hist-bar-bg">
+                        <div class="hist-bar-fill" style="width: ${percentage}%; background: ${barBackground};"></div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += `</div>`;
+    panel.innerHTML = html;
 }
 
 // =========================================================

@@ -170,23 +170,16 @@ function renderCards(cards) {
         // --- 2. สร้าง Badge Html (ถ้าอยู่ในโหมดแก้ไข) ---
         let badgeHtml = '';
         if (showBadges) {
-            // สไตล์พื้นฐานของ Badge
-            const badgeStyle = "position: absolute; top: 0; left: 0; width: 50px; height: 50px; z-index: 800; pointer-events: none;";
-            
             if (isPermanentlyBanned) {
-                badgeHtml = `<img src="images/icon_ban.png" 
-                             style="${badgeStyle}" 
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-                             alt="Banned">
-                             <div style="display:none; ${badgeStyle} background:rgba(255,0,0,0.8); color:white; font-weight:bold; align-items:center; justify-content:center; border-radius:4px 0 4px 0; font-size:12px;">BAN</div>`;
+                // ใช้ class "status-badge" แทน style ยาวๆ
+                badgeHtml = `<img src="images/icon_ban.png" class="status-badge" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Banned"><div class="status-badge-fallback ban">BAN</div>`;
             } 
-            // แก้ไขตรงนี้: เช็ค isBanlistLimited แทน dynamicMaxLimit === 1
             else if (isBanlistLimited) { 
                 badgeHtml = `<img src="images/icon_limit1.png" 
-                             style="${badgeStyle}" 
+                             class="status-badge"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
                              alt="Limit 1">
-                             <div style="display:none; ${badgeStyle} background:rgba(218, 165, 32, 0.9); color:white; font-weight:bold; align-items:center; justify-content:center; border-radius:4px 0 4px 0; font-size:14px; border:2px solid white;">1</div>`;
+                             <div class="status-badge-fallback limit">1</div>`;
             }
         }
 
@@ -321,12 +314,18 @@ function renderCards(cards) {
         };
 
         cardImg.oncontextmenu = (e) => {
+            // สำคัญ: บรรทัดนี้จะกันไม่ให้เมนู save รูปเด้งขึ้นมา
+            e.preventDefault(); 
+            e.stopPropagation();
+            
+            cancelPress(); // ยกเลิกการกดค้าง (Logic เดิม)
+
+            // ทำงาน Logic เพิ่มการ์ดตามปกติ
             const sidePanel = document.getElementById('deckSidePanel');
-            if (sidePanel && sidePanel.classList.contains('open')) {
-                e.preventDefault();
-                e.stopPropagation();
-                cancelPress();
-                
+            const isPcEditing = sidePanel && sidePanel.classList.contains('open');
+            const isMobileEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
+
+            if (isPcEditing || isMobileEditMode) {
                 if (typeof handleQuickMultiAdd === 'function') {
                     handleQuickMultiAdd(e, card);
                 }

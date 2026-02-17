@@ -2,22 +2,34 @@
 // ไฟล์แยกสำหรับจัดการ Quick Multi-Add (Double Click/Tap)
 // =========================================================
 
-// ฟังก์ชันจัดการ Visual Feedback
+// ฟังก์ชันจัดการ Visual Feedback (แก้ไขแล้ว: รองรับ Custom Object และ Null)
 function showQuickFeedback(e, text, color = "#f1c40f") {
     const feedback = document.createElement('div');
     feedback.className = 'floating-feedback';
     feedback.innerText = text;
     feedback.style.color = color;
 
-    // รองรับทั้ง Mouse Event และ Touch Event
     let x, y;
-    if (e.type.startsWith('touch')) {
+
+    // 1. กรณีไม่ได้ส่ง e มาเลย (null/undefined) -> ให้แสดงกลางจอ
+    if (!e) {
+        x = window.innerWidth / 2;
+        y = window.innerHeight / 2;
+    } 
+    // 2. กรณีเป็น Touch Event (เช็คว่ามี type และขึ้นต้นด้วย touch)
+    else if (e.type && e.type.startsWith('touch')) {
         x = e.touches[0].clientX;
         y = e.touches[0].clientY;
-    } else {
+    } 
+    // 3. กรณีเป็น Mouse Event หรือ Custom Object {clientX, clientY} จาก main.js
+    else {
         x = e.clientX;
         y = e.clientY;
     }
+
+    // กันเหนียว: ถ้าค่าเป็น NaN หรือ undefined ให้ใช้ค่ากลางจอ
+    if (isNaN(x) || x === undefined) x = window.innerWidth / 2;
+    if (isNaN(y) || y === undefined) y = window.innerHeight / 2;
 
     feedback.style.left = `${x}px`;
     feedback.style.top = `${y}px`;

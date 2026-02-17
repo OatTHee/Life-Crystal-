@@ -54,7 +54,10 @@ function toggleMobileDeckMode() {
         body.classList.remove('edit-mode-on');
         // ...
     }
-
+    
+if (typeof renderCards === 'function' && typeof currentFilteredCards !== 'undefined') {
+        renderCards(currentFilteredCards);
+    }
     console.log("Current Edit Mode:", isEditMode); // ลองใส่เพื่อเช็คใน Console ของมือถือ
 }
 

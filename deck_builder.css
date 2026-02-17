@@ -842,3 +842,47 @@ body.panel-open .add-to-deck-btn {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
+
+/* ไฟล์: responsive.css หรือ deck_builder.css */
+
+/* 1. ป้องกันการกดแช่แล้วขึ้นเมนู Save รูป (สำคัญมากสำหรับมือถือ) */
+.card-img-btn {
+    -webkit-touch-callout: none !important; /* iOS Safari */
+    -webkit-user-select: none !important;   /* Safari */
+    -khtml-user-select: none !important;    /* Konqueror HTML */
+    -moz-user-select: none !important;      /* Old Firefox */
+    -ms-user-select: none !important;       /* Internet Explorer/Edge */
+    user-select: none !important;           /* Non-prefixed version */
+}
+
+/* 2. สไตล์ของ Badge (ค่าเริ่มต้นสำหรับ PC) */
+.status-badge {
+    position: absolute;
+            width: 95px !important;
+        height: 80px !important;
+    top: -5px;      /* ขยับให้อยู่มุมสวยๆ */
+    right: -5px;
+    z-index: 800;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Fallback กรณีรูปไม่โหลด */
+.status-badge-fallback {
+    display: none;
+    position: absolute;
+    top: 0; right: 0;
+    width: 40px; height: 40px;
+    z-index: 800;
+    pointer-events: none;
+    color: white;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 12px;
+    border: 2px solid white;
+}
+.status-badge-fallback.ban { background: rgba(255,0,0,0.9); }
+.status-badge-fallback.limit { background: rgba(218, 165, 32, 0.9); }
+

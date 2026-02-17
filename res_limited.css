@@ -1,0 +1,23 @@
+/* responsive.css (วางไว้ล่างสุดของไฟล์) */
+
+@media (max-width: 768px) {
+    /* เพิ่ม .card นำหน้า เพื่อเพิ่มพลังให้ Selector ชนะของ PC */
+    .card .status-badge, 
+    .deck-item .status-badge {
+        width: 58px !important;
+        height: 58px !important;
+        top: 0px !important;    /* ขยับเข้ามานิดนึงให้สวย */
+        right: 0px !important;
+    }
+    
+    .card .status-badge-fallback,
+    .deck-item .status-badge-fallback {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 9px !important;
+        line-height: 20px !important;
+        top: 2px !important;
+        right: 2px !important;
+        border-width: 1px !important; /* ลดความหนาขอบลงหน่อย */
+    }
+}

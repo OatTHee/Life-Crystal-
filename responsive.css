@@ -189,6 +189,7 @@
 
 /* --- จัดระเบียบ Filter Bar บนมือถือ --- */
 @media (max-width: 768px) {
+
     /* จัดเรียง Container หลักเป็นแนวตั้ง */
     .controls {
         display: flex;
@@ -254,7 +255,6 @@
 /* --- วางไว้บรรทัดล่างสุดของ responsive.css --- */
 
 @media screen and (max-width: 768px) {
-    
     /* สั่งซ่อนปุ่มทุกปุ่มที่มี class modal-nav-btn ที่อยู่ใน #imageModal */
     #imageModal .modal-nav-btn,
     #imageModal button.modal-nav-btn {

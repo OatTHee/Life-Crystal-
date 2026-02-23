@@ -145,7 +145,7 @@ function toggleMonitor() {
 }
 
 // =========================================================
-//  STATS CALCULATION (Updated: Curve Graphs)
+//  STATS CALCULATION (Updated: Curve Graphs Fixed)
 // =========================================================
 
 function getDeckStatsHTML() {
@@ -210,7 +210,7 @@ function getDeckStatsHTML() {
         return `${color} ${start}% ${currentPercent}%`;
     }).join(", ");
 
-    // 6. ข้อมูล DP Curves (ปรับปรุงใหม่ตามคำขอ)
+    // 6. ข้อมูล DP Curves
     const getCurveData = (list) => {
         const curve = new Array(9).fill(0); // 0 ถึง 8
         list.forEach(c => {
@@ -238,7 +238,7 @@ function getDeckStatsHTML() {
     }
     .stats-col {
         flex: 1;
-        min-width: 280px; /* ลดลงเพื่อให้ลงตัวในมือถือขนาดเล็ก */
+        min-width: 280px; 
     }
     .stats-col-wide {
         flex: 1.5;
@@ -246,7 +246,7 @@ function getDeckStatsHTML() {
     }
     .curve-container {
         flex: 2;
-        min-width: 100%; /* เปลี่ยนจาก 420px เป็น 100% เพื่อให้ยืดหดตามจอ */
+        min-width: 100%; 
         display: flex;
         flex-direction: column;
         gap: 15px;
@@ -324,11 +324,15 @@ function getDeckStatsHTML() {
                 <div class="curve-container">
                     <div>
                         <span style="font-size: 14px; color: #f1c40f;">📊 Creature Curves (DP)</span>
-                        <div style="display: flex; align-items: flex-end; height: 50px; gap: 8px; border-bottom: 2px solid #00ff15; padding-bottom:4px; margin-top:10px;">
+                        <div style="display: flex; align-items: flex-end; height: 80px; gap: 8px; border-bottom: 2px solid #00ff15; padding-bottom:4px; margin-top:10px;">
                             ${creatureCurve.map((count, i) => `
                                 <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
                                     <span style="font-size:11px; color:#fff; font-weight:bold; margin-bottom:2px;">${count > 0 ? count : ''}</span>
-                                    <div style="width:100%; background:#f1c40f; height:${(count/maxVal)*100}%; border-radius:2px 2px 0 0; min-height:1px; opacity: ${count > 0 ? 1 : 0.3};"></div>
+                                    
+                                    <div style="width: 100%; height: 50px; display: flex; align-items: flex-end;">
+                                        <div style="width:100%; background:#f1c40f; height:${(count/maxVal)*100}%; border-radius:2px 2px 0 0; min-height:2px; opacity: ${count > 0 ? 1 : 0.3}; transition: height 0.4s ease-out;"></div>
+                                    </div>
+
                                     <span style="font-size:11px; color:#00ff15; margin-top:2px;">${i}</span>
                                 </div>
                             `).join('')} 
@@ -337,11 +341,15 @@ function getDeckStatsHTML() {
 
                     <div>
                         <span style="font-size: 14px; color: #e74c3c;">🪄 Magic Curves (DP)</span>
-                        <div style="display: flex; align-items: flex-end; height: 50px; gap: 8px; border-bottom: 2px solid #00ff15; padding-bottom:4px; margin-top:10px;">
+                        <div style="display: flex; align-items: flex-end; height: 80px; gap: 8px; border-bottom: 2px solid #00ff15; padding-bottom:4px; margin-top:10px;">
                             ${magicCurve.map((count, i) => `
                                 <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
                                     <span style="font-size:11px; color:#fff; font-weight:bold; margin-bottom:2px;">${count > 0 ? count : ''}</span>
-                                    <div style="width:100%; background:#e74c3c; height:${(count/maxVal)*100}%; border-radius:2px 2px 0 0; min-height:1px; opacity: ${count > 0 ? 1 : 0.3};"></div>
+                                    
+                                    <div style="width: 100%; height: 50px; display: flex; align-items: flex-end;">
+                                        <div style="width:100%; background:#e74c3c; height:${(count/maxVal)*100}%; border-radius:2px 2px 0 0; min-height:2px; opacity: ${count > 0 ? 1 : 0.3}; transition: height 0.4s ease-out;"></div>
+                                    </div>
+
                                     <span style="font-size:11px; color:#00ff15; margin-top:2px;">${i}</span>
                                 </div>
                             `).join('')}

@@ -136,11 +136,10 @@
         rarity:"Promo",
 
     ability: `<span class="hlabi">Effect :</span> <br> 
+    • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาาม : ค้นเด็ค > หา Field เฉพาะเผ่ามีปีก 1 ใบขึ้นมือ > สับเด็ค.<br>
     • <span class="hlauto">Auto</span> เมื่อออกจากสนาม, หาก Master เราชื่อ <span class="hlkw">"Keiko"</span> :
-     ค้นเด็ค > หาการ์ด <span class="hlkw">"Tornado"</span> 1 ใบขึ้นมือ จากนั้นสับเด็ค. <br> 
-    • <span class="hlauto">Auto</span> <span class="hlkw">[นอกเกม]</span> เมื่อ Creature ที่การ์ดนี้
-    ทำการบูสตกสุสานจากสนาม, สามารถทิ้งการ์ด 1 ใบ : ค้นเด็ค > หา Magic เฉพาะเผ่ามีปีก 1 ใบ ขึ้นมือได้ > 
-    สับเด็ค. 
+     สามารถทิ้ง Action 1 ใบ ถ้าทิ้ง, ค้นเด็ค/สุสานเรา > หาการ์ด <span class="hlkw">"Tornado"</span> 1 ใบขึ้นมือ > 
+     ถ้าค้นจากเด็คให้สับเด็ค.
 <br><br> 
     <span class="hlrm"><span class="hlmanual">Manual</span> [เมนเฟสเรา][นอกเกม] [รีมูฟ] "Tupuxuara" ในสุสานเรา 1 
     ใบ : นำการ์ดนี้จากนอกเกมกลับ <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]</span>

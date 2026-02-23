@@ -56,7 +56,7 @@ const BoostMaster2Data = [
     dp: 1,
     type: "Boost_Creature",
     set: "บููสมาสเตอร์2",
-    clan: ["เผ่าคอยาว"],
+    clan: ["คอยาว"],
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม : นำ Creature เผ่าคอยาว ในเด็คเรา 1 ใบเข้าสุสาน > สับเด็ค. <br> • <span class="hlcont">Cont.</span> ตราบที่อยู่บนสนาม, หาก Master เราชื่อ [Irina], Creature เผ่าคอยาว ในสุสานของเราไม่สามารถถูกนำออกจากเกมได้.`,
     image: "images/Fanmade/Boost2/Jobaria.png"
 },

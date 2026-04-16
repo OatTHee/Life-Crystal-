@@ -2,7 +2,8 @@ const cardsData = [...C_originalData,...MG_originalData,...CharacterData, ...C_E
     ...MG_enigmaData,...C_NewmasterData,
 ...MG_newmasterData, ...C_StepNextData, ...MS_newmasterData, ...MG_StepNextData,
  ...ReEnigmaData, ...MG_AR1Data, ...Armored_DinoData,
-...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...icefireData,...Boost5Data, ]; 
+...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...Boost5Data, ...icefireData, 
+...Boost6Data, ]; 
 
 let myDeck = JSON.parse(localStorage.getItem('dinomaster_deck')) || [];
 let currentFilteredCards = cardsData;
@@ -153,8 +154,8 @@ function openModal(cardOrId) {
         const typeMapping = {
             "Creature": "ครีเจอร์", "Action": "แอ็คชั่น", "Armor": "อาร์เมอร์",
             "Fusion_Monster": "ฟิวชั่นมอนสเตอร์", "Armored_Dino" : "ครีเจอร์ติดเกราะ",
-            "Field": "ฟิลด์", "Master": "มาสเตอร์", "Boost_Master": "บูสมาสเตอร์", "Boost_Creature": "บููสครีเจอร์",
-            "Action_Field":"แอคชั่น [รูปแบบ:พื้นที่]","Illusion":"อิลูชั่น"
+            "Field": "ฟิลด์", "Master": "มาสเตอร์", "Boost_Master": "บูสมาสเตอร์", "Boost_Creature": "บูสครีเจอร์",
+            "Action_Field":"แอคชั่น [รูปแบบ:พื้นที่]","Illusion":"อิลูชั่น","LC":"ไลฟ์คริสตัล"
         };
 
         const displayTypes = card.type ? card.type.split(' ').map(t => typeMapping[t] || t).join(' / ') : '-';
@@ -633,6 +634,113 @@ function limitedSearch() {
         );
     }
 }
+
+// ==========================================
+// ✨ ระบบ SHARE & IMPORT DECK LINK
+// ==========================================
+
+// 1. ฟังก์ชันสำหรับสร้าง Link และคัดลอกลง Clipboard
+function copyDeckLink() {
+    if (myDeck.length === 0) {
+        alert("กรุณาเลือกการ์ดลงเด็คก่อนแชร์ครับ");
+        return;
+    }
+
+    // รวบรวมข้อมูล: {id: count, isCommander: true/false}
+    // รูปแบบข้อมูลสั้นๆ: "ID:Count:isCmd"
+    const deckData = myDeck.reduce((acc, card) => {
+        const found = acc.find(item => item.id === card.id);
+        if (found) {
+            found.count++;
+            if (card.isCommander) found.isCmd = 1;
+        } else {
+            acc.push({ id: card.id, count: 1, isCmd: card.isCommander ? 1 : 0 });
+        }
+        return acc;
+    }, []);
+
+    const shareString = deckData.map(item => `${item.id}|${item.count}|${item.isCmd}`).join(',');
+    
+    // เข้ารหัส Base64 เพื่อให้ URL ไม่เสียรูป
+    const encodedDeck = btoa(encodeURIComponent(shareString));
+    const finalUrl = `${window.location.origin}${window.location.pathname}?deck=${encodedDeck}`;
+
+    // คัดลอกลง Clipboard
+    navigator.clipboard.writeText(finalUrl).then(() => {
+        if (typeof showQuickFeedback === 'function') {
+            showQuickFeedback({clientX: window.innerWidth/2, clientY: 50}, "คัดลอกลิงก์เด็คแล้ว!", "#2ecc71");
+        } else {
+            alert("คัดลอกลิงก์เด็คเรียบร้อยแล้ว!");
+        }
+    });
+}
+
+// 2. ฟังก์ชันสำหรับแกะรหัสเด็คจาก String
+function processImport(encodedData) {
+    try {
+        const decodedString = decodeURIComponent(atob(encodedData));
+        const cardRows = decodedString.split(',');
+        
+        let newDeck = [];
+        cardRows.forEach(row => {
+            const [id, count, isCmd] = row.split('|');
+            const cardTemplate = cardsData.find(c => String(c.id) === String(id));
+            
+            if (cardTemplate) {
+                for (let i = 0; i < parseInt(count); i++) {
+                    // สร้าง Object ใหม่จากการ์ดต้นแบบ
+                    let cardToAdd = { ...cardTemplate };
+                    if (i === 0 && isCmd === "1") {
+                        cardToAdd.isCommander = true;
+                    }
+                    newDeck.push(cardToAdd);
+                }
+            }
+        });
+
+        if (newDeck.length > 0) {
+            myDeck = newDeck;
+            saveDeckToLocalStorage();
+            updateDeckUI();
+            if (typeof renderCards === 'function') renderCards(currentFilteredCards);
+            return true;
+        }
+    } catch (e) {
+        console.error("Import Error:", e);
+        return false;
+    }
+}
+
+// 3. ฟังก์ชันปุ่มกด Manual Import
+function importDeckPrompt() {
+    const link = prompt("วางลิงก์เด็ค หรือรหัสเด็คที่ได้รับมาที่นี่:");
+    if (!link) return;
+
+    let code = link;
+    if (link.includes("?deck=")) {
+        code = link.split("?deck=")[1];
+    }
+
+    if (processImport(code)) {
+        alert("นำเข้าเด็คสำเร็จ!");
+    } else {
+        alert("รหัสเด็คไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+    }
+}
+
+// 4. ตรวจสอบ URL เมื่อโหลดหน้าเว็บ (Auto-Import)
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const deckParam = urlParams.get('deck');
+
+    if (deckParam) {
+        if (confirm("พบข้อมูลเด็คจากลิงก์ คุณต้องการโหลดเด็คนี้แทนที่เด็คปัจจุบันหรือไม่?")) {
+            processImport(deckParam);
+            // ล้าง URL parameter เพื่อไม่ให้เด้งถามซ้ำตอน Refresh
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+});
 
 // 5. Event Listeners
 searchInput.addEventListener('input', filterCards);

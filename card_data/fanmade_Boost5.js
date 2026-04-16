@@ -5,7 +5,7 @@
     nameEN: "Dravidosaurus",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "มีเกราะหางหนาม",
         rarity:"Promo",
 
@@ -25,7 +25,7 @@
     nameEN: "Aletopelta biibeyhallorum",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "มีเกราะหางหนาม",
         rarity:"Promo",
 
@@ -49,14 +49,14 @@
     nameEN: "Cedarpelta plicatospineus",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "มีเกราะหางหนาม",
         rarity:"Promo",
     ability: `<span class="hlabi">Effect :</span> <br> 
     • <span class="hlcont">Cont.</span> จำนวนการ <span class="hlkw">[ผลาญกอง]</span> คู่แข่งจากผลสำแดงของเรา +1 นอกจากนั้น, 
     Creature มีเกราะหางหนาม ของเรา SH + (200 x X) (X = จำนวนครั้งที่คู่แข่งถูก [ผลาญกอง] ในเทิร์นเรา) 
     (รีเซ็ตค่า SH นี้เมื่อเข้าเทิร์นเรา). <br> 
-    • <span class="hlauto">Auto</span> [เทิร์นของเรา] เมื่อคู่แข่งถูก [ผลาญกอง] : เรารับ 1 DP. <br> 
+    • <span class="hlauto">Auto</span> <span class="hloneper">เทิร์นละครั้ง</span> [เทิร์นของเรา] เมื่อคู่แข่งถูก [ผลาญกอง] : เรารับ 1 DP. <br> 
     • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม : [สำรวจกอง (5)] > นำ Creature 
     <span class="hlkw">[Gastonia]</span> หรือ <span class="hlkw">[Pelta]</span> 1 ใบจากที่แสดงเข้าสนามทันที > การ์ดที่เหลือเรียงไว้ใต้เด็ค
     <br><br>
@@ -71,7 +71,7 @@
     nameEN: "Sinraptor",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "สองขา",
         rarity:"Promo",
     ability: `<span class="hlabi">Effect :</span> <br> 
@@ -91,7 +91,7 @@
     nameEN: "Utharaptor / Plug Utharaptor",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "สองขา",
         rarity:"Promo",
 
@@ -113,7 +113,7 @@
     nameEN: "Eoraptor",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "สองขา",
         rarity:"Promo",
 
@@ -131,7 +131,7 @@
     nameEN: "Tupuxuara / Neo Tupuxuara",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "มีปีก",
         rarity:"Promo",
 
@@ -152,7 +152,7 @@
     nameEN: "Hybodus / Hybodus Red",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "สัตว์น้ำ",
         rarity:"Promo",
 
@@ -174,7 +174,7 @@
     nameEN: "Therizinosaurus / Shine Therizinosaurus",
     dp: 1,
     type: "Boost_Creature",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "สองขา",
     rarity:"Promo",
     ability: `<span class="hlabi">Effect :</span> <br> 
@@ -199,7 +199,7 @@
     nameEN: "Chen",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     rarity:"Promo",
     ability: `
     <span style="color:#E8AB00;">ใช้การ์ดนี้ได้ต่อเมื่อเด็คเราไม่มี Creature อื่นนอกจากเผ่าสัตว์น้ำ และ/หรือคอยาว</span>
@@ -221,7 +221,7 @@
     nameEN: "Keiko",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     rarity:"Promo",
     ability: `<span style="color:#E8AB00;">ใช้การ์ดนี้ได้ต่อเมื่อเด็คเราไม่มี Creature อื่นนอกจากเผ่ามีปีก และ/หรือสองขา</span>
     <br><br>
@@ -245,7 +245,7 @@
     nameEN: "Shino",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     rarity:"Promo",
     ability: `<span class="hlabi">CP Charge :</span> <br> 
     <span class="hlkw">[การ์ดของเรา], [มีคำว่า [Megatech] ในชื่อ / Creature& สองขา ] [ร่ายสำเร็จ / 
@@ -271,7 +271,7 @@
     nameEN: "Touch",
     dp: "ไร้DP",
     type: "Boost_Master",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     rarity:"Promo",
     ability: `
     <span class="hlabi">CP Charge :</span> <br> 
@@ -300,7 +300,7 @@
     nameEN: "Megatech T Rex",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "เปลี่ยนเกลือเป็นทอง2",
+    set: "PR06",
     clan: "สองขา, จักรกล",
         rarity:"Promo",
     ability: `<span class="hloneper">ไม่ซ้ำซ้อน</span> <span style="color:#E8AB00;">[เอ็กซ์ตร้าเด็ค]

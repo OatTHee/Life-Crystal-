@@ -1,30 +1,58 @@
-// ฟังก์ชันรวบรวมข้อมูลเด็คเพื่อส่งให้ AI
+// ai_deck.js
+
+// 1. ฟังก์ชันล้างข้อความขยะจาก HTML
+const cleanAbilityText = (input) => {
+    if (!input || typeof input !== 'string') return "ไม่มีความสามารถพิเศษ";
+    return input
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]*>?/gm, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+};
+
+// 2. ฟังก์ชันเตรียมข้อมูลเด็ค
 function prepareAIData() {
-    const mainList = myDeck.filter(c => !c.isCommander && !["Master", "Boost_Master"].includes(c.type));
-    const commander = myDeck.find(c => c.isCommander);
-    const master = myDeck.find(c => c.type === "Master" || c.type === "Boost_Master");
+    try {
+        if (typeof myDeck === 'undefined') throw new Error("ไม่พบตัวแปร myDeck");
 
-    // สร้างลิสต์รายชื่อการ์ดและจำนวน
-    const cardSummary = {};
-    mainList.forEach(c => {
-        cardSummary[c.nameTH] = (cardSummary[c.nameTH] || 0) + 1;
-    });
+        const validDeck = myDeck.filter(c => c !== null && c !== undefined);
+        const mainList = validDeck.filter(c => !c.isCommander && !["Master", "Boost_Master", "LC"].includes(c.type));
+        const commander = validDeck.find(c => c.isCommander);
+        const master = validDeck.find(c => c.type === "Master" || c.type === "Boost_Master");
 
-    const deckString = Object.entries(cardSummary)
-        .map(([name, count]) => `- ${name} x${count}`)
-        .join("\n");
+        const cardSummary = {};
+        mainList.forEach(c => {
+            const id = c?.id || "unknown";
+            if (!cardSummary[id]) {
+                cardSummary[id] = {
+                    name: c?.nameTH || "การ์ดไม่มีชื่อ",
+                    count: 1,
+                    type: c?.type || "-",
+                    clan: c?.clan || "-",
+                    ability: cleanAbilityText(c?.ability)
+                };
+            } else {
+                cardSummary[id].count++;
+            }
+        });
 
-    return {
-        commander: commander ? commander.nameTH : "ไม่ได้เลือก",
-        master: master ? master.nameTH : "ไม่ได้เลือก",
-        totalCards: mainList.length,
-        deckList: deckString
-    };
+        const deckString = Object.values(cardSummary)
+            .map(c => `- ${c.name} x${c.count} [${c.type}/${c.clan}] เอฟเฟกต์: ${c.ability}`)
+            .join("\n");
+
+        return {
+            deckList: deckString || "ยังไม่มีการ์ดในเด็คหลัก",
+            commanderInfo: commander ? `${commander.nameTH} (${cleanAbilityText(commander.ability)})` : "ไม่ได้เลือก",
+            masterInfo: master ? `${master.nameTH} (${cleanAbilityText(master.ability)})` : "ไม่ได้เลือก"
+        };
+    } catch (e) {
+        console.error("Prepare Data Error:", e);
+        return null;
+    }
 }
 
-// 1. ส่วนที่คุณจัดการได้อิสระ (Knowledge Base ของ AI)
+// 3. ระบบจัดการ API Key
 const AI_CONFIG = {
-    apiKey: "AIzaSyBLY2v1EieBV7I59hWkcCsxozSvAg-bEQg", // ไปเอาที่ https://aistudio.google.com/
     systemPrompt: `
     คุณคือ “ผู้เล่นระดับแข่งขัน Dinomaster TCG”
 คุณต้องวิเคราะห์เกมโดยยึดกฎทั้งหมด 100%
@@ -32,7 +60,7 @@ const AI_CONFIG = {
 ห้ามใช้ตรรกะแบบเกมอื่น
 ห้ามอ้างอิง Yu-Gi-Oh / MTG / Pokémon
 
-ให้คิดแบบผู้เล่นจริงที่เข้าใจ:
+ให้คิดแบบผู้เล่นจริงที่เข้าใจ และศึกษากติกาที่ให้อย่างละเอียด:
 Tempo , Resource (DP management),Line Control, Red Zone Timing, Fusion / Swarm Optimization
 Armor Infuse Efficiency, Boost Value Curve, Illusion Risk Assessment
 
@@ -334,35 +362,59 @@ Risk Map
     `
 };
 
-// 2. ฟังก์ชันเรียก AI จริง (ใช้ Fetch API)
-async function askAIForAdvice() {
-    const data = prepareAIData();
-    const btn = document.querySelector("button[onclick='askAIForAdvice()']");
-    let insightBox = document.getElementById('aiInsightResult');
+function getApiKey() {
+    let key = localStorage.getItem('dinomaster_gemini_key');
+    if (!key || key === "null" || key === "undefined") {
+        key = prompt("กรุณาใส่ Google Gemini API Key (ขอรับฟรีได้ที่ aistudio.google.com):");
+        if (key && key.trim() !== "") {
+            localStorage.setItem('dinomaster_gemini_key', key.trim());
+        } else {
+            return null;
+        }
+    }
+    return key;
+}
 
+function clearApiKey() {
+    localStorage.removeItem('dinomaster_gemini_key');
+    alert("ล้าง API Key เรียบร้อยแล้ว");
+}
+
+// 4. ฟังก์ชันหลัก (กดปุ่มแล้วรันตัวนี้)
+async function askAIForAdvice() {
+    const insightBox = document.getElementById('aiInsight');
+    
+    // ตรวจสอบว่ามีกล่องแสดงผลไหม
     if (!insightBox) {
-        insightBox = document.createElement('div');
-        insightBox.id = 'aiInsightResult';
-        insightBox.style = "margin-top:15px; font-size:13px; color:#eee; background:rgba(0,0,0,0.4); padding:15px; border-radius:10px; border-left:4px solid #6c5ce7; white-space: pre-wrap;";
-        btn.parentElement.appendChild(insightBox);
+        alert("CRITICAL ERROR: ไม่พบ Element id='aiInsight' ในหน้า HTML ของคุณ!");
+        return;
     }
 
-    btn.disabled = true;
-    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> วิเคราะห์ระดับโปร...`;
-    insightBox.innerHTML = "<em>กำลังสื่อสารกับระบบ...</em>";
+    insightBox.innerText = "🔍 กำลังเตรียมข้อมูลและตรวจสอบ API Key...";
 
     try {
-        const apiKey = AI_CONFIG.apiKey.trim();
-        
-        // ลองใช้ v1 (Stable) แทน v1beta
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
+        // ดึง API Key
+        const apiKey = getApiKey();
+        if (!apiKey) {
+            insightBox.innerHTML = "<span style='color:#e74c3c'>❌ ไม่พบ API Key (กรุณากดวิเคราะห์อีกครั้งเพื่อใส่ Key)</span>";
+            return;
+        }
+
+        // เตรียมข้อมูลเด็ค
+        const data = prepareAIData();
+        if (!data) throw new Error("ไม่สามารถอ่านข้อมูลเด็คได้");
+
+        insightBox.innerText = "🤖 AI กำลังคิดคำแนะนำให้คุณ...";
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
                     parts: [{
-                        text: `${AI_CONFIG.systemPrompt}\n\nวิเคราะห์เด็คนี้ให้หน่อย:\n${data.deckList}`
+                        text: `${AI_CONFIG.systemPrompt}\n\nนี่คือข้อมูลเด็คของฉัน:\n- Commander: ${data.commanderInfo}\n- Master: ${data.masterInfo}\n- รายชื่อการ์ด:\n${data.deckList}`
                     }]
                 }]
             })
@@ -370,25 +422,24 @@ async function askAIForAdvice() {
 
         const resData = await response.json();
 
-        // ถ้ายังเจอ 404 หรือ Model Not Found
         if (resData.error) {
-            if (resData.error.status === "NOT_FOUND") {
-                throw new Error("Google หาโมเดลนี้ไม่เจอในบัญชีของคุณ ลองเช็คใน AI Studio ว่าเปิดใช้ Gemini 1.5 Flash หรือยัง");
+            if (resData.error.message.includes("API key not valid")) {
+                clearApiKey(); // ลบ Key ที่ผิดทิ้งเพื่อให้ผู้ใช้ใส่ใหม่
+                throw new Error("API Key ไม่ถูกต้องหรือถูกระงับ");
             }
             throw new Error(resData.error.message);
         }
 
-        if (resData.candidates && resData.candidates[0].content) {
-            insightBox.innerText = resData.candidates[0].content.parts[0].text;
+        const aiResponse = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (aiResponse) {
+            insightBox.innerText = aiResponse;
         } else {
-            insightBox.innerText = "AI ได้รับข้อมูลแต่ไม่มีคำแนะนำออกมา (อาจจะติดระบบกรองเนื้อหา)";
+            insightBox.innerText = "AI ไม่ยอมตอบ (อาจติดระบบกรองคำพูด)";
         }
 
     } catch (error) {
-        console.error("AI Error Detailed:", error);
-        insightBox.innerHTML = `<span style='color:#ff7675;'>❌ ${error.message}</span>`;
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-magic"></i> วิเคราะห์เด็คอีกครั้ง`;
+        console.error("AI Error:", error);
+        insightBox.innerHTML = `<span style='color:#ff7675'>❌ เกิดข้อผิดพลาด: ${error.message}</span>`;
     }
 }
+

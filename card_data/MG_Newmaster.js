@@ -709,7 +709,7 @@ image: "images/NewmasterMG/Sky Large.jpg"
 },
 
 {
-id: "2011NM-R015", // ตามข้อมูลต้นฉบับระบุ ID ซ้ำกับ Harmonic Rope Plate
+id: "2011NM-R023", // ตามข้อมูลต้นฉบับระบุ ID ซ้ำกับ Harmonic Rope Plate
 nameTH: "ชุดเกราะกงล้อหมุน",
 nameEN: "Spin Wheel Armor",
 dp: 4,

@@ -68,10 +68,10 @@ function handleQuickMultiAdd(e, card) {
             maxLimit = 0; // ถ้าโดนแบน ให้ Max เป็น 0
         } else if (format.limited.includes(cardId)) {
             maxLimit = 1; // ถ้าโดนจำกัด ให้ Max เป็น 1
-        } else if (card.type === "Master" || card.type === "Boost_Master") {
+        } else if (card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
             maxLimit = 1; // กฎปกติประเภทการ์ด
         }
-    } else if (card.type === "Master" || card.type === "Boost_Master") {
+    } else if (card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
         maxLimit = 1;
     }
 

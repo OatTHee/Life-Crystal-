@@ -92,7 +92,7 @@ const Armored_DinoData = [
     type: "Armored_Dino",
     rarity:"Golden_Rare",
     set: "นิวมาสเตอร์",
-    clan: "มีเกราะหางหนาม",
+    clan: "มีเขา",
         image: "images/Armored_Dino/Armored_Triceratops.png"
 },
 ];

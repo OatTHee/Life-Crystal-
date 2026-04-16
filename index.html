@@ -416,6 +416,8 @@ body::before {
             <option value="Boost_Master">บูสมาสเตอร์</option>
             <option value="Fusion_Monster">มอนสเตอร์ฟิวชั่น</option>
             <option value="Armored_Dino">ครีเจอร์ติดเกราะ</option>
+            <option value="LC">ไลฟ์คริสตัล</option>
+
         </select>
 
         <select id="clanFilter">
@@ -445,12 +447,13 @@ body::before {
             <option value="สเต็ปเน็ก">ภาค 4 : สเต็ปเน็ก</option>
             <option value="รีอินิกม่า">ภาค 5 : รีอินิกม่า</option>
             <option value="AR1">ภาค 6 : AR1</option>
-            <option value="บููสมาสเตอร์2">แฟนเมด : บููสมาสเตอร์ รีอินิกม่า</option>            
-            <option value="เปลี่ยนเกลือเป็นทอง">แฟนเมด : เปลี่ยนเกลือเป็นทอง</option>              
-            <option value="โดนใจรีเทิร์น">แฟนเมด : โดนใจรีเทิร์น</option>   
-            <option value="บูสมาสเตอร์1รีอาร์ท">แฟนเมด : รีอาร์ทชุุดบููสมาสเตอร์ 1</option>
-            <option value="คู่หูเพลิงน้ำแข็ง">แฟนเมด : คู่หูเพลิงน้ำแข็ง</option>
-            <option value="เปลี่ยนเกลือเป็นทอง2">แฟนเมด : เปลี่ยนเกลือเป็นทอง2</option> 
+            <option value="PR01">แฟนเมด : PR01</option>            
+            <option value="PR02">แฟนเมด : PR02</option>              
+            <option value="PR03">แฟนเมด : PR03</option>   
+            <option value="PR04">แฟนเมด : PR04</option>
+            <option value="PR05">แฟนเมด : PR05</option>
+            <option value="PR06">แฟนเมด : PR06</option>
+            <option value="PR07">แฟนเมด : PR07</option> 
         </select>
 
         <button id="resetBtn" onclick="resetFilters()">ล้างการค้นหา</button>
@@ -543,13 +546,14 @@ body::before {
         <input type="file" id="importDeckInput" style="display: none;" accept=".json" onchange="importDeckFromFile(event)">
         
 <button onclick="document.getElementById('importDeckInput').click()" class="btn-import">
-    <i class="fa-solid fa-file-import"></i> นำเข้า
-</button>
+    <i class="fa-solid fa-file-import"></i></button>
 
         
-        <button onclick="saveOverwrite()" ><i class="fa-solid fa-floppy-disk"></i>  บันทึก</button>
+        <button onclick="saveOverwrite()" ><i class="fa-solid fa-floppy-disk"></i>  Save</button>
         
-        <button onclick="saveAsNew()" ><i class="fa-solid fa-floppy-disk"></i>  บันทึกเป็น</button>   
+        <button onclick="saveAsNew()" ><i class="fa-solid fa-floppy-disk"></i>  Save As</button>
+        <button onclick="copyDeckLink()" ><i class="fa-regular fa-copy"></i></button>   
+        <button onclick="importDeckPrompt()" ><i class="fa-regular fa-clipboard"></i></button>      
     </div>
 </div>
             </div>
@@ -788,6 +792,7 @@ body::before {
     <script src="card_data/fanmade_Boost4.js"></script>
     <script src="card_data/fanmade_Boost5.js?v=1.2"></script>
     <script src="card_data/fanmade_icefire.js?v=1.1"></script>
+    <script src="card_data/fanmade_Boost6.js"></script>
     
         <script src="banlist_data.js"></script>	
 

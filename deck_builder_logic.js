@@ -9,6 +9,8 @@ let lastTap = 0;        // สำหรับตรวจจับ Double Tap (�
 function updateAllButtonStates() {
     const activeMaster = myDeck.find(c => c.type === "Master");
     const activeBoostMaster = myDeck.find(c => c.type === "Boost_Master");
+    const activeLC = myDeck.find(c => c.type === "LC");
+
     const commander = myDeck.find(c => c.isCommander);
 
     // วนลูปการ์ดทุกใบที่แสดงอยู่ในหน้าจอ
@@ -63,6 +65,13 @@ function updateAllButtonStates() {
                 isDisabled = true;
                 btnColor = "#b0b0b0";
                 btnText = (String(card.id) === String(activeBoostMaster.id)) ? "เพิ่มแล้ว 1 / 1" : "มี Boost Master อื่นแล้ว";
+            } else { btnText = `+ เพิ่ม (0 / 1)`; }
+
+        } else if (card.type === "LC") {
+            if (activeLC) {
+                isDisabled = true;
+                btnColor = "#b0b0b0";
+                btnText = (String(card.id) === String(activeLC.id)) ? "เพิ่มแล้ว 1 / 1" : "มี LC อื่นแล้ว";
             } else { btnText = `+ เพิ่ม (0 / 1)`; }
         } else {
             // --- แก้ไขตรงนี้: ใช้ dynamicMaxLimit แทนเลข 3 ---
@@ -162,7 +171,7 @@ function renderCards(cards) {
         }
 
         // กฎ Master / Boost Master (กำหนด Max เป็น 1 แต่ "ไม่" นับว่าเป็น Banlist Limit)
-        if (card.type === "Master" || card.type === "Boost_Master") {
+        if (card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
             dynamicMaxLimit = 1;
             // ❌ ไม่ต้อง set isBanlistLimited = true
         }
@@ -738,6 +747,7 @@ function updateTotalCounterOnly() {
         !c.type.includes('Armored_Dino') &&
         !c.type.includes('Boost_Creature') &&
         !c.type.includes('Illusion') &&
+        !c.type.includes('LC') &&
         !c.type.includes('Master')
     ).length;
     
@@ -755,6 +765,8 @@ function updateTotalCounterOnly() {
 
 
 function createDeckItem(card, index) {
+
+    
     const item = document.createElement('div');
     item.className = 'deck-item';    
     const safeId = String(card.id).replace(/\s+/g, '-');
@@ -763,7 +775,7 @@ function createDeckItem(card, index) {
     if (card.isCover) item.classList.add('is-cover-now');
     if (card.isCommander) item.classList.add('is-commander');
 
-    const isMasterGroup = card.type === "Master" || card.type === "Boost_Master";
+    const isMasterGroup = card.type === "Master" || card.type === "Boost_Master" || card.type === "LC";
     const isCommander = card.isCommander === true;
     const displayTypeName = card.type ? card.type.replace('_', ' ').toUpperCase() : 'CARD';
 
@@ -920,7 +932,7 @@ function renderAllDeckItems() {
         const type = String(item.type || "");
 
         // แยกถังลงหน้าจอ (Starter / Extra / Main)
-        if (item.isCommander || type.includes('Master')) {
+        if (item.isCommander || type.includes('Master') || type.includes('LC')) {
             // ใบที่เป็น Commander หรือ Master ให้ลง StarterBox
             if(starterBox) starterBox.appendChild(element);
         } else if (item.isExtra || type.includes('Fusion_Monster') || type.includes('Armored_Dino') || type.includes('Boost_Creature')|| type.includes('Illusion')) {
@@ -940,12 +952,12 @@ const card = cardsData.find(c => String(c.id) === String(cardId));
     if (!card) return;
 
     // เช็คประเภท Master / Boost Master
-    const isMasterType = card.type === "Master" || card.type === "Boost_Master";
+    const isMasterType = card.type === "Master" || card.type === "Boost_Master" || card.type === "LC";
 
     if (isMasterType) {
         // เช็คว่าในเด็คมี Master ที่ ID ต่างจากใบนี้อยู่แล้วหรือไม่
         const otherMaster = myDeck.find(c => 
-            (c.type === "Master" || c.type === "Boost_Master") && 
+            (c.type === "Master" || c.type === "Boost_Master" || c.type === "LC") && 
             String(c.id) !== String(card.id)
         );
 

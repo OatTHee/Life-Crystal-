@@ -5,7 +5,7 @@
     nameEN: "Therazignus Phoenix Mode",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
     clan: "สองขา, มีปีก",
             rarity:"Promo",
 
@@ -30,7 +30,7 @@
     nameEN: "Shukaio Glacier Mode",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
     clan: "สองขา, คอยาว",
             rarity:"Promo",
 
@@ -57,7 +57,7 @@
     nameEN: "Giga P. Prototype",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
     clan: "สองขา, มีเขา",
             rarity:"Promo",
 
@@ -69,7 +69,7 @@
      <span style="color:#DC143C;">(Effect นี้ไม่ถูกยกเลิก/ทำให้ไร้ผล)</span> <br> 
     • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, หาก Master เราชื่อ 
     <span class="hlkw">"Chris"</span> สามารถทิ้งการ์ด 
-    1 ใบ : เรียก Creature มีเขา DP 5 จากเด็ค 1 ใบ เข้าสนามได้ทันที <span style="color:#E8AB00;">
+    1 ใบ : เรียก Creature เผ่าคอยาว DP 5 จากเด็ค 1 ใบ เข้าสนามได้ทันที <span style="color:#E8AB00;">
     (Effect/Skill ของการ์ดนั้นไร้ผล และสั่งการไม่ได้)</span> <br> 
     • <span class="hlcont">Cont.</span> ตราบที่การ์ดนี้สวม Armor อยู่, จำนวนครั้งที่โจมตีได้ +1`,
     image: "images/Fanmade/icefire/Giga P. Prototype.png"
@@ -80,7 +80,7 @@
     nameEN: "Giga Pentus",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
     clan: "มีเขา, สองขา, คอยาว",
             rarity:"Promo",
 
@@ -104,7 +104,7 @@
     nameEN: "Edmanto Beta",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
     clan: "มีเกราะหางหนาม, มีปีก",
             rarity:"Promo",
 
@@ -126,7 +126,7 @@
     nameEN: "Epsirampho",
     dp: "ไร้DP",
     type: "Fusion_Monster",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
     clan: "สัตว์น้ำ, มีปีก",
             rarity:"Promo",
 
@@ -150,7 +150,7 @@
     nameEN: "Epsirampho",
     dp: "ไร้DP",
     type: "Illusion",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
         rarity:"Promo",
     ability: `• <span class="hlcont">Cont.</span> หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน] 
     ผลของการ์ดนี้สามารถทิ้ง Creature เผ่าใดก็ได้แทนวัตถุดิบลงสุสาน. <br> 
@@ -168,7 +168,7 @@
     nameEN: "Edmontobeta",
     dp: "ไร้DP",
     type: "Illusion",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
         rarity:"Promo",
     ability: `• <span class="hlcont">Cont.</span> หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน] 
     ผลของการ์ดนี้สามารถทิ้ง Creature เผ่าใดก็ได้แทนวัตถุดิบลงสุสาน. <br> 
@@ -186,7 +186,7 @@
     nameEN: "Therazignus=Phoenix Mode=",
     dp: "ไร้DP",
     type: "Illusion",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
         rarity:"Promo",
     ability: `• <span class="hlcont">Cont.</span> หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน] 
     ผลของการ์ดนี้สามารถทิ้ง Creature เผ่าใดก็ได้แทนวัตถุดิบลงสุสาน. <br> 
@@ -204,7 +204,7 @@
     nameEN: "Shukaio =Glacier Mode=",
     dp: "ไร้DP",
     type: "Illusion",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
         rarity:"Promo",
     ability: `• <span class="hlcont">Cont.</span> หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน] 
     ผลของการ์ดนี้สามารถทิ้ง Creature เผ่าใดก็ได้แทนวัตถุดิบลงสุสาน. <br> 
@@ -222,7 +222,7 @@
     nameEN: "Giga P. Prototype",
     dp: "ไร้DP",
     type: "Illusion",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
         rarity:"Promo",
     ability: `• <span class="hlcont">Cont.</span> หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน] 
     ผลของการ์ดนี้สามารถทิ้ง Creature เผ่าใดก็ได้แทนวัตถุดิบลงสุสาน. <br> 
@@ -237,10 +237,10 @@
 			{
     id: "FM-PR06 illus06 JU",
     nameTH: "กิก้า เพนตัส",
-    nameEN: "Guga Pentus",
+    nameEN: "Giga Pentus",
     dp: "ไร้DP",
     type: "Illusion",
-    set: "คู่หูเพลิงน้ำแข็ง",
+    set: "PR06",
         rarity:"Promo",
     ability: `• <span class="hlcont">Cont.</span> หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน] 
     ผลของการ์ดนี้สามารถทิ้ง Creature เผ่าใดก็ได้แทนวัตถุดิบลงสุสาน. <br> 

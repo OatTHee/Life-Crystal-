@@ -59,7 +59,6 @@ const banlistData = {
     "No_Meta": {
         name: "โนเมต้า",
         banned: [
-            "D021 JU",
             "DE019 JU",
             "DE060",
             "MamenchisaurusM1",
@@ -116,8 +115,10 @@ const banlistData = {
             "2011NM-R028",
             "DP Fern2",
             "Megatech Yoyo",
+            "Flashing Bolt",            
             "2011NM-R015"
         ],
+        bannedTypes: ["Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion"],
         limited: [
             "D020 JU",
             "AC036 MG",
@@ -140,6 +141,7 @@ function getCardMaxLimit(card) {
 
     // 1. เช็คว่าโดนแบนหรือไม่ (0 ใบ)
     if (format.banned && format.banned.includes(cardId)) return 0;
+    if (format.bannedTypes && card.type && format.bannedTypes.includes(card.type)) return 0; // ถ้าประเภทการ์ดตรงกับที่แบนไว้ ให้ใส่ได้ 0 ใบ
 
     // 2. เช็คว่าโดนจำกัด Limit 1 หรือไม่ (1 ใบ)
     if (format.limited && format.limited.includes(cardId)) return 1;

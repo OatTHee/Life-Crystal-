@@ -23,6 +23,7 @@ function openDeckShowcase() {
     const starterList = myDeck.filter(c => 
         c.isCommander === true || 
         c.type === "Master" || 
+        c.type === "LC" || 
         c.type === "Boost_Master"
     );
     // Extra: การ์ดพิเศษต่างๆ
@@ -308,7 +309,19 @@ function getDeckStatsHTML() {
                 <i class="fas fa-magic"></i> วิเคราะห์เด็คด้วย AI
             </button>
         </div>
-
+<div id="aiInsight" style="
+    margin-top: 15px; 
+    padding: 15px; 
+    background: rgba(0,0,0,0.3); 
+    border-radius: 8px; 
+    color: #ecf0f1; 
+    line-height: 1.6; 
+    min-height: 50px;
+    white-space: pre-wrap;
+    border: 1px dashed #7f8c8d;
+">
+    คำแนะนำจาก AI จะปรากฏตรงนี้...
+</div>
         <div class="stats-col-wide">
             <div class="chart-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
                 
@@ -365,8 +378,51 @@ function getDeckStatsHTML() {
 }
 
 // ฟังก์ชันจำลองสำหรับปุ่ม AI
-function askAIForAdvice() {
-    alert("ระบบ AI Deck Doctor กำลังประมวลผลข้อมูลเด็คของคุณเทียบกับ Meta Games ล่าสุด...");
+async function askAIForAdvice() {
+    const insightBox = document.getElementById('aiInsight');
+    if (!insightBox) return;
+
+    insightBox.innerText = "🔍 AI กำลังอ่านเด็คของคุณ...";
+
+    try {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+
+        const data = prepareAIData();
+
+        // ใช้ URL เวอร์ชัน Stable เพื่อความชัวร์กับ API Key ทุกประเภท
+const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `${AI_CONFIG.systemPrompt}\n\nนี่คือข้อมูลเด็คของฉัน:\n${data.deckList}`
+                    }]
+                }]
+            })
+        });
+
+        const resData = await response.json();
+
+        if (resData.error) {
+            // ถ้า Error เพราะรุ่นโมเดลผิด ให้แจ้งเตือนชัดเจน
+            throw new Error(`Google API ตอบกลับว่า: ${resData.error.message}`);
+        }
+
+        const aiResponse = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (aiResponse) {
+            insightBox.innerText = aiResponse;
+        } else {
+            insightBox.innerText = "AI ไม่สามารถสร้างคำแนะนำได้ในขณะนี้";
+        }
+
+    } catch (error) {
+        console.error("AI Error:", error);
+        insightBox.innerHTML = `<span style='color:#ff7675'>❌ ${error.message}</span>`;
+    }
 }
 
 // ฟังก์ชันจัดการ Showcase Update (Add/Remove)

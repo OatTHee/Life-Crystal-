@@ -5,7 +5,8 @@ function exportToUntap() {
     }
 
     // แยกกลุ่มการ์ดตามประเภท
-    const starterCards = myDeck.filter(c => c.isCommander || (c.type && c.type.includes('Master')) || c.type.includes('Boost_Master'));
+    const starterCards = myDeck.filter(c => c.isCommander || (c.type && c.type.includes('Master')) || c.type.includes('Boost_Master')
+ || c.type.includes('LC'));
     
     const extraCards = myDeck.filter(c => 
         !c.isCommander && 

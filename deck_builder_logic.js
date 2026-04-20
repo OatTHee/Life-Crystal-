@@ -1176,7 +1176,7 @@ if(btn) {
         return Object.values(groups);
     };
 
-    const starterList = myDeck.filter(c => c.isCommander || c.type === "Master" || c.type === "Boost_Master");
+    const starterList = myDeck.filter(c => c.isCommander || c.type === "Master" || c.type === "Boost_Master"|| c.type === "LC");
     const extraTypes = ["Boost_Creature", "Fusion_Monster", "Illusion"];
     const extraList = myDeck.filter(c => extraTypes.includes(c.type));
     const mainList = myDeck.filter(c => !c.isCommander && c.type !== "Master" && c.type !== "Boost_Master" && !extraTypes.includes(c.type));

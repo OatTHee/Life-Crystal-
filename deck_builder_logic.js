@@ -1179,7 +1179,7 @@ if(btn) {
     const starterList = myDeck.filter(c => c.isCommander || c.type === "Master" || c.type === "Boost_Master"|| c.type === "LC");
     const extraTypes = ["Boost_Creature", "Fusion_Monster", "Illusion"];
     const extraList = myDeck.filter(c => extraTypes.includes(c.type));
-    const mainList = myDeck.filter(c => !c.isCommander && c.type !== "Master" && c.type !== "Boost_Master" && !extraTypes.includes(c.type));
+    const mainList = myDeck.filter(c => !c.isCommander && c.type !== "Master" && c.type !== "Boost_Master" && c.type !== "LC" && !extraTypes.includes(c.type));
 
     const MainTypes = ["Creature", "Action", "Armor", "Field"];
     const typeCounts = { "Creature": 0, "Action": 0, "Armor": 0, "Field": 0 };

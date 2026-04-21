@@ -59,10 +59,12 @@ const banlistData = {
     "No_Meta": {
         name: "โนเมต้า",
         banned: [
+            "D021 JU",
             "DE019 JU",
             "DE060",
             "MamenchisaurusM1",
             "2016NE-DE303",
+            "2016NE-DE309",   
 
             "DE011 JU",
             "BambiraptorM1",
@@ -104,7 +106,8 @@ const banlistData = {
             "2011NM-A030",
             "2011NM-A022",
             "Megatech Cycling",
-
+            "Super Incendiary Bomb",
+            "2011NM-A014",
             "AR004 MG",
             "ARC004 MG",
             "AR027 MG",
@@ -115,7 +118,8 @@ const banlistData = {
             "2011NM-R028",
             "DP Fern2",
             "Megatech Yoyo",
-            "Flashing Bolt",            
+            "Flashing Bolt",
+            "Disintegrate",            
             "2011NM-R015"
         ],
         bannedTypes: ["Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion"],

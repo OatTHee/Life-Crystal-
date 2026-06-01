@@ -5,6 +5,17 @@ const cardsData = [...C_originalData,...MG_originalData,...CharacterData, ...C_E
 ...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...Boost5Data, ...icefireData, 
 ...Boost6Data,...Boost7Data ]; 
 
+if (typeof cardStatsData !== 'undefined') {
+    cardsData.forEach(card => {
+        const stats = cardStatsData[String(card.id)];
+        if (stats) {
+            card.at = stats.at;
+            card.df = stats.df;
+            card.taxonomy = stats.taxonomy;
+        }
+    });
+}
+
 let myDeck = JSON.parse(localStorage.getItem('dinomaster_deck')) || [];
 let currentFilteredCards = cardsData;
 let myCollections = JSON.parse(localStorage.getItem('dinomaster_collections')) || [];
@@ -35,14 +46,14 @@ function filterCards() {
     const setValue = setFilter.value;
     const clanValue = clanFilter.value;
     const rarityValue = rarityFilter.value;
-    
+
     const filtered = cardsData.filter(card => {
+
+        // --- Filter เดิม (ไม่แตะ) ---
         const matchName = (card.nameTH || "").toLowerCase().includes(searchText) || 
                           (card.nameEN || "").toLowerCase().includes(searchText);
         const matchDP = dpValue === "" || card.dp == dpValue;
-        
-        // --- แก้ไขจุดนี้: เปลี่ยนจาก .includes(typeValue) เป็นการเช็ค === ---
-// --- รองรับกรณีที่ type เป็น Array ---
+
         let matchType = false;
         if (typeValue === "") {
             matchType = true; 
@@ -64,22 +75,60 @@ function filterCards() {
         const matchClan = clanValue === "" || (card.clan && card.clan.includes(clanValue));
         const matchRarity = rarityValue === "" || card.rarity === rarityValue;
 
-        return matchName && matchDP && matchType && matchSet && matchClan && matchRarity;
+        // --- Advanced Filter (เพิ่มใหม่) ---
+        const s = advancedFilterState;
+
+        const matchAtMin = s.atMin === null || (card.at != null && card.at >= s.atMin);
+        const matchAtMax = s.atMax === null || (card.at != null && card.at <= s.atMax);
+        const matchDfMin = s.dfMin === null || (card.df != null && card.df >= s.dfMin);
+        const matchDfMax = s.dfMax === null || (card.df != null && card.df <= s.dfMax);
+        const matchTaxonomy = s.taxonomy === "" || card.taxonomy === s.taxonomy;
+
+        let matchLegendary = true;
+if (s.legendary === 'yes') {
+    matchLegendary = Array.isArray(card.type)
+        ? card.type.some(t => t.includes("Legend"))
+        : (card.type || "").includes("Legend");
+} else if (s.legendary === 'no') {
+    matchLegendary = Array.isArray(card.type)
+        ? !card.type.some(t => t.includes("Legend"))
+        : !(card.type || "").includes("Legend");
+}
+
+        return matchName && matchDP && matchType && matchSet && matchClan && matchRarity
+            && matchAtMin && matchAtMax && matchDfMin && matchDfMax
+            && matchTaxonomy && matchLegendary;
     });
 
-    // --- จุดที่แก้ไข: เก็บค่าที่กรองแล้วลงในตัวแปรส่วนกลาง ---
-    currentFilteredCards = filtered; 
+    currentFilteredCards = filtered;
     renderCards(currentFilteredCards);
 }
 
 function resetFilters() {
+    // --- Filter เดิม (ไม่แตะ) ---
     document.getElementById('searchInput').value = "";
     document.getElementById('dpFilter').value = "";
     document.getElementById('typeFilter').value = "";
     document.getElementById('clanFilter').value = "";
     document.getElementById('setFilter').value = "";
-	document.getElementById('rarityFilter').value = "";
+    document.getElementById('rarityFilter').value = "";
 
+    // --- รีเซ็ต Advanced Filter ด้วย ---
+    advancedFilterState = {
+        atMin: null, atMax: null,
+        dfMin: null, dfMax: null,
+        taxonomy: '',
+        legendary: 'all'
+    };
+    document.getElementById('advAtMin').value = '';
+    document.getElementById('advAtMax').value = '';
+    document.getElementById('advDfMin').value = '';
+    document.getElementById('advDfMax').value = '';
+    document.getElementById('advTaxonomy').value = '';
+    setLegendaryFilter('all');
+    updateAdvancedFilterIndicator();
+
+    // --- ของเดิม (ไม่แตะ) ---
     currentFilteredCards = cardsData;
     renderCards(currentFilteredCards);
     syncDpButtons();
@@ -213,7 +262,34 @@ function openModal(cardOrId) {
             btnColor = '#b0b0b0';
         }
         
-        
+        // สร้าง HTML ส่วน Secret Art (ถ้ามี)
+const secretArtHTML = card.secretArt && card.secretArt_img ? `
+    <div style="margin-top: 16px; border-top: 1px solid #444; padding-top: 12px;">
+        <p style="color: #f1c40f; font-weight: bold; margin-bottom: 8px;">
+            ✨ มีอาร์ตเวิร์คพิเศษ (Secret Art)
+        </p>
+        <img 
+            src="${card.secretArt_img}" 
+            alt="Secret Art ของ ${card.nameTH}"
+            onclick="openFullSecretArt('${card.secretArt_img}', '${card.nameTH}')"
+            style="
+                width: 100%; 
+                max-width: 200px;
+                border-radius: 8px; 
+                cursor: zoom-in;
+                border: 2px solid #f1c40f;
+                display: block;
+                margin: 0 auto;
+                transition: transform 0.2s;
+            "
+            onmouseover="this.style.transform='scale(1.03)'"
+            onmouseout="this.style.transform='scale(1)'"
+        >
+        <p style="text-align:center; font-size: 11px; color: #aaa; margin-top: 6px;">
+            กดที่รูปเพื่อดูแบบเต็ม
+        </p>
+    </div>
+` : '';
         // เพิ่มตัวแปรเช็คเงื่อนไข Boost Master
         const hasBoostMaster = myDeck.some(c => c.type === "Boost_Master");
         const isSpecialButNoBoost = card.specialCommander && !hasBoostMaster;
@@ -247,6 +323,7 @@ function openModal(cardOrId) {
                     ${warningText}
                 </p>
                 <div id="commanderBtnArea"></div> 
+                ${secretArtHTML}
             </div>
         `;
 
@@ -279,6 +356,25 @@ function openModal(cardOrId) {
 }
 // ตัวแปรเก็บ Index ของการ์ดที่เปิดอยู่ใน Modal ปัจจุบัน
 let currentModalIndex = -1;
+
+function openFullSecretArt(imgSrc, cardName) {
+    // สร้าง Overlay ชั่วคราว ซ้อนบน Modal ที่มีอยู่แล้ว
+    const overlay = document.createElement('div');
+    overlay.id = 'secretArtOverlay';
+    overlay.style = `
+        position: fixed; inset: 0; z-index: 999999;
+        background: rgba(0,0,0,0.92);
+        display: flex; align-items: center; justify-content: center;
+        cursor: zoom-out;
+        backdrop-filter: blur(6px);
+    `;
+    overlay.innerHTML = `
+        <img src="${imgSrc}" alt="Secret Art: ${cardName}"
+            style="max-width: 90vw; max-height: 90vh; border-radius: 10px; border: 2px solid #f1c40f;">
+    `;
+    overlay.onclick = () => overlay.remove(); // กดที่ไหนก็ปิดได้
+    document.body.appendChild(overlay);
+}
 
 // ฟังก์ชันเปลี่ยนการ์ด (Previous / Next) พร้อม Fade Effect
 function navigateModal(direction) {
@@ -756,3 +852,75 @@ setFilter.addEventListener('change', filterCards);
 
 // เริ่มต้นแสดงผล
 renderCards(cardsData);
+
+
+// ===== ADVANCED FILTER =====
+
+let advancedFilterState = {
+    atMin: null, atMax: null,
+    dfMin: null, dfMax: null,
+    taxonomy: '',
+    legendary: 'all'   // 'all' | 'yes' | 'no'
+};
+
+function openAdvancedFilter() {
+    document.getElementById('advancedFilterModal').style.display = 'flex';
+}
+
+function closeAdvancedFilter() {
+    document.getElementById('advancedFilterModal').style.display = 'none';
+}
+
+function closeAdvancedFilterOutside(event) {
+    if (event.target === document.getElementById('advancedFilterModal')) {
+        closeAdvancedFilter();
+    }
+}
+
+function setLegendaryFilter(value) {
+    advancedFilterState.legendary = value;
+    // อัปเดตสีปุ่ม
+    ['All','Yes','No'].forEach(v => {
+        const btn = document.getElementById('legendaryBtn' + v);
+        const isActive = value === v.toLowerCase();
+        btn.style.background = isActive ? '#ff9f43' : 'transparent';
+        btn.style.color = isActive ? '#000' : '#eee';
+        btn.style.borderColor = isActive ? '#ff9f43' : '#555';
+        btn.style.fontWeight = isActive ? 'bold' : 'normal';
+    });
+}
+
+function applyAdvancedFilter() {
+    advancedFilterState.atMin = parseInt(document.getElementById('advAtMin').value) || null;
+    advancedFilterState.atMax = parseInt(document.getElementById('advAtMax').value) || null;
+    advancedFilterState.dfMin = parseInt(document.getElementById('advDfMin').value) || null;
+    advancedFilterState.dfMax = parseInt(document.getElementById('advDfMax').value) || null;
+    advancedFilterState.taxonomy = document.getElementById('advTaxonomy').value;
+
+    closeAdvancedFilter();
+    filterCards(); // เรียก function filter หลักที่มีอยู่แล้ว
+    updateAdvancedFilterIndicator();
+}
+
+function resetAdvancedFilter() {
+    advancedFilterState = { atMin: null, atMax: null, dfMin: null, dfMax: null, taxonomy: '', legendary: 'all' };
+    document.getElementById('advAtMin').value = '';
+    document.getElementById('advAtMax').value = '';
+    document.getElementById('advDfMin').value = '';
+    document.getElementById('advDfMax').value = '';
+    document.getElementById('advTaxonomy').value = '';
+    setLegendaryFilter('all');
+    filterCards();
+    updateAdvancedFilterIndicator();
+}
+
+// แสดงจุดสีส้มบนไอคอนฟันเฟืองเมื่อมี filter ที่เปิดอยู่
+function updateAdvancedFilterIndicator() {
+    const s = advancedFilterState;
+    const isActive = s.atMin !== null || s.atMax !== null ||
+                     s.dfMin !== null || s.dfMax !== null ||
+                     s.taxonomy !== '' || s.legendary !== 'all';
+    const btn = document.getElementById('advancedFilterBtn');
+    btn.style.color = isActive ? '#ff9f43' : '#aaa';
+    btn.style.background = isActive ? 'rgba(255,159,67,0.15)' : 'none';
+}

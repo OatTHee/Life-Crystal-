@@ -57,7 +57,9 @@
 		• <span class="hlcont">Cont.</span> [การ์ดของเรา], [Armor] [เข้าสนาม] เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้<br>
 		<span class="hlabi">Master Skill :</span> <br> • <span class="hlauto">Auto</span> เมื่อเราสวม Armor ให้ Creature ของเราเองด้วยการ [ผสานเกราะ] สำเร็จ : จั่วการ์ด 2 ใบ<br> • <span class="hlauto">Auto</span> เมื่อ Armor ของเราถูก [ทำลาย] : เรารับ 2 DP > สามารถกำหนด Creature ได้ 1 เป้าหมาย : การ์ดนั้น AT+100<br> • <span class="hlmanual">Manual</span> จ่าย 4 CP + เลือก Armor ของเราในสุสาน หรือ ที่ถูกนำออกจากเกม 1 ใบ : นำการ์ดนั้นกลับขึ้นมือ`
         ,
-        image: "images/Fanmade/reartboost1/LOVENA.png"
+        image: "images/Fanmade/reartboost1/LOVENA.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/reartboost1/Lovena_Secret.png"
     },
       {
         id: "2011NM-MSKeiko / FM-PR01-MS05 JU",
@@ -72,7 +74,9 @@
 		<span class="hlabi">Master Skill :</span> <br> 
 		• <span class="hlmanual">Manual</span> จ่าย 4 DP : แสดงบนสุดเด็คเรา 2 ใบ > เรียก Creature มีปีก ทั้งหมดจากที่แสดงเข้าสนามทันที > การ์ดที่เหลือสับเข้าเด็ค`
         ,
-        image: "images/Fanmade/reartboost1/KEIKO.png"
+        image: "images/Fanmade/reartboost1/KEIKO.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/reartboost1/KEIKO_Secret.png"
     },
 
         {

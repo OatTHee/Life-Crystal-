@@ -323,6 +323,8 @@
     [Megatech]</span> ในสุสานเรา 1 ใบ
      : นำการ์ดนั้นขึ้นมือ.`
     ,
-    image: "images/Fanmade/Boost5/Megatech T Rex.png"
+    image: "images/Fanmade/Boost5/Megatech T Rex.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost5/Megatech_T_Rex_Secret.png"
 },
 		];

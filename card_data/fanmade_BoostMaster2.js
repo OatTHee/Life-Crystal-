@@ -87,7 +87,9 @@ const BoostMaster2Data = [
     set: "PR02",
     clan: "",
     ability: `<span class="hlabi">Commander Bless :</span> <br> • <span class="hlauto">Auto</span> เทิร์นละครั้ง เมื่อเรานำ Creature [สองขา] ขึ้นมือจากเด็ค, สามารถจ่าย LP 500 : เรียกการ์ดนั้นเข้าสนามได้ทันที. <br> <span class="hlabi">Master Skill :</span> <br> • <span class="hlcont">Cont.</span> หากคู่แข่งมี LP มากกว่าเรา, แสดงผลดังนี้ <br> ① ในระหว่างเทิร์นของเรา Creature [สองขา] ของเราปรับ AT+200. <br> ② หากมากกว่าอยู่ตั้งแต่ 1000 ขึ้นไป, คู่แข่งไม่สามารถสร้าง [สภาวะสับสน] ใส่ Creature [สองขา] ของเราได้.` ,
-    image: "images/Fanmade/Boost2/Ayu.png"
+    image: "images/Fanmade/Boost2/Ayu.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost2/Ayu_Secret.png"
 },
 
 {
@@ -147,7 +149,9 @@ const BoostMaster2Data = [
     set: "PR02",
     clan: "",
     ability: `<span class="hlabi">Commander Bless :</span> <br> • <span class="hlcont">Cont.</span> ต่อจำนวน Creature เผ่าคอยาว ในสุสานเรา 4 ใบ, Creature เผ่าคอยาว ที่เราควบคุมปรับ AT+100 และ DF+100. <br> <span class="hlabi">Master Skill :</span> <br> • <span class="hlauto">Auto</span> เมื่อ Creature เผ่าคอยาว ของเราเข้าสนามจากสุสาน : หากการ์ดเหล่านั้น DP 5 หรือมากกว่าจะไม่กลับขึ้นมือ/เข้าเด็ค 1 เทิร์น, หาก DP 6 จะไม่ติดสภาวะสับสน 1 เทิร์น.`,
-    image: "images/Fanmade/Boost2/Irina.png"
+    image: "images/Fanmade/Boost2/Irina.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost2/Irina_Secret.png"
 },
 
 {
@@ -159,7 +163,9 @@ const BoostMaster2Data = [
     set: "PR02",
     clan: "",
     ability: `<span class="hlabi">Commander Bless :</span> <br> • <span class="hlcont">Cont.</span> หากเราสุ่มดูการ์ดบนมือคู่แข่ง, แล้วการ์ดที่ดูเป็นการ์ด Action ให้ทิ้งการ์ดนั้นทันที. <br> <span class="hlabi">Master Skill :</span> <br> • <span class="hlextra">Extra</span> เมื่อเราสุ่มดูการ์ดบนมือคู่แข่ง, สามารถจ่าย 2 DP : ทิ้งการ์ดที่สุ่มดูนั้นทันที.`,
-    image: "images/Fanmade/Boost2/Yoko.png"
+    image: "images/Fanmade/Boost2/Yoko.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost2/Yoko_Secret.png"
 },
 {
     id: "FM-PR03 D04 JU",
@@ -226,7 +232,9 @@ const BoostMaster2Data = [
     ให้นำกลับขึ้นมือ. <br> 
     • <span class="hlmanual">Manual</span> จ่าย 2 DP : ทิ้ง Creature จากมือ 1 ใบ : ค้นเด็ค > 
     หา Creature 1 ใบที่ DP ตรงกับการ์ดที่ทิ้งขึ้นมือ > สับเด็ค > จั่วการ์ด 1 ใบ.` ,
-    image: "images/Fanmade/Boost2/Anya.jpg"
+    image: "images/Fanmade/Boost2/Anya.jpg",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost2/Anya_Secret.png"
 },
 {
     id: "FM-PR03 MS03 JU",
@@ -237,7 +245,9 @@ const BoostMaster2Data = [
     set: "PR03",
     clan: "",
     ability: `<span class="hlabi">Commander Bless :</span> <br> <span class="hlcont">Cont.</span> Creature ของคู่แข่งความสามารถจะไร้ผลระหว่างที่ถูกสลับ AT และ DF และ Creature ของเราปรับ AT + 500 ระหว่างที่ถูกสลับ AT และ DF. <br> <span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> [เทิร์นของเรา] เราร่าย Action ที่มีคำว่า [Meteor] ในชื่อได้แม้ Master หรือ Creature ยังไม่ถูกโจมตี. <br> • <span class="hlcont">Cont.</span> Action ที่มีคำว่า [Control / Meteor] ในชื่อของเราถือว่าเป็น Action เฉพาะ สองขา ไม่ว่าอยู่ที่ใดก็ตาม. <br> • <span class="hlmanual">Manual</span> จ่าย 2 DP + ทิ้งการ์ด 1 ใบ จากนั้นเลือก Action ที่มีคำว่า [Control / Meteor] ในชื่อจากสุสานเรา 1 ใบ : นำการ์ดนั้นกลับขึ้นมือ.` ,
-    image: "images/Fanmade/Boost2/Feel.jpg"
+    image: "images/Fanmade/Boost2/Feel.jpg",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost2/Feel_Secret.png"
 },
 {
     id: "FM-PR03 MS05 JU",
@@ -248,7 +258,9 @@ const BoostMaster2Data = [
     set: "PR03",
     clan: "",
     ability: `เงื่อนไข : หากเราใช้การ์ดนี้, จะไม่สามารถสั่งให้ Creature รวมฝูงกันได้. <br> <span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> Creature ของเราสามารถรวมร่างได้ในเทิร์นที่เข้าสนาม. <br> • <span class="hlcont">Cont.</span> หาก Creature ที่รวมร่างของเรา DP 6 ขึ้นไป, สามารถโจมตีใส่ Creature ได้ในเทิร์นที่รวมร่าง, หากรวมร่างกัน 3 ตัว จะไม่ตกเป็นเป้าหมายจาก Magic/Skill 1 เทิร์น. <br> • <span class="hlmanual">Manual</span> จ่าย 5 DP หรือ ทิ้งการ์ด [Final Fusion] 1 ใบ + จ่าย 3 DP : เรียก Creature 2 ใบที่มี DP 3 และเผ่าต่างกันในมือเข้าสนามทันที > รวมร่างทั้งสองใบกับ Creature ตัวอื่นของเรา 0-1 ใบในทันที (รวมร่างกันด้วยความสามารถนี้ได้ถึง 3 ตัว).` ,
-    image: "images/Fanmade/Boost2/Chris.jpg"
+    image: "images/Fanmade/Boost2/Chris.jpg",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost2/Chris_Secret.png"
 },
 {
     id: "FM-PR03 D02 JU",

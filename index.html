@@ -458,7 +458,13 @@ body::before {
         </select>
 
         <button id="resetBtn" onclick="resetFilters()">ล้างการค้นหา</button>
-        
+        <div style="display: flex; justify-content: flex-end; margin-top: 6px;">
+        <button id="advancedFilterBtn" onclick="openAdvancedFilter()" title="ตัวกรองขั้นสูง"
+            style="background: none; border: none; cursor: pointer; color: #aaa; font-size: 18px;
+                   padding: 4px 8px; border-radius: 6px; transition: color 0.2s, background 0.2s;">
+            <i class="fas fa-sliders-h"></i>
+        </button>
+    </div>
     </div>
 
     <div class="dp-filter-wrapper">
@@ -644,11 +650,116 @@ body::before {
             <div class="modal-info-side" id="modalInfo"></div>
 
         </div>
+
         <button class="modal-nav-btn next-btn" onclick="navigateModal(1)" aria-label="Next Card">
         <img src="images/modal_button/br.png" alt="Next">
     </button>
     </div>
     
+    <!-- Advanced Filter Modal -->
+<div id="advancedFilterModal" class="modal" onclick="closeAdvancedFilterOutside(event)">
+    <div class="modal-content-wrapper" onclick="event.stopPropagation()"
+         style="max-width: 480px; width: 92%; background: #1a1a2e; border-radius: 12px;
+                padding: 28px; color: #eee; font-family: 'Kanit', sans-serif;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0; color:#ff9f43;"><i class="fas fa-sliders-h"></i> ตัวกรองขั้นสูง</h3>
+            <span onclick="closeAdvancedFilter()" style="cursor:pointer; font-size:24px; color:#aaa;">&times;</span>
+        </div>
+
+        <!-- AT -->
+        <div style="margin-bottom: 16px;">
+            <label style="display:block; margin-bottom:6px; font-size:14px; color:#ccc;">
+                ⚔️ AT (พลังโจมตี)
+            </label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="number" id="advAtMin" placeholder="ต่ำสุด" min="0"
+                    style="flex:1; padding:8px; border-radius:6px; border:1px solid #444;
+                           background:#0d0d1a; color:#fff; font-family:'Kanit',sans-serif;">
+                <span style="color:#888;">–</span>
+                <input type="number" id="advAtMax" placeholder="สูงสุด" min="0"
+                    style="flex:1; padding:8px; border-radius:6px; border:1px solid #444;
+                           background:#0d0d1a; color:#fff; font-family:'Kanit',sans-serif;">
+            </div>
+        </div>
+
+        <!-- DF -->
+        <div style="margin-bottom: 16px;">
+            <label style="display:block; margin-bottom:6px; font-size:14px; color:#ccc;">
+                🛡️ DF (พลังป้องกัน)
+            </label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input type="number" id="advDfMin" placeholder="ต่ำสุด" min="0"
+                    style="flex:1; padding:8px; border-radius:6px; border:1px solid #444;
+                           background:#0d0d1a; color:#fff; font-family:'Kanit',sans-serif;">
+                <span style="color:#888;">–</span>
+                <input type="number" id="advDfMax" placeholder="สูงสุด" min="0"
+                    style="flex:1; padding:8px; border-radius:6px; border:1px solid #444;
+                           background:#0d0d1a; color:#fff; font-family:'Kanit',sans-serif;">
+            </div>
+        </div>
+
+        <!-- Taxonomy -->
+        <div style="margin-bottom: 16px;">
+            <label style="display:block; margin-bottom:6px; font-size:14px; color:#ccc;">
+                🦕 อนุกรมวิธาน (Taxonomy)
+            </label>
+            <select id="advTaxonomy"
+                style="width:100%; padding:8px; border-radius:6px; border:1px solid #444;
+                       background:#0d0d1a; color:#fff; font-family:'Kanit',sans-serif;">
+                <option value="">ทั้งหมด</option>
+                <option value="Tyrannosauridae">Tyrannosauridae</option>
+                <option value="Abelisauridae">Abelisauridae</option>
+                <option value="Elasmosauridae">Elasmosauridae</option>
+            </select>
+        </div>
+
+        <!-- Legendary Toggle -->
+        <div style="margin-bottom: 24px;">
+            <label style="display:block; margin-bottom:8px; font-size:14px; color:#ccc;">
+                ⭐ การ์ด Legendary
+            </label>
+            <div style="display:flex; gap:8px;">
+                <button id="legendaryBtnAll" onclick="setLegendaryFilter('all')"
+                    style="flex:1; padding:9px; border-radius:6px; border:2px solid #ff9f43;
+                           background:#ff9f43; color:#000; font-family:'Kanit',sans-serif;
+                           cursor:pointer; font-weight:bold;">
+                    ทั้งหมด
+                </button>
+                <button id="legendaryBtnYes" onclick="setLegendaryFilter('yes')"
+                    style="flex:1; padding:9px; border-radius:6px; border:2px solid #555;
+                           background:transparent; color:#eee; font-family:'Kanit',sans-serif;
+                           cursor:pointer;">
+                    Legendary เท่านั้น
+                </button>
+                <button id="legendaryBtnNo" onclick="setLegendaryFilter('no')"
+                    style="flex:1; padding:9px; border-radius:6px; border:2px solid #555;
+                           background:transparent; color:#eee; font-family:'Kanit',sans-serif;
+                           cursor:pointer;">
+                    ไม่รวม Legendary
+                </button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; gap:10px;">
+            <button onclick="applyAdvancedFilter()"
+                style="flex:1; padding:12px; background:#ff9f43; color:#000; border:none;
+                       border-radius:8px; font-size:16px; font-weight:bold;
+                       font-family:'Kanit',sans-serif; cursor:pointer;">
+                <i class="fas fa-search"></i> กรองเลย
+            </button>
+            <button onclick="resetAdvancedFilter()"
+                style="flex:1; padding:12px; background:#555; color:#fff; border:none;
+                       border-radius:8px; font-size:16px;
+                       font-family:'Kanit',sans-serif; cursor:pointer;">
+                ล้างค่า
+            </button>
+        </div>
+
+    </div>
+</div>
+
 <nav class="bottom-navbar">
 
     <div class="nav-left" onclick="openInfoModal()">
@@ -776,7 +887,7 @@ body::before {
     <script src="card_data/C_original.js"></script>
     <script src="card_data/MG_original.js"></script>
     <script src="card_data/C_Enigma.js"></script>
-    <script src="card_data/MG_enigma.js?v=1.1"></script>
+    <script src="card_data/MG_enigma.js?v=1.2"></script>
 	<script src="card_data/Character.js"></script>
     <script src="card_data/C_Newmaster.js"></script>
     <script src="card_data/MG_Newmaster.js"></script>	
@@ -787,11 +898,11 @@ body::before {
 	<script src="card_data/MG_AR1.js?v=1"></script>
 	<script src="card_data/Armored_Dino.js?v=1.1"></script>
 	
-    <script src="card_data/fanmade_BoostMaster2.js?v=1.1"></script>
+    <script src="card_data/fanmade_BoostMaster2.js?v=1.2"></script>
 	<script src="card_data/fanmade_Reart1.js"></script>
     <script src="card_data/fanmade_Boost3.js"></script>
     <script src="card_data/fanmade_Boost4.js"></script>
-    <script src="card_data/fanmade_Boost5.js?v=1.2"></script>
+    <script src="card_data/fanmade_Boost5.js?v=1.3"></script>
     <script src="card_data/fanmade_icefire.js?v=1.1"></script>
     <script src="card_data/fanmade_Boost6.js"></script>
     <script src="card_data/fanmade_Boost7.js"></script>
@@ -799,7 +910,7 @@ body::before {
         <script src="banlist_data.js?v=1"></script>	
 
     <script src="small_script.js?v=1.1"></script>	
-    <script src="deck_builder_logic.js?v=1.4.2"></script>
+    <script src="deck_builder_logic.js?v=1.4.3"></script>
     <script src="Showcase_logic.js?v=1"></script>	
 	<script src="handsimulate_logic.js"></script>
     <script src="collection_logic.js?v=1.1"></script>
@@ -808,7 +919,8 @@ body::before {
     <script src="untap_logic.js"></script>
     <script src="quickadd_logic.js?v=1.2"></script>
     <script src="dynamic_bg.js"></script>    
-    <script src="main.js?v=1.2"></script>
+    <script src="card_stats.js"></script>
+    <script src="main.js?v=1.4.3"></script>
     <script src="clan_identity_logic.js"></script>
     <script src="ai_deck.js"></script>	
 

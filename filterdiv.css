@@ -380,3 +380,15 @@ header {
     background: linear-gradient(0deg, #555 0%, #999 60%, #ccc 120%);
     border-color: #333;
 }
+
+/* Advanced Filter Modal — override modal-content-wrapper เดิม */
+#advancedFilterModal .modal-content-wrapper {
+    display: block !important;
+    height: auto !important;
+    max-width: 480px !important;
+    width: 92% !important;
+    background: #1a1a2e !important;
+    border-radius: 12px !important;
+    overflow: visible !important;
+    padding: 0 !important; /* padding อยู่ใน div ข้างใน แล้วอยู่แล้ว */
+}

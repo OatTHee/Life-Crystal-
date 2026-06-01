@@ -745,14 +745,16 @@ const MG_enigmaData = [
     id: "AR034 MG",
     nameTH: "เครื่องร่อนลมพายุ",
     nameEN: "Gale Glider",
-    dp: 2,
+    dp: 4,
     type: "Armor",
     set: "อินิกม่า",
     clan: "มีปีก",
-    ability: `<span class="hlabi">Skill :</span> <br> • เพิ่ม AT+200/DF+100 <br> • เมื่อ Creature ที่สวมใส่ออกโจมตี ปรับเพิ่ม AT+200 จนจบการต่อสู้ <br> • <span class="hlmanual">Manual</span> ใช้ DP 2 จุด นำ Armor Card ใบนี้และ Creature ที่สวมใส่กลับเข้ามือ`,
+    ability: `<span class="hlabi">Skill :</span> <br> 
+    • เพิ่ม AT+200/DF+100 <br> 
+    • เมื่อ Creature ที่สวมใส่ออกโจมตี ปรับเพิ่ม AT+200 จนจบการต่อสู้ <br> 
+    • <span class="hlmanual">Manual</span> ใช้ DP 2 จุด นำ Armor Card ใบนี้และ Creature ที่สวมใส่กลับเข้ามือ`,
     image: "images/EnigmaMG/Gale Glider.jpg"
 },
-
 {
     id: "AR035 MG",
     nameTH: "โซ่คล้องคู่หู",
@@ -796,7 +798,7 @@ const MG_enigmaData = [
     dp: 3,
     type: "Armor",
     set: "อินิกม่า",
-    clan: "",
+    clan: "มีปีก",
     ability: `<span class="hlabi">Skill :</span> <br> เมื่อถูกโจมตี : สามารถเลือก Creature ที่กำลังโจมตีเข้ามือเจ้าของ (เจ้าของสามารถจ่าย DP 3 เพื่อยกเลิกผลนี้)`,
     image: "images/EnigmaMG/Eyes of Chaos.jpg"
 },

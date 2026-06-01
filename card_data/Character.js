@@ -218,7 +218,8 @@ const CharacterData = [
     type: "Creature",
     set: "คาแร็คเตอร์",
     clan: "มีปีก",
-    ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlmanual">Manual (DP 3)</span> ทิ้งการ์ดนี้ : ค้นกองการ์ดหา "Tornado" 1 ใบ แสดงแล้วนำขึ้นมือ`,
+    ability: `<span class="hlabi">Skill :</span> <br> 
+    • <span class="hlmanual">Manual</span> ใช้ 3 DP + ทิ้งการ์ดนี้จากมือ : ค้นเด็ค > หาการ์ด "Tornado" 1 ใบ แสดงแล้วนำขึ้นมือ`,
     image: "images/Character/Neo Tupuxuara.jpg"
 },
 

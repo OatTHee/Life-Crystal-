@@ -26,7 +26,7 @@ const Armored_DinoData = [
 },
 {
     id: "Armored Jugaloceratops",
-    nameTH: "อาร์เมอร์ จููกาโลเซราทอปส์",
+    nameTH: "อาร์เมอร์ จูกาโลเซราทอปส์",
     nameEN: "Armored Jugaloceratops",
     dp: "ไร้DP",
     type: "Armored_Dino",

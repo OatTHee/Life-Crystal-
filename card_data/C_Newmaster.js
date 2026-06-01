@@ -168,13 +168,17 @@ const C_NewmasterData = [
 
 	{
         id: "2011NM-C016",
-        nameTH: "เจ้อเจียงออปเทออัส",
+        nameTH: "ซีชางออปเทออัส",
         nameEN: "Zhejiangopterus",
         dp: 4,
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlauto">Auto</span> เมื่อ Creature ตัวนี้เข้าสนาม เราสามารถกำหนด Field หรือ Magic บนสนาม 1 เป้าหมาย แล้วทำลายเป้าหมายและ Creature ตัวนี้ปรับค่า AT + 200 / DF + 200 เป็นเวลา 1 เทิร์น <br> • <span class="hlmanual">Manual</span> จ่าย DP 2 จุด นำ Creature ใบนี้เข้ามือเจ้าของ`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlauto">Auto</span> เมื่อ Creature ตัวนี้เข้าสนาม เราสามารถกำหนด Field หรือ Magic บนสนาม 1 เป้าหมาย 
+        แล้วทำลายเป้าหมายและ Creature ตัวนี้ปรับค่า AT + 200 / DF + 200 เป็นเวลา 1 เทิร์น <br> 
+        • <span class="hlmanual">Manual</span> จ่าย DP 2 จุด นำ Creature ใบนี้เข้ามือเจ้าของ.<br><br>
+        <span class="hlrm">เกร็ดความรู้ : ในสำเนียงจีน จะเรียกชื่อว่า "เจ้อเจียงออปเทออัส"</span>`,
         image: "images/Newmaster/Zhejiangopterus.jpg"
     },
     {
@@ -185,7 +189,9 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> <span class="hlmanual">Manual</span> "พร้อมรบ", จ่าย DP 1 จุด : Creature ตัวนี้ปรับค่า AT+200/DF+100 และยังสามารถโจมตีได้จนจบเทิร์น`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        <span class="hlcont">Cont</span> <span class="hlkw">"พร้อมรบ"</span> (เจ้าของ Creature ตัวนี้สามารถสั่งการ Creature ตัวนี้ได้ในเทิร์นที่เพิ่งเข้ามาในสนาม) <br>
+        <span class="hlmanual">Manual</span> จ่าย DP 1 จุด : Creature ตัวนี้ปรับค่า AT+200/DF+100 และยังสามารถโจมตีได้จนจบเทิร์น`,
         image: "images/Newmaster/Zhenyuanopterus.jpg"
     },
     {
@@ -207,6 +213,7 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีปีก",
+        rarity: "Silver_Rare",
         ability: `<span class="hlabi">Skill :</span> <br> <span class="hlauto">Auto</span> เมื่อ Creature ตัวนี้เข้าสนาม > เราสามารถเรียก Magic Card ที่มี DP ค่าเรียก 3 จุดหรือต่ำกว่าจากมือถ้าสามารถทำได้ดยไม่เสียค่าเรียก`,
         image: "images/Newmaster/Campylognathus.jpg"
     },
@@ -284,6 +291,7 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีเกราะหางหนาม",
+        rarity: "Silver_Rare",
         ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlmanual">Manual</span> กำหนดเด็คผู้เล่นเป้าหมาย : นำการ์ด 2 ใบบนสุดของเด็คเป้าหมายลงสุสานและยังสามารถโจมตีได้เป็นเวลาจนจบเทิร์น <br> • <span class="hlmanual">Manual</span> จ่าย DP 2 ทิ้งการ์ดใบนี้จากบนมือ กำหนด Creature 1 เป้าหมาย 1 ใบ ให้ Creature เป้าหมาย SH +600 เป็นเวลา 1 เทิร์น (Skill นี้ใช้ได้ขณะการ์ดใบนี้อยู่บนมือ)`,
         image: "images/Newmaster/Antarctopelta oliveroi.jpg"
     },
@@ -486,7 +494,8 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีปีก",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> "พร้อมรบ" (ผู้ควบคุมสามารถสั่งการ Creature ตัวนี้ในเทิร์นที่พึ่งเข้าสนาม) <br> • <span class="hlmanual">Manual</span> จ่าย DP 2 จุด ; Creature ตัวนี้ปรับค่า AT + 400 จนจบเทิร์น และยังสามารถโจมตีหรือป้องกันได้ในเทิร์นนี้`,
+        ability: `<span class="hlabi">Skill :</span> <br> 
+        • <span class="hlcont">Cont.</span> <span class="hlkw">"พร้อมรบ"</span> (ผู้ควบคุมสามารถสั่งการ Creature ตัวนี้ในเทิร์นที่พึ่งเข้าสนาม) <br> • <span class="hlmanual">Manual</span> จ่าย DP 2 จุด ; Creature ตัวนี้ปรับค่า AT + 400 จนจบเทิร์น และยังสามารถโจมตีหรือป้องกันได้ในเทิร์นนี้`,
         image: "images/Newmaster/Caulkicephalus.jpg"
     },
     {

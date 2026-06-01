@@ -65,14 +65,15 @@
 			},
 {
 				id: "D006 JU",
-				nameTH: "จิกแกนโนโตซอรัส",
+				nameTH: "ไจแกนโนโตซอรัส",
 				nameEN: "Giganotosaurus",
 				dp: 4,
 				type: "Creature",
 				set: "ออริจินอล",
 				clan: "สองขา",
 				ability: `<span class="hlabi">Effect :</span> <br> <span class="hlcont">Cont.</span> Fast run (เมื่อการ์ดใบนี้เข้ามาในสนาม สามารถใช้งานได้ทันที) <br> 
-				<span class="hlcont">Cont.</span> การ์ดใบนี้ ไม่ตกเป็นเป้าหมาย Skill จาก Creature ที่มี AT น้อยกว่า`
+				<span class="hlcont">Cont.</span> การ์ดใบนี้ ไม่ตกเป็นเป้าหมาย Skill จาก Creature ที่มี AT น้อยกว่า.<br><br>
+        <span class="hlrm">เกร็ดความรู้ : ชื่อเรียกที่ถูกต้องคือ "จิกแกนโนโตซอรัส"</span>`
 				,
 				image: "images/Original/Giganotosaurus.jpg"
 			}, 
@@ -185,7 +186,9 @@
 				type: "Creature",
 				set: "ออริจินอล",
 				clan: "มีเขา",
-				ability: `<span class="hlabi">Effect :</span> <br> <span class="hlcont">Cont.</span> การ์ดใบนี้สามารถโจมตี Creature ที่ติดสภาวะผิดปกติใน DF line ได้ แม้ว่าจะมี Creature ที่ AT line`
+				ability: `<span class="hlabi">Effect :</span> <br> 
+				<span class="hlcont">Cont.</span> การ์ดใบนี้สามารถโจมตี Creature ที่ติดสภาวะผิดปกติใน DF line ได้ แม้ว่าจะมี Creature ที่ AT line.<br><br>
+        <span class="hlrm">เกร็ดความรู้ : เป็นแค่ไดโนเสาร์สมมุติในการ์ตูนเท่านั้น</span>`
 				,
 				image: "images/Original/Jugaloceratops.jpg"
 			},
@@ -740,7 +743,7 @@
 				type: "Creature",
 				set: "ออริจินอล",
 				clan: "มีเกราะหางหนาม",
-				ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบน้เป็นเป้าหมายการโจมตี Creature ที่โจมตีได้รับสภาวะบาดเจ็บ DF-200 เมื่อจบการต่อสู้`
+				ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เป็นเป้าหมายการโจมตี Creature ที่โจมตีได้รับสภาวะบาดเจ็บ DF-200 เมื่อจบการต่อสู้`
 				,
 				image: "images/Original/Minmi.jpg"
 			},
@@ -752,7 +755,10 @@
 				type: "Creature",
 				set: "ออริจินอล",
 				clan: "มีเกราะหางหนาม",
-				ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ออกโจมตี สามารถ Creature เผ่ามีเกราะหางหนามในสุสาน 1 ใบออกจากเกมแล้วการ์ดใบนี้เพิ่ม AT+1000 จนจบ Turn. <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกเป็นเป้าหมายการโจมตี Creature ที่โจมตีมาได้รับ สภาวะบาดเจ็บ ลด AT-200.`
+				ability: `<span class="hlabi">Effect :</span> <br> 
+				<span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ออกโจมตี สามารถ <span class="hlkw">[รีมูฟ]</span> Creature 
+				เผ่ามีเกราะหางหนามในสุสาน 1 ใบออกจากเกม ถ้าทำ, การ์ดใบนี้เพิ่ม AT+1000 จนจบ Turn. <br> 
+				<span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกเป็นเป้าหมายการโจมตี Creature ที่โจมตีมาติด <span class="hlkw">[สภาวะบาดเจ็บ AT-200]</span> .`
 				,
 				image: "images/Original/Stegosaurus.jpg"
 			},
@@ -824,7 +830,10 @@
 				set: "ออริจินอล",
 				clan: "มีเกราะหางหนาม",
 				rarity:"Golden_Rare",
-				ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ออกโจมตี สามารถ Creature เผ่ามีเกราะหางหนามในสุสาน 1 ใบออกจากเกมแล้วการ์ดใบนี้เพิ่ม AT+1000 จนจบ Turn. <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกเป็นเป้าหมายการโจมตี Creature ที่โจมตีมาได้รับ สภาวะบาดเจ็บ ลด AT-200.`
+				ability: `<span class="hlabi">Effect :</span> <br> 
+				<span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ออกโจมตี สามารถ <span class="hlkw">[รีมูฟ]</span> Creature 
+				เผ่ามีเกราะหางหนามในสุสาน 1 ใบออกจากเกม ถ้าทำ, การ์ดใบนี้เพิ่ม AT+1000 จนจบ Turn. <br> 
+				<span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกเป็นเป้าหมายการโจมตี Creature ที่โจมตีมาติด <span class="hlkw">[สภาวะบาดเจ็บ AT-200]</span> .`
 				,
 				image: "images/Original/Stegosaurus_spe.jpg"
 			},

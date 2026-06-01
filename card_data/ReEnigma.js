@@ -396,7 +396,7 @@
     image: "images/ReEnigma/Eotriceratops.jpg"
 },
 {
-    id: "2016NE-DE403",
+    id: "2016NE-DE401",
     nameTH: "ไพลโอซอรัส / พรีเดเตอร์ เอ็กซ์",
     nameEN: "Pliosaurus",
     dp: 5,
@@ -989,7 +989,10 @@
         type: "Creature",
         set: "รีอินิกม่า",
         clan: "มีเกราะหางหนาม",
-        ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้โจมตีสำเร็จ เลือกสุ่มทิ้งการ์ดในมือคู่ต่อสู้ 1 ใบได้ <br> • <span class="hlabi">Skill :</span> <br> <span class="hlmanual">Manual</span> ใช้ DP 4 เปิดการ์ดบนกองการ์ดฝั่งใดก็ได้ 3 ใบ จัดเรียกแล้ววางกลับเข้ากองตามเดิม`,
+        ability: `<span class="hlabi">Effect :</span> <br> 
+        • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้โจมตีสำเร็จ เลือกสุ่มทิ้งการ์ดในมือคู่ต่อสู้ 1 ใบได้ <br> 
+        • <span class="hlabi">Skill :</span> <br> <span class="hlmanual">Manual</span> ใช้ DP 4 เปิดการ์ดบนกองการ์ดฝั่งใดก็ได้ 3 ใบ 
+        จัดเรียงแล้ววางกลับเข้ากองตามเดิม`,
         image: "images/ReEnigma/Gigantspinosaurus.jpg"
     },
     {

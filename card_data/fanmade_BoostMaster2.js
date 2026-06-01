@@ -69,7 +69,10 @@ const BoostMaster2Data = [
     type: "Boost_Creature",
     set: "PR02",
     clan: ["มีเกราะหางหนาม"],
-    ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlauto">Auto</span> เมื่อ Creature ที่มี [Pelta] ในชื่อเข้าสนาม : นำบนสุดเด็คคู่แข่ง 2 ใบลงสุสาน. <br> • <span class="hlauto">Auto</span> เมื่อตกเป็นเป้าหมายจากการโจมตี : เรารับ 1 DP > หลังจบการต่อสู้หาก Master เราชื่อ [Jason], สร้างความเสียหาย 200 แก่ Creature ที่โจมตี.`,
+    ability: `<span class="hlabi">Effect :</span> <br> 
+    • <span class="hlauto">Auto</span> เมื่อ Creature ที่มี [Pelta] ในชื่อเข้าสนาม : นำบนสุดเด็คคู่แข่ง 2 ใบลงสุสาน. <br> 
+    • <span class="hlauto">Auto</span> เมื่อตกเป็นเป้าหมายจากการโจมตี : เรารับ 2 DP > หลังจบการต่อสู้หาก Master เราชื่อ [Jason], 
+    สร้างความเสียหาย 200 แก่ Creature ที่โจมตี.`,
     image: "images/Fanmade/Boost2/Gargoyleosaurus.png"
 },
 

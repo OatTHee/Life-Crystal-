@@ -56,23 +56,24 @@ function handleQuickMultiAdd(e, card) {
         }
     }
 
-    // 1. ตรวจสอบโควตาสูงสุดของการ์ดใบนี้ (รวมกฎ Banlist และกฎประเภทการ์ด)
+    // 1. ตรวจสอบโควตาสูงสุดของการ์ดใบนี้
     let maxLimit = 3;
-    
-    // ดึงข้อมูล Banlist ปัจจุบัน
     const format = (typeof banlistData !== 'undefined') ? (banlistData[currentBanlistFormat] || banlistData["None"]) : null;
     const cardId = String(card.id);
+    
+    // เช็ค Legend
+    const isLegend = Array.isArray(card.type) ? card.type.includes("Legend") : card.type === "Legend";
 
     if (format) {
         if (format.banned.includes(cardId)) {
-            maxLimit = 0; // ถ้าโดนแบน ให้ Max เป็น 0
+            maxLimit = 0; 
         } else if (format.limited.includes(cardId)) {
-            maxLimit = 1; // ถ้าโดนจำกัด ให้ Max เป็น 1
-        } else if (card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
-            maxLimit = 1; // กฎปกติประเภทการ์ด
+            maxLimit = 1; 
+        } else if (isLegend || card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
+            maxLimit = 1; // บังคับ Legend ให้ Max เป็น 1
         }
-    } else if (card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
-        maxLimit = 1;
+    } else if (isLegend || card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
+        maxLimit = 1; // บังคับ Legend ให้ Max เป็น 1 (กรณีไม่มี Banlist)
     }
 
     // 2. นับจำนวนปัจจุบันในเด็ค (ใช้ myDeck จากไฟล์หลัก)

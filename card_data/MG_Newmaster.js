@@ -44,6 +44,7 @@ const MG_newmasterData = [
     type: "Action",
     set: "นิวมาสเตอร์",
     clan: "",
+    rarity: "Silver_Rare",
     ability: `<span class="hlabi">Effect :</span> <br> เลือก Creature ที่เราควบคุม 1 ตัว สับเข้าเด็คเรา จั่วการ์ด 1 ใบ จากนั้นเลือก Creature Card ที่ DP เท่ากับหรือน้อยกว่าตัวดังกล่าว 1 ตัวลงมาในสนามฝ่ายเรา`,
     image: "images/NewmasterMG/Life Cycle.jpg"
 },
@@ -380,6 +381,7 @@ const MG_newmasterData = [
     type: "Action_Field",
     set: "นิวมาสเตอร์",
     clan: "สัตว์น้ำ",
+    rarity: "Silver_Rare",
     ability: `<span class="hlabi">Effect :</span> (ระยะคงอยู่ ตลอดไป) <br> Creature เผ่าสัตว์น้ำฝ่ายเราทั้งหมด ปรับค่า AT+200 / DF+200`,
     image: "images/NewmasterMG/Convenient Sea.jpg"
 },
@@ -822,6 +824,7 @@ dp: 4,
 type: "Armor",
 set: "",
 clan: "สัตว์น้ำ",
+rarity: "Silver_Rare",
 ability:`<span class="hlabi">Skill :</span> <br> <span class="hlcont">Cont.</span> Creature ที่สวมใส่ปรับค่า AT+500`
 ,
 image: "images/NewmasterMG/Aquatic War Gear.jpg"

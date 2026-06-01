@@ -3,7 +3,7 @@ const cardsData = [...C_originalData,...MG_originalData,...CharacterData, ...C_E
 ...MG_newmasterData, ...C_StepNextData, ...MS_newmasterData, ...MG_StepNextData,
  ...ReEnigmaData, ...MG_AR1Data, ...Armored_DinoData,
 ...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...Boost5Data, ...icefireData, 
-...Boost6Data, ]; 
+...Boost6Data,...Boost7Data ]; 
 
 let myDeck = JSON.parse(localStorage.getItem('dinomaster_deck')) || [];
 let currentFilteredCards = cardsData;
@@ -42,18 +42,22 @@ function filterCards() {
         const matchDP = dpValue === "" || card.dp == dpValue;
         
         // --- แก้ไขจุดนี้: เปลี่ยนจาก .includes(typeValue) เป็นการเช็ค === ---
-let matchType = false;
+// --- รองรับกรณีที่ type เป็น Array ---
+        let matchType = false;
         if (typeValue === "") {
-            matchType = true; // ถ้าไม่ได้เลือกประเภท ให้ผ่านทั้งหมด
+            matchType = true; 
         } else if (typeValue === "Action") {
-            // ถ้าเลือก Action ให้หาทั้ง "Action" และ "Action_Field"
-            matchType = (card.type === "Action" || card.type === "Action_Field");
+            matchType = Array.isArray(card.type) 
+                ? (card.type.includes("Action") || card.type.includes("Action_Field"))
+                : (card.type === "Action" || card.type === "Action_Field");
         } else if (typeValue === "Field") {
-            matchType = (card.type === "Field" || card.type === "Action_Field");
-        }
-        else {
-            // ประเภทอื่นๆ (Creature, Armor, Field ฯลฯ) ให้เช็คตรงตัวเหมือนเดิม
-            matchType = (card.type === typeValue);
+            matchType = Array.isArray(card.type) 
+                ? (card.type.includes("Field") || card.type.includes("Action_Field"))
+                : (card.type === "Field" || card.type === "Action_Field");
+        } else {
+            matchType = Array.isArray(card.type) 
+                ? card.type.includes(typeValue)
+                : (card.type === typeValue);
         }
 
         const matchSet = setValue === "" || card.set === setValue;
@@ -123,7 +127,9 @@ function openModal(cardOrId) {
     // เตรียม Class สำหรับ Ability Box (แก้ปัญหา ReferenceError: abilityBoxClass)
     let abilityBoxClass = "ability-box";
     if (card.type) {
-        const types = card.type.split(' ').filter(t => t.trim() !== '');
+        // เช็คว่าเป็น Array หรือไม่ ถ้าใช่ให้ใช้เลย ถ้าไม่ใช่ค่อย split
+        const typesArray = Array.isArray(card.type) ? card.type : card.type.split(' ');
+        const types = typesArray.filter(t => t.trim() !== '');
         const typeClasses = types.map(t => `type-${t}`).join(' '); 
         abilityBoxClass += ` ${typeClasses}`;
     }
@@ -155,11 +161,10 @@ function openModal(cardOrId) {
             "Creature": "ครีเจอร์", "Action": "แอ็คชั่น", "Armor": "อาร์เมอร์",
             "Fusion_Monster": "ฟิวชั่นมอนสเตอร์", "Armored_Dino" : "ครีเจอร์ติดเกราะ",
             "Field": "ฟิลด์", "Master": "มาสเตอร์", "Boost_Master": "บูสมาสเตอร์", "Boost_Creature": "บูสครีเจอร์",
-            "Action_Field":"แอคชั่น [รูปแบบ:พื้นที่]","Illusion":"อิลูชั่น","LC":"ไลฟ์คริสตัล"
+            "Action_Field":"แอคชั่น [รูปแบบ:พื้นที่]","Illusion":"อิลูชั่น","LC":"ไลฟ์คริสตัล","Legend":"เลเจนด์"
         };
-
-        const displayTypes = card.type ? card.type.split(' ').map(t => typeMapping[t] || t).join(' / ') : '-';
-        
+        const typesArrayForDisplay = Array.isArray(card.type) ? card.type : card.type.split(' ');
+        const displayTypes = card.type ? typesArrayForDisplay.map(t => typeMapping[t] || t).join(' / ') : '-';        
         // --- [ส่วนที่เพิ่ม] คำนวณ Banlist และ Limit ---
         let dynamicMaxLimit = 3;
         let isBanned = false;

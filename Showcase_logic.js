@@ -4,6 +4,10 @@
 // =========================================================
 
 function openDeckShowcase() {
+    const hasType = (card, ...types) => {
+    const cardTypes = Array.isArray(card.type) ? card.type : [card.type];
+    return types.some(t => cardTypes.includes(t));
+};
     const overlay = document.getElementById('deckShowcaseOverlay');
     const body = document.getElementById('showcaseBody');
     const title = document.getElementById('showcaseTitle');
@@ -27,13 +31,15 @@ function openDeckShowcase() {
         c.type === "Boost_Master"
     );
     // Extra: การ์ดพิเศษต่างๆ
-    const extraList = myDeck.filter(c => !c.isCommander && ["Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion"].includes(c.type));
+    const extraList = myDeck.filter(c => !c.isCommander && 
+    hasType(c, "Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion")
+);
     
     // Main: ที่เหลือทั้งหมด
     const mainList = myDeck.filter(c => 
-        !starterList.includes(c) && 
-        !extraList.includes(c)
-    );
+    !starterList.includes(c) && 
+    !extraList.includes(c)
+);
 
     // 2. ฟังก์ชันนับจำนวนซ้ำเพื่อโชว์เลข x2, x3
     const getGrouped = (list) => {

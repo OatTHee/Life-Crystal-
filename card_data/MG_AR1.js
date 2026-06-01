@@ -87,7 +87,8 @@ const MG_AR1Data = [
     type: "Action_Field",
     set: "AR1",
     clan: "สองขา",
-    ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">Cont.</span> เพิ่มค่า AT 400 ให้กับ สองขา ที่เราควบคุมทุกใบใน AT Line.`,
+    ability: `<span class="hlabi">Effect :</span> <br> 
+    • <span class="hlcont">Cont.</span> เพิ่มค่า AT 400 ให้กับ สองขา ที่เราควบคุมทุกใบใน AT Line.`,
     image: "images/AR1MG/Mountain Field.jpg"
 },
 {
@@ -145,6 +146,69 @@ const MG_AR1Data = [
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">Cont.</span> Creature ที่โจมตี มีเกราะหางหนาม -AT 500 จนจบเทิร์น.`,
     image: "images/AR1MG/Desert Field.jpg"
 },
-
+  {
+    id: "2018NE-AR-AR001",
+    nameTH: "สนับจันทร์เสี้ยว",
+    nameEN: "Crescent Gaiter",
+    dp: 4,
+    type: "Armor",
+    set: "AR1",
+    clan: "สองขา, มีเขา",
+    ability: `<span class="hlabi">Effect :</span> <br>
+    • <span class="hlcont">Cont.</span> Creature ที่สวมใส่ปรับค่า AT +1000/DF +1000.<br>
+    • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกสุสานจากกองการ์ดหรือจากมือ : นำการ์ดใบนี้กลับขึ้นมือเจ้าของใน ช่วงจบเทิร์น.`,
+    image: "images/AR1MG/Crescent_Gaiter.jpg"
+  },
+  {
+    id: "2018NE-AR-AR002",
+    nameTH: "ชุดสะสมพลังงาน",
+    nameEN: "Energy Storage Suit",
+    dp: 3,
+    type: "Armor",
+    set: "AR1",
+    clan: "สองขา, มีเกราะหางหนาม, สัตว์น้ำ, มีเขา, มีปีก, คอยาว",
+    ability: `<span class="hlabi">Effect :</span> <br>
+    • <span class="hlcont">Cont.</span> Creature ที่สวมใส่เพิ่ม AT 300<br>
+    • <span class="hlcont">Cont.</span> หากมีการใช้งาน Action Card เกิดขึ้น : Creature ที่สวมปรับเพิ่ม AT 100 ต่อ Action Card 1 ใบที่ประกาศใช้งาน.`,
+    image: "images/AR1MG/Energy_Storage_Suit.jpg"
+  },
+  {
+    id: "2018NE-AR-AR003",
+    nameTH: "กรงเล็บโลหะ",
+    nameEN: "Metal Claw",
+    dp: 4,
+    type: "Armor",
+    set: "AR1",
+    clan: "สองขา, มีปีก",
+    ability: `<span class="hlabi">Effect :</span> <br>
+    • <span class="hlcont">Cont.</span> Creature ที่สวมใส่เพิ่ม AT+X (X=DP ของ Creature ที่สวมใส่ x200).`,
+    image: "images/AR1MG/Metal_Claw.jpg"
+  },
+  {
+    id: "2018NE-AR-AR004",
+    nameTH: "หมวกกันน็อค",
+    nameEN: "Safety Helmet",
+    dp: 4,
+    type: "Armor",
+    set: "AR1",
+    clan: "คอยาว, มีเกราะหางหนาม",
+    ability: `<span class="hlabi">Effect :</span> <br>
+    • <span class="hlcont">Cont.</span> Creature ที่สวมใส่เพิ่ม DF 400 และไม่ถูกทำลายจากการต่อสู้ 1 ครั้ง.<br>
+    • <span class="hlauto">Auto</span> เมื่อจบการต่อสู้นำ Armor ชิ้นนี้ลงสุสาน และ เราจั่วการ์ด 1 ใบ.`,
+    image: "images/AR1MG/Safety_Helmet.jpg"
+  },
+  {
+    id: "2018NE-AR-AR005",
+    nameTH: "ผ้าคลุมไททัน",
+    nameEN: "Titan Rope",
+    dp: 3,
+    type: "Armor",
+    set: "AR1",
+    clan: "คอยาว, สัตว์น้ำ",
+    ability: `<span class="hlabi">Effect :</span> <br>
+    • <span class="hlcont">Cont.</span> Creature ที่สวมใส่เพิ่ม ไม่ติดสภาวะสับสน เมื่ออยู่ใน AT Line.<br>
+    • <span class="hlcont">Cont.</span> Creature ที่สวมใส่จะไม่รับผลสำแดงจาก Action Card ของฝ่ายตรงข้าม.`,
+    image: "images/AR1MG/Titan_Rope.jpg"
+  }
 
 ];

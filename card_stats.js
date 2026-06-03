@@ -299,5 +299,20 @@ const cardStatsData = {
     "2016NE-DE602": { at: 100, df: 500, taxonomy: null },
     "2016NE-DE603": { at: 500, df: 900, taxonomy: null },
     "2016NE-DE604": { at: 1300, df: 800, taxonomy: null },
-    "2016NE-DE605": { at: 1100, df: 1100, taxonomy: null }
+    "2016NE-DE605": { at: 1100, df: 1100, taxonomy: null },
+
+    //fanmade cards
+
+    "FM-PR06-EXC01 JU": { at: 2500, df: 1800, taxonomy: null },
+    "FM-PR06 EXC02 JU": { at: 1500, df: 700, taxonomy: null },
+    "FM-PR06 EXC03 JU": { at: 1500, df: 700, taxonomy: null },
+    "FM-PR06 EXC04 JU": { at: 1500, df: 800, taxonomy: null },
+    "FM-PR06 EXC05 JU": { at: 2700, df: 1800, taxonomy: null },
+    "FM-PR06 EXC06 JU": { at: 1200, df: 500, taxonomy: null },
+    "FM-PR06 EXC07 JU": { at: 1400, df: 400, taxonomy: null },
+
+    "FM-PR08 EXC01 JU": { at: 1300, df: 600, taxonomy: null },
+    "FM-PR08 EXC02 JU": { at: 1300, df: 600, taxonomy: null },
+    "FM-PR08 EXC03 JU": { at: 1500, df: 1200, taxonomy: null },
+
 };

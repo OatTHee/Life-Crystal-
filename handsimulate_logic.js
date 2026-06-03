@@ -35,9 +35,14 @@ function openHandSimulator() {
         }
     }
 
-    // 4. เตรียมกองจั่ว (แก้ไข: ตัด Master, Boost Master และ Commander ออกจากกองจั่ว)
-    let drawPile = myDeck.filter(c => c.type !== "Master" && c.type !== "Boost_Master"&& c.type !== "Boost_Creature"&& 
-	c.type !== "Fusion_Monster"&& c.type !== "Armored_Dino"&& c.type !== "Illusion");
+    // 4. เตรียมกองจั่ว — ตัดการ์ดที่ไม่อยู่ในมือออก:
+    //    Master, Boost_Master, Commander, และการ์ด Extra Deck ทุกประเภท (Legend, Boost_Creature, Fusion_Monster, Armored_Dino, Illusion)
+    const extraDeckTypes = new Set(["Master", "Boost_Master", "Legend", "Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion", "LC"]);
+    let drawPile = myDeck.filter(c => {
+        if (c.isCommander) return false;
+        const types = Array.isArray(c.type) ? c.type : [c.type];
+        return !types.some(t => extraDeckTypes.has(t));
+    });
     // 5. สับกองการ์ด (Fisher-Yates Shuffle)
     for (let i = drawPile.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -55,7 +60,7 @@ function openHandSimulator() {
         infoText.innerHTML = `
             <span style="color:#aaa;">มาสเตอร์: <strong style="color:#fff;">${masterName}</strong></span>
             <span style="margin-left:15px; color:#aaa;">จำนวนการ์ดเริ่มต้น: <strong style="color:#2ecc71;">${handSize}</strong> ใบ</span>
-            <div style="font-size: 12px; color: #888; margin-top: 5px;">*ไม่รวม Master และ Commander ในการจั่ว</div>
+            <div style="font-size: 12px; color: #888; margin-top: 5px;">*ไม่รวม Master, Commander และการ์ด Extra Deck ในการจั่ว</div>
         `;
     }
 

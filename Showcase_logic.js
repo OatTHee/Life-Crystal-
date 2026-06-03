@@ -456,9 +456,27 @@ function handleShowcaseUpdate(cardId, action) {
 
     if (action === 'add') {
         const currentCount = myDeck.filter(c => String(c.id) === String(cardId)).length;
-        if (currentCount >= 3) {
-            alert("⚠️ ใส่การ์ดซ้ำได้ไม่เกิน 3 ใบ");
+        const isLegend = Array.isArray(template.type) ? template.type.includes("Legend") : template.type === "Legend";
+        const isLC = template.type === "LC";
+        const maxAllowed = (isLegend || isLC) ? 1 : 3;
+
+        if (currentCount >= maxAllowed) {
+            alert(isLegend ? "⚠️ การ์ด Legend ใส่ได้เพียง 1 ใบต่อเด็คเท่านั้น" : isLC ? "⚠️ การ์ด Life Crystal ใส่ได้เพียง 1 ใบต่อเด็คเท่านั้น" : "⚠️ ใส่การ์ดซ้ำได้ไม่เกิน 3 ใบ");
             return;
+        }
+        if (isLegend) {
+            const activeLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
+            if (activeLegend && String(activeLegend.id) !== String(cardId)) {
+                alert(`⚠️ เด็คนี้มีการ์ด Legend แล้ว (${activeLegend.nameTH})\nใส่ Legend ได้เพียง 1 ใบต่อเด็คเท่านั้น!`);
+                return;
+            }
+        }
+        if (isLC) {
+            const activeLC = myDeck.find(c => c.type === "LC");
+            if (activeLC && String(activeLC.id) !== String(cardId)) {
+                alert(`⚠️ เด็คนี้มีการ์ด Life Crystal แล้ว (${activeLC.nameTH})\nใส่ LC ได้เพียง 1 ใบต่อเด็คเท่านั้น!`);
+                return;
+            }
         }
         if (template.type === "Master" || template.type === "Boost_Master") {
             const hasMaster = myDeck.some(c => c.type === template.type);

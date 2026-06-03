@@ -677,13 +677,23 @@ function changeQty(cardId, delta, index = null) {
         const cardTemplate = myDeck[targetIndex];
         const currentCount = myDeck.filter(c => String(c.id) === String(cardId)).length;
         
-        if (currentCount < 3) {
-            // Copy ข้อมูลการ์ดเดิม (รวม image อาร์ตนั้น) เพิ่มเข้าไป
-            myDeck.push({ ...cardTemplate });
-        } else {
-            alert("การ์ดชื่อนี้ใส่ได้สูงสุด 3 ใบครับ");
-            return;
-        }
+        const isLegend = Array.isArray(cardTemplate.type) ? cardTemplate.type.includes("Legend") : cardTemplate.type === "Legend";
+const maxQty = isLegend ? 1 : 3;
+
+if (isLegend) {
+    const existingLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
+    if (existingLegend && String(existingLegend.id) !== String(cardId)) {
+        alert("เด็คนี้มีการ์ด Legend แล้ว ใส่ Legend ได้เพียง 1 ใบต่อเด็คเท่านั้น!");
+        return;
+    }
+}
+
+if (currentCount < maxQty) {
+    myDeck.push({ ...cardTemplate });
+} else {
+    alert(`การ์ดใบนี้ใส่ได้สูงสุด ${maxQty} ใบครับ`);
+    return;
+}
     } else {
         // --- กฎการลด (Minus) ---
         myDeck.splice(targetIndex, 1);
@@ -811,9 +821,11 @@ function createDeckItem(card, index) {
     if (card.isCover) item.classList.add('is-cover-now');
     if (card.isCommander) item.classList.add('is-commander');
 
-    const isMasterGroup = card.type === "Master" || card.type === "Boost_Master" || card.type === "LC";
-    const isCommander = card.isCommander === true;
-    const displayTypeName = card.type
+const isMasterGroup = card.type === "Master" || card.type === "Boost_Master" || card.type === "LC";
+const isCommander = card.isCommander === true;
+const isLegendCard = Array.isArray(card.type) ? card.type.includes("Legend") : card.type === "Legend";
+const displayTypeName = card.type
+
     ? (Array.isArray(card.type) ? card.type.join(' / ') : card.type.replace('_', ' ')).toUpperCase()
     : 'CARD';
     const safeTypeStr = Array.isArray(card.type) ? card.type.join("_") : (card.type || "");
@@ -822,20 +834,12 @@ function createDeckItem(card, index) {
          style="cursor: pointer; border: ${card.isCover ? '2px solid #ff9f43' : 'none'};"
          onerror="this.src='images/placeholder.png'">
     
-    <div class="qty-control">${(isCommander || isMasterGroup) ? 
-        `<span style="color:${isCommander ? '#f1c40f' : '#3498db'}; font-size:10px; font-weight:bold;">${isCommander ? 'COMMANDER' : displayTypeName}</span>` : 
+    <div class="qty-control">${(isCommander || isMasterGroup || isLegendCard) ? 
+        `<span style="color:${isCommander ? '#f1c40f' : isLegendCard ? '#9b59b6' : '#3498db'}; font-size:10px; font-weight:bold;">${isCommander ? 'COMMANDER' : displayTypeName}</span>` : 
         `<button class="qty-btn minus" onclick="event.stopPropagation(); changeQty('${card.id}', -1, ${index})">-</button>
          <div class="qty-number">${card.count || 1}</div>
          <button class="qty-btn plus" onclick="event.stopPropagation(); changeQty('${card.id}', 1, ${index})">+</button>`
     }</div>
-
-    ${(isCommander || isMasterGroup) ? `
-    <div class="deck-item-overlay-controls">
-        <button onclick="event.stopPropagation(); removeFromDeck(${index})" class="btn-custom-action ${isCommander ? 'btn-detach-cmd' : 'btn-eject-master'}">
-            ${isCommander ? 'ปลด' : 'ลบ'}
-        </button>
-    </div>
-    ` : ''}
     `;
     
     // --- [เพิ่มส่วน Logic: Quick Remove & Double Interaction] ---
@@ -1005,12 +1009,22 @@ const card = cardsData.find(c => String(c.id) === String(cardId));
         }
     }
     
-    // ตรวจสอบเงื่อนไข (เช่น ไม่เกิน 4 ใบต่อ 1 ชื่อ)
-    const count = myDeck.filter(c => c.id === cardId).length;
-    if (count >= 3) {
-        alert("ใส่การ์ดใบนี้ซ้ำได้ไม่เกิน 3 ใบ");
+    const isLegend = Array.isArray(card.type) ? card.type.includes("Legend") : card.type === "Legend";
+const maxQty = isLegend ? 1 : 3;
+
+if (isLegend) {
+    const existingLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
+    if (existingLegend && String(existingLegend.id) !== String(card.id)) {
+        alert(`เด็คนี้มีการ์ด Legend แล้ว (${existingLegend.nameTH})\nใส่ Legend ได้เพียง 1 ใบต่อเด็คเท่านั้น!`);
         return;
     }
+}
+
+const count = myDeck.filter(c => c.id === cardId).length;
+if (count >= maxQty) {
+    alert(`ใส่การ์ดใบนี้ซ้ำได้ไม่เกิน ${maxQty} ใบ`);
+    return;
+}
 
 
 
@@ -1464,11 +1478,22 @@ function handleShowcaseUpdate(cardId, action) {
         // --- กฎการเพิ่มการ์ด (เลียนแบบ addToDeck แต่คุมเอง) ---
         
         // เช็คจำนวนการ์ดซ้ำ (ไม่เกิน 4 ใบตามกฎทั่วไป ถ้าไม่ใช่ Energy)
-        const currentCount = myDeck.filter(c => String(c.id) === String(cardId)).length;
-        if (currentCount >= 3) {
-            alert("⚠️ ใส่การ์ดซ้ำได้ไม่เกิน 3 ใบ");
-            return;
-        }
+        const isLegend = Array.isArray(template.type) ? template.type.includes("Legend") : template.type === "Legend";
+const maxQty = isLegend ? 1 : 3;
+const currentCount = myDeck.filter(c => String(c.id) === String(cardId)).length;
+
+if (isLegend) {
+    const existingLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
+    if (existingLegend && String(existingLegend.id) !== String(cardId)) {
+        alert(`⚠️ เด็คนี้มีการ์ด Legend แล้ว (${existingLegend.nameTH})\nใส่ Legend ได้เพียง 1 ใบเท่านั้น`);
+        return;
+    }
+}
+
+if (currentCount >= maxQty) {
+    alert(`⚠️ ใส่การ์ดซ้ำได้ไม่เกิน ${maxQty} ใบ`);
+    return;
+}
 
         // เช็ค Master (ถ้าเป็นการ์ด Master ต้องมีใบเดียวในเด็ค)
         if (template.type === "Master" || template.type === "Boost_Master") {

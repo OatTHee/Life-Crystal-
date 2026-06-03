@@ -1,60 +1,18 @@
-// ai_deck.js
+// =========================================================
+//  ai_deck.js (v2 — Groq Edition)
+//  ต้องโหลดหลัง: card_data/*.js, card_stats.js,
+//                card_knowledge_builder.js
+// =========================================================
 
-// 1. ฟังก์ชันล้างข้อความขยะจาก HTML
-const cleanAbilityText = (input) => {
-    if (!input || typeof input !== 'string') return "ไม่มีความสามารถพิเศษ";
-    return input
-        .replace(/<br\s*\/?>/gi, ' ')
-        .replace(/<[^>]*>?/gm, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-};
-
-// 2. ฟังก์ชันเตรียมข้อมูลเด็ค
-function prepareAIData() {
-    try {
-        if (typeof myDeck === 'undefined') throw new Error("ไม่พบตัวแปร myDeck");
-
-        const validDeck = myDeck.filter(c => c !== null && c !== undefined);
-        const mainList = validDeck.filter(c => !c.isCommander && !["Master", "Boost_Master", "LC"].includes(c.type));
-        const commander = validDeck.find(c => c.isCommander);
-        const master = validDeck.find(c => c.type === "Master" || c.type === "Boost_Master");
-
-        const cardSummary = {};
-        mainList.forEach(c => {
-            const id = c?.id || "unknown";
-            if (!cardSummary[id]) {
-                cardSummary[id] = {
-                    name: c?.nameTH || "การ์ดไม่มีชื่อ",
-                    count: 1,
-                    type: c?.type || "-",
-                    clan: c?.clan || "-",
-                    ability: cleanAbilityText(c?.ability)
-                };
-            } else {
-                cardSummary[id].count++;
-            }
-        });
-
-        const deckString = Object.values(cardSummary)
-            .map(c => `- ${c.name} x${c.count} [${c.type}/${c.clan}] เอฟเฟกต์: ${c.ability}`)
-            .join("\n");
-
-        return {
-            deckList: deckString || "ยังไม่มีการ์ดในเด็คหลัก",
-            commanderInfo: commander ? `${commander.nameTH} (${cleanAbilityText(commander.ability)})` : "ไม่ได้เลือก",
-            masterInfo: master ? `${master.nameTH} (${cleanAbilityText(master.ability)})` : "ไม่ได้เลือก"
-        };
-    } catch (e) {
-        console.error("Prepare Data Error:", e);
-        return null;
-    }
-}
-
-// 3. ระบบจัดการ API Key
+// -------------------------------------------------------
+//  CONFIG — แก้ตรงนี้เพื่อ "เทรน" AI เพิ่ม
+// -------------------------------------------------------
 const AI_CONFIG = {
+    model: "llama-3.3-70b-versatile",   // เปลี่ยน model ตรงนี้
+    max_tokens: 2048,
+
     systemPrompt: `
-    คุณคือ “ผู้เล่นระดับแข่งขัน Dinomaster TCG”
+คุณคือ "ผู้เล่นระดับแข่งขัน Dinomaster TCG"
 คุณต้องวิเคราะห์เกมโดยยึดกฎทั้งหมด 100%
 ห้ามสมมติกฎเอง
 ห้ามใช้ตรรกะแบบเกมอื่น
@@ -71,375 +29,336 @@ Extra Deck: 0–15 ใบ
 ซ้ำได้ไม่เกิน 3 ใบ (ดูจาก ID)
 Boost / Fusion / Illusion อยู่ Extra Deck
 หากเป็นการ์ดคนละ Type หมายความว่านั่นไม่ใช่การ์ดที่ซ้ำกัน
-2️⃣ DP ECONOMY
-เริ่มก่อน 8 DP
-เริ่มหลัง 10 DP
-ทุก Start Phase รีเซ็ตเป็น 8
-Extra Draw = 4 DP ต่อใบ (ไม่จำกัดครั้ง) ซึ่งถ้าเกมไม่นำจริงๆ หรือไม่จวนตัวจริงๆจะไม่มีใครจ่าย 4 DP เพื่อจั่วเพราะมันเปลืองในทางปฏิบัติ มักเก็บ DP ไว้ร่ายการ์ดเพื่อป้องกันมากกว่า
 
-ต้องวิเคราะห์ Efficiency ต่อ 1 DP เสมอ
+DP ECONOMY
+เริ่มก่อน 8 DP | เริ่มหลัง 10 DP | ทุก Start Phase รีเซ็ตเป็น 8
+Extra Draw = 4 DP ต่อใบ (ในทางปฏิบัติมักไม่จ่าย เก็บไว้ป้องกันดีกว่า)
+วิเคราะห์ Efficiency ต่อ 1 DP เสมอ
 
-3️⃣ TURN STRUCTURE
-Start → Draw → Main1 → Battle → Main2 → End
+TURN STRUCTURE: Start → Draw → Main1 → Battle → Main2 → End
 คนเริ่ม ข้าม Draw + Battle เทิร์นแรก
-4️⃣ RED ZONE
-ปลดล็อกเทิร์น 4 ของเจ้าของเทิร์น
-ลงใหม่เท่านั้น ห้ามย้ายเข้าลงแล้วใช้ได้ทันที
-ตอนโจมตีเลือก +500 AT หรือ +500 DF
-เปลี่ยนตัว = ตัวเก่าออกนอกเกม
 
-ต้องวิเคราะห์ว่า:
-ควร tempo push หรือ bait removal
-ควรใส่ creature แบบ burst หรือ control
+RED ZONE
+ปลดล็อกเทิร์น 4 ของเจ้าของเทิร์น | ลงใหม่เท่านั้น ห้ามย้าย
+ตอนโจมตีเลือก +500 AT หรือ +500 DF | เปลี่ยนตัว = ตัวเก่าออกนอกเกม
 
-5️⃣ LINE LOGIC
-AT Line ว่าง → ตี DF ได้
-AT+DF ว่าง → ตี Master ได้
+LINE LOGIC
+AT Line ว่าง → ตี DF ได้ | AT+DF ว่าง → ตี Master ได้
+DF ใช้ DF สู้ | AT ใช้ AT เทียบ AT | SH ลด AT ฝ่ายรุก
 
-DF ใช้ DF สู้
-AT ใช้ AT เทียบ AT
-SH ลด AT ฝ่ายรุก
+SWARM: ทำได้ Main 1/2 ต้องพร้อมสั่งการ ห้ามรวมหลังโจมตี รวมได้ครั้งเดียวต่อใบ
 
-6️⃣ SWARM (รวมฝูง)
-ทำได้ Main 1/2 ต้องพร้อมสั่งการ ห้ามรวมหลังโจมตี รวมได้ครั้งเดียวต่อใบ ห้ามแยกจนกว่าเทิร์นหน้า
+FUSION: ใช้ 2 เผ่าต่างกัน ได้ความสามารถทั้งหมด ใช้สิทธิ์ตามวัตถุดิบ
+Armor ลงสุสาน | Boost ออกจากเกม | Effect หาย ยกเว้น Abnormal
 
-วิเคราะห์:
-Breakpoint AT
-DF stacking (ตามกฎหากมีการเพิ่ม SH จะนำ SH มาเพิ่ม DF)
-Leader selection
-Value per body
+ARMOR: จ่าย DP แล้ววางทับ | ใส่ให้ศัตรูได้ | Infuse ลด DP (เทิร์นละครั้ง)
 
-7️⃣ FUSION (รวมร่าง)
-ใช้ 2 เผ่าต่างกัน ได้ความสามารถทั้งหมด ใช้สิทธิ์ตามวัตถุดิบ Armor ลงสุสาน Boost ออกจากเกม Effect หาย ยกเว้นAbnormal
+BOOST: ติดได้ใบเดียว | เพิ่ม AT/DF/DP | ออกจากสนาม = ออกจากเกม
 
-ต้องคิดเรื่อง:
-Value explosion ,Risk exposure ,Removal vulnerability
-
-8️⃣ ARMOR
-จ่าย DP แล้ววางทับ
-ใส่ให้ศัตรูได้
-Infuse ลด DP (เทิร์นละครั้ง)
-Armor ติดไปพร้อม creature
-วิเคราะห์:
-Infuse break-even
-Debuff strategy
-Armor stacking efficiency
-
-9️⃣ BOOST
-
-ติดได้ใบเดียว
-เพิ่ม AT/DF/DP
-ออกจากสนาม = ออกจากเกม
-ต้องคิด:
-Boost timing
-Target protection
-Fusion interaction loss
-
-🔟 ILLUSION
-1 DP ลงตัวใหญ่
-ถ้า Illusion หลุด = Creature ตาย
+ILLUSION: 1 DP ลงตัวใหญ่ | ถ้า Illusion หลุด = Creature ตาย
 ใช้ช่วย Fusion ลดวัตถุดิบ 1
-ต้องวิเคราะห์:
-High risk high reward
-Removal meta sensitivity
-Tempo spike vs collapse
 
-1️⃣1️⃣ MANUAL QUOTA
-1 ครั้งต่อใบต่อเทิร์น ถ้าตัวไหนใช้ Manual หาก DP เรามากพอก็สามาถกดใช้ Manual ของตัวอื่นได้
-รีเซ็ต Start Phase
-ฝ่ายตรงข้ามใช้ได้ก่อน Battle เราจะเริ่ม
-หลังประกาศโจมตี ฝ่ายรับหมดสิทธิ Manual เว้นแต่จะเป็น Manual ที่มี Timing พิเศษ คือเป็น
-1.แบบทิ้งจากมือ (Hand Trap): พวกที่ต้องทิ้งตัวเองจากมือลงสุสานเพื่อใช้
-2. แบบปรับพลัง (Stat Modifier): พวกที่ เพิ่ม-ลด พลัง หรือสร้าง สภาวะผิดปกติชนิดปรับพลัง โดยไม่มีผลอื่นปนมา
-3. แบบพุ่งเป้า (Targeting Attacker) : พวกที่กล่าวถึงหรือเล็งเป้าหมายไปที่ การ์ดที่กำลังโจมตี/ถูกโจมตี โดยตรง
-นี่คือจุดวัด Skill สูงสุด
-ที่กล่าวมาข้างต้นคือกติกาและกลยุทธ์ที่พื้นฐานที่สุด
-นี่คือข้อแนะนำในการจัดเด็ค และการเดินเกมฉบับโปรเพลเยอร์ที่ต้องยึดตาม สำคัญมากในการให้คำแนะนำ
-การจัดเด็ค
-หัวใจสำคัญในการจัดเด็คที่ต้องคำนึงเป็นอันดับแรกคือ สไตล์ของเด็ค เราต้องรู้ก่อนว่าอยากจะใหเด็คแนวโจมตีดุดัน หรือเน้นตั้งบอร์ดเพื่อทำคอมโบ หรืออยากยื้อเกม  บางเด็คก็มีเงื่อนไขความต้องการแตกต่างกันไป
-วิธีสังเกตแนวทางของเด็คเบื้องต้น ให้ดูจากความสามารถของการ์ด Master และ BoostMaster ประกอบกัน ส่วนนี้สำคัญ มากๆ
-เมื่อรู้แนวแล้ว ก็เลือกการ์ดในเด็คให้สัมพันธ์กับแนวทาง ย้ำว่านี่คือวิธีการแบบเบสิคที่สุดเท่านั้น ผู้เล่นทุกคนมีความคิดสร้างสรรค์ที่แตกต่างกันไป ซึ่งต้องวิเคราะห์ความสามารถการ์ดทั้งหมดโดยรวม
-เด็คส่วนใหญ่หากใส่การ์ดที่ค่า DP สูง 4-8  เยอะเกินไปจะทำให้หนักมือและลำบากในการเล่น แต่บางเด็คที่การ์ด Master หรือ Boost Master สามารถเรียกการ์ดได้แบบฟรีๆ การใส่การ์ด DP หนักก็อาจไม่สร้างภาระอะไร 
- คอมมานเดอร์ไดโน เป็นการเลือกครีเจอร์การ์ดมาเป็นแม่ทัพที่จะร่วมดูเอลไปกับเรา เราเลือกที่จะมีคอมมานเดอร์ไดโนหรือไม่ก็ได้ เป็นการทำข้อผูกมัดให้เด็คใช้ได้แค่ Creatureเผ่าเดียว(แต่ไม่จำกัด Magic)
- เช่น ใช้ไทแรนโนไททัน เป็นคอมมานเดอร์ไดโน ก็จะใส่ครีเจอร์การ์ดในเด็คได้แค่เผ่าสองขา
-คอมมานเดอร์ไดโนนับว่าเป็นส่วนหนึ่งของการ์ดในเด็คหลักด้วย 
-ระหว่างที่อยู่ในคอมมานเดอร์โซน สามารถทำการ "คอมมานเดอร์ซัพพอร์ต" ได้!!
+MANUAL QUOTA: 1 ครั้งต่อใบต่อเทิร์น | รีเซ็ต Start Phase
+Hand Trap / Stat Modifier / Targeting Attacker ใช้ได้แม้หลังประกาศโจมตี
 
-คอมมานเดอร์ซัพพอร์ต
-เมื่อเราจะทำการ :
-1. ลงครีเจอร์การ์ด
-2. สวมใส่อาร์เมอร์การ์ดเฉพาะทางเผ่า
-3. เมื่อจะวางฟิลด์การ์ดเฉพาะทางเผ่า
-4. เมื่อจะใช้แอคชั่นการ์ดเฉพาะทางเผ่า
-5. ใช้ Skill ของครีเจอร์การ์ด
-ที่มีเผ่าตรงกับเผ่าของคอมมานเดอร์ไดโน 
+COMMANDER SYSTEM
+เลือก Creature เป็น Commander → เด็คใช้ Creature เผ่าเดียว (ไม่จำกัด Magic)
+Commander Support: วางนอน = ลด DP 2 สำหรับลงการ์ดเผ่าตรงกัน
+Commander Call: จ่าย 4 DP เข้า Red Zone | Commander Gift: ค้นการ์ดเผ่า 1 ใบ
+Life Link: ถูกนำออก → จ่าย 1000 LP กลับ Commander Zone หรือยกเลิก
 
-สามารถเปลี่ยนคอมมานเดอร์ไดโนของเราจากวางตั้งเป็นวางนอนเพื่อ ลด DP ในการทำสิ่งเหล่านั้นลง 2 จุดได้
+META ปัจจุบัน
+- เด็ควนสุสาน และเด็คตีเร็ว เป็นเมต้าหลัก
+- ระวัง Armor สาย pelta (โม่กอง)
+- Counter สุสาน: Clean The Graveyard, Temper in Waste
+- Counter บอร์ด: Black Hole, Super Incendiary Bomb, End of the Strongest
+- การ์ดสามัญสำคัญ: Earthquake, Tornado, Thunder Bolt, Flashing Bolt, Disintegrate
+- ถ้าเด็คเน้น Creature DP ต่ำ: Creature Reinforcement 1-2 ใบ
 
-เมื่อกลับเข้าเทิร์นของเราอีกครั้ง ก็จะกลับมาเป็นวางตั้ง
+การ์ด Limit 1 ที่ควรใส่ถ้าได้:
+- Lacussovagus: โดดจากมือยกเลิกเวท ได้บอร์ด ได้จั่ว
+- Dryptosaurus: ทิ้งการ์ดโดดฟรีมาสั่งสับสน คอมโบตกสุสานได้
+- Tapejara imperator: ลงมาดูมืออีกฝ่ายทั้งหมด ทิ้ง 1 ใบ
+- Geosternbergia: สกิลฟรี รีมูฟสุสาน 3 ใบ วน Magic กลับมือ
+- Germanodactylus: ตกสุสานจากสนาม → วน Magic 1 ใบ
 
-เราสามารถลงคอมมานเดอร์ไดโนเข้าสู่สนามเพื่อใช้ต่อสู้ได้ เมื่ออยู่ในสนามแล้วจะถือว่าเป็นครีเจอร์การ์ดตามปกติ
-
-การเอาคอมมานเดอร์ไดโนมาใช้ในสนาม เรียกว่า "คอมมานเดอร์คอล"
-หากเรดโซนของเรายังไม่ปลดล็อค จะยังลงคอมมานเดอร์ไดโนเข้าสู่สนามไม่ได้
-
-=วิธีการคอมมานเดอร์คอล=
-ใน "เทิร์นของเรา" ในระหว่าง
-⓵ เมนเฟส 1 (ช่วงลงการ์ด) หรือ
-⓶ ในระหว่าง เมนเฟส 2 (ช่วงก่อนจบเทิร์น)
-
-➠ เราสามารถ "จ่าย 4 DP" นำคอมมานเดอร์ไดโนจากในโซนเข้าสู่ ช่องเรดโซน
-
-//การคอมมานเดอร์คอลต้องเอาเข้าช่องเรดโซนเท่านั้น ลงจุดอื่นไม่ได้
-เมื่อเราทำการคอมมานเดอร์คอลลงสู่สนามมาแล้ว คอมมานเดอร์ไดโนใบนั้นจะมี "สถานะคอมมานเดอร์"
-
-สิทธิพิเศษที่คุณจะได้จากคอมมานเดอร์ไดโนมี 2 อย่างคือ คอมมานเดอร์กิฟท์ และคอมมานเดอร์ไลฟ์ลิงก์
-= คอมมานเดอร์กิฟท์ =
-เมื่อ "คอมมานเดอร์คอล" สำเร็จ : จะทำให้เราสามารถค้นหา "การ์ดประเภทไหนก็ได้!!" 1 ใบ ที่เป็น "การ์ดสำหรับเผ่าที่เราเล่น" จากเด็คเราขึ้นมือ
-
-การ์ดสำหรับเผ่าที่เราเล่น ได้แก่
-- การ์ดเกราะเฉพาะทางเผ่า
-- แอคชั่นการ์ดเฉพาะทางเผ่า
-- การ์ดพื้นที่ของเผ่านั้น
-- ครีเจอร์การ์ดเผ่านั้น
-
-//หาแล้วอย่าลืมสับเด็คด้วยนะ
-= คอมมานเดอร์ไลฟ์ลิงก์ =
-
-#เมื่อจะถูกนำออกจากสนามโดยอีกฝ่าย#
-➠ เจ้าของสามารถเลือกได้ 2 ทาง คือ
-
-1. เลือกยอมจ่ายพลังชีวิต (LP) ของผู้เล่น 1000 จุด ถ้าทำก็จะได้นำการ์ดใบนั้นกลับไปวางแสดงไว้ที่คอมมานเดอร์โซน
-
-ตัวอย่างตามในรูป
-
-หรือ 2. เลือกที่จะไม่เอากลับคอมมานเดอร์โซน ปล่อยทิ้งไปเลยก็ได้เหมือนกัน แต่การ์ดนั้นก็จะหลุดจาก "สถานะคอมมานเดอร์" ไปเลย (ถูกนำกลับขึ้นมือก็ขึ้นมือ ถูกทำลายก็ลงสุสาน ถูกนำออกเกมก็ออกเกม)
-
-แน่นอนว่าถ้าถูกยกเลิกการเรียกระหว่าง "คอมมานเดอร์คอล" ก็จะไลฟ์ลิงก์ได้ตามที่อธิบายไป 
-
-
-การจัดเด็คของเกมนี้ถูกแบ่งเป็น 2 วิธี หลักๆตามการผสมเผ่า
-- จัดเด็คแบบ "คอมมานเดอร์ไดโน" คือแบบเผ่าล้วน  หรือจัดแบบเผ่าผสม
-
-การจัดเด็คแบบเผ่าล้วน หากเด็คที่ให้คุณวิเคราะห์มีการ์ดที่ถูกตั้งเป็น Commander Dino ห้ามแนะนำการ์ดที่ไม่ใช่เผ่าของ Commander นั้นเด็ดขาด
-Creature ที่มี DP ในระดับ 3-4 ไม่ได้หนักมือมากนักเพราะทำการคอมมานเดอร์ซัพพอร์ตได้ 
-การ์ดสามัญก็จัดตามเมต้าตามปกติ
-แนวการเล่น ควรเน้นให้ความสำคัญกับการปูบอร์ดและรักษาบาลานซ์ของสนามเพื่อทยอยทำจังหวะบุุกในช่วงเรดโซนเปิด
-
-การจัดเด็คแบบผสมเผ่า
-ควรให้ความสำคัญกับ Creature ขนาดกลาง-เล็ก คือ DP 3 ส่วนการ์ดที่ DP 2 ลงไป ต้องดููว่าใบไหนน่าใช้
-เด็คแบบผสมเผ่ามักถูกจัดเพราะมีคอมโบเฉพาะตัว หรือต้องทำตามเงื่อนไขของ BoostMaster หรือต้องการจัดเด็คที่เน้นรวมร่าง หรือเน้นเรียกมอนสเตอร์
-การืดที่น่าสนใจเหมือนเกิดมาเพื่อเด็คผสมคือ Dawn of the Dead "นำ Creature ที่ค่าร่ายไม่เกิน 3 ที่เผ่าต่างกัน 2 ใบจากสุสานกลับเข้ามาในสนาม สามารถสั่งการได้ทันที และเมื่อจบเทิร์นจะต้องนำกลับเข้าสุสาน"
-การ์ดสามัญก็จัดตามเมต้าตามปกติ
-แนวการเล่น ค่อนข้างลำบากในช่วงต้นเพราะบาลานซ์ DP ยากพอสมควรเลย จึงไม่สามามรถตั้งบอร์ดได้ไวเท่ากับคอมมานเดอร์ แต่แลกมากับคอมโบที่ไหลลื่นกว่า จึงควรให้ความสำคัญกับการป้องกันตัวเองที่ชัวร์เพื่อค่อยๆสร้างบอร์ดไปจนคอมโบติด
-เด็คผสมถ้าสามารถผสมเผ่าไหนได้ก็ควรใช้การ์ดเก่งๆของเผ่านั้น
-
-การ์ดสามัญระดับโคตรเมต้าที่เก่งจนติดแบนลิส โดนลิมิต 1 ที่ถ้าใส่ได้ก็ควรใส่
-- Lacussovagus : โดดจาดมือมายกเลิกเวท ได้บอร์ด ได้จั่ว พลังใช้ได้
-- Dryptosaurus : พลังใช้ได้ มีทิ้งการ์ดโดดฟรีมาสั่งสับสนได้ การทิ้งการ์ดก็คอมโบการตกสุสานได้อีก
-- Tapejara imperator : ลงมาดูมืออีกฝ่ายทั้งหมดและทิ้ง 1 ใบจากที่ดู อีกฝ่ายแผนแตกได้ง่ายๆ
-- Geosternbergia : สกิลใช้ฟรี รีมูฟสุสานเรา 3 ใบเพื่อวน Magic ในสุสาน 1 ใบกลับขึ้นมือ
-- Germanodactylus : เมื่อตกสุสานจากสนามจะได้วน Magic 1 ใบ อีกฝ่ายต้องคิดหนักถ้าจะตีมัน
-
-การ์ดเก่งประจำเผ่าที่เป็นไดโนสามัญได้ (หากเล่นเผ่าล้วนก็ควรมีตัวพวกนี้ที่ตรงกับเผ่าที่เล่น  หากเล่นผสมก็ควรมีตัวพวกนี้ติดไว้ตามสไตล์เด็คหรือสิ่งที่ขาด)  ผมให้มาแค่ชื่อ คุณต้องเอาไปเทียบกับ ability ในฐานข้อมูลอย่างละเอียดด้วย
-สองขา : Gorgosaurus Iguanodon,  Dryptosaurus, Bambiraptor[Set : สเต็ปเน็ก] , Compsognathus[Set : สเต็ปเน็ก]  ,Pachycephalosaurus Ouranosaurus, Cryolophosaurus,
- Tarbosaurus bataar
-มีเกราะ : Europelta, Tarchia, Stegosaurus stenops, Gigantspinosaurus[Set : สเต็ปเน็ก] 
-สัตว์น้ำ : Muraenosaurus, Dunkleosteus,Tylosaurus, Styxosaurus snowii,Woolungasaurus, Kronosaurus,Muraenosaurus[Set : สเต็ปเน็ก]  
-มีเขา : Brachyceratops, Rubeosaurus
-มีปีก : Tapejara imperator,Geosternbergia,Germanodactylus,Lacussovagus,Ludodactylus,
-คอยาว : Amargasaurus, Apatosaurus, Bonitasaura salgadoi, 
-
-แนวทาง Meta: [เมต้าช่วงนี้มีทั้งเด็คที่เน้นวนการ์ดในสุสาน และเด็คที่ตีได้รวดเร็ว และควรระวังเด็คโม่กองอย่างเผ่าเกราะสาย pelta ไว้ด้วย
-    ควรใส่ Clean The Graveyard หรือ Temper in Waste มามต่อต้านการวนสุสาน การ์ดสามัญที่แนะนำให้มีอย่างยิ่งคือ Earthquake,Tornado,Thunder Bolt
-    , Flashing Bolt, Disintegrate
-    การแก้ทางเด็คเผ่าเกราะ และคอยาว หรือแม้แต่เผ่ามีเขา ควรใส่การ์ดล้างบอร์ดอย่าง Black Hole, Super Incendiary Bomb หรือ End of the Strongest มา
-    หากคิดว่าต้องการการเติมบอร์ดบ่อยๆ และเด็คเราเน้น Creature DP ต่ำ ควรมี Creature Reinforcement มาช่วย 1-2 ใบแล้วแต่ความจำเป็น
-
-    กลยุทธ์ในการเดินเกม และ mind set พื้นฐาน
-เน้นการบริหารทรัพยากร DP, การรู้จักความสามารถของการ์ด และการวางแผนตามสถานการณ์เพื่อพัฒนาฝีมือในเกม.
-การเล่นการ์ดไดโนมาสเตอร์ต้องมีการวางกลยุทธ์ที่ดี โดยการเลือกใช้การ์ดอย่างมีประสิทธิภาพและฝึกฝนอย่างสม่ำเสมอ
-  - การเก็บการ์ดให้ได้อย่างมีประสิทธิภาพจะทำให้ฝ่ายตรงข้ามรู้สึกหวาดกลัว}
-- มูลค่าของการ์ดไม่ใช่แค่ราคาทางการเงิน แต่ขึ้นอยู่กับสถานการณ์ที่ใช้การ์ด}
-- การเล่นต้องค่อยเป็นค่อยไป และฝึกฝนจนเกิดความเคยชิน}
-- การเรียนรู้จากความผิดพลาดจะช่วยให้ไม่เกิดเหตุการณ์เดิมซ้ำอีก}
-
-การเล่นการ์ดไดโนมาสเตอร์ให้เก่งขึ้นนั้น นอกจากจะต้องรู้จักกติกาแล้ว ยังต้องมีความรู้เกี่ยวกับการ์ดและความสามารถของการ์ดหลากหลาย เพื่อให้สามารถประเมินสถานการณ์ได้ดีขึ้น การเรียนรู้จากการเล่นจริงจะช่วยให้จดจำความสามารถของการ์ดได้เร็วขึ้น
-  - การรู้จักการ์ดให้มากขึ้นจะช่วยให้เก่งขึ้น}
-- การประเมินสถานการณ์ในการเล่นจะดีขึ้นเมื่อรู้จักการ์ดมากขึ้น}
-- การเล่นบ่อยๆ และถูกฝ่ายตรงข้ามใช้การ์ด จะช่วยให้จำความสามารถได้ดี}
-- การเล่นกับผู้เล่นอื่นจะช่วยให้เรียนรู้การใช้การ์ดได้มากขึ้น}
-      
-การบริหาร DP เป็นทักษะสำคัญในการเล่นการ์ดไดโนมาสเตอร์ เพื่อให้สามารถเอาชนะคู่แข่งได้แม้จะมีการ์ดในมือไม่มาก
-  - DP เป็นทรัพยากรที่สำคัญที่สุดในเกม Master ซึ่งต้องบริหารให้ดี}
-- การเช็ค DP ของฝ่ายตรงข้ามเป็นทักษะพื้นฐานที่ทุกคนควรทำ เพื่อคาดเดาการเล่นของคู่แข่ง}
-- การรู้จักการ์ดให้มากขึ้นจะช่วยให้เราใช้ DP ได้อย่างมีประสิทธิภาพ แม้การ์ดในมือจะน้อย}
-      
-การเล่นการ์ดไดโนมาสเตอร์ต้องมีการวางกลยุทธ์ที่ดีและเข้าใจความจำเป็นของการ์ดในสถานการณ์ต่าง ๆ
-  - การจัดการกับการ์ดต้องมีการวางแผนและใช้กลยุทธ์อย่างถูกต้อง}
-- มูลค่าของการ์ดไม่ได้หมายถึงราคา แต่เป็นความจำเป็นในการใช้งานในสถานการณ์นั้น ๆ}
-- ควรประเมินสถานการณ์ปัจจุบันและความจำเป็นของการ์ดที่มีอยู่ในมือ}
-- การ์ดที่ถืออยู่ต้องมีความสำคัญต่อการตอบโต้ในเกม}
-      
-) การพัฒนาทักษะในการเล่นการ์ดไดโนมาสเตอร์นั้นต้องเริ่มจากการรู้จักจุดแข็งและจุดอ่อนของตนเอง รวมถึงการปรับปรุงตามประสบการณ์ที่ได้รับจากการเล่น
-  - รู้จักจุดแข็งของตัวเองเพื่อพัฒนาให้ดีขึ้น}
-- ต้องประเมินตัวเองและการ์ด Dex อย่างสม่ำเสมอ}
-- การรู้จุดอ่อนของตัวเองเป็นสิ่งสำคัญในการปรับปรุง}
-- การเล่นบ่อยๆ จะช่วยให้เข้าใจจุดอ่อนและจุดแข็งได้ดียิ่งขึ้น}
-      
-การประเมินคู่แข่งและการปรับกลยุทธ์ในการเล่นการ์ดไดโนมาสเตอร์เป็นสิ่งสำคัญ เพื่อเพิ่มโอกาสในการชนะและเข้าใจพฤติกรรมของคู่แข่ง
-  - การปรับกลยุทธ์ในการเล่นบ่อยๆ เป็นสิ่งที่จำเป็น}
-- การเก็บ DP ไว้เยอะๆ ช่วยให้ไม่ต้องกลัวการโจมตี}
-- การพบคู่แข่งที่กล้าเสี่ยงทำให้สามารถเล่นได้อย่างเต็มที่}
-- การประเมินนิสัยของคู่แข่งช่วยให้วางแผนการเล่นได้ดีขึ้น}
-- การรู้จักการ์ดมากพอช่วยในการเดาการเล่นของฝ่ายตรงข้าม}
-      
-🧠 SYSTEM OVERRIDE
-
-ก่อนเริ่มวิเคราะห์เด็ค คุณต้องทำขั้นตอนนี้ก่อนทุกครั้ง:
-ห้ามวิเคราะห์ภาพรวมก่อนอ่านรายละเอียดการ์ดครบทุกใบ
-ห้ามสรุป archetype จากชื่อ
-ห้ามข้าม effect แม้จะดูเล็กน้อย
-
-📘 STEP 1 — CARD EXTRACTION PHASE
-เมื่อฉันให้รายชื่อเด็ค
-คุณต้อง:แยกการ์ดทุกใบออกมาเป็นรายการ
-อ่านข้อมูลแต่ละใบดังนี้:
-ประเภท (Creature / Armor / Action / Field / Boost / Illusion)
-DP/AT / DF / SH
-เผ่า Effect / Skill / Master Skill
-Manual หรือ Auto / Cont / Extra
-
-เงื่อนไขใช้งาน
-Interaction พิเศษ (เช่น ใช้ใน Battle, Hand Trap, Red Zone synergy)
-สรุปความสามารถของแต่ละใบแบบสั้นแต่ครบ 
-ทำครบทุกใบก่อนเข้าสู่ขั้นตอนวิเคราะห์
-
-🧩 STEP 2 — INTERACTION MAPPING
-
-หลังอ่านครบทุกใบแล้วให้สร้าง:
-1️⃣ Synergy Map
-ใบไหนคอมโบกับ ใบไหนใบไหนเปิดทาง Red Zone ใบไหนช่วย Fusion ใบไหนแก้ Armor / Illusion
-2️⃣ Conflict Map
-การ์ดที่ทำให้ overextend
-
-⚙️ STEP 3 — RESOURCE GRAPH
-วิเคราะห์:
-Turn 1–3 setup
-Turn 4 Red Zone spike
-Average cost per play
-Burst potential
-
-🚨 CRITICAL RULE
-ถ้าในการวิเคราะห์มีการอ้างถึง effect ที่ไม่เคยอ่านในขั้นตอนแรก
-ถือว่าการวิเคราะห์ผิด และต้องย้อนกลับไปอ่านใหม่
-
-🎯 ANALYSIS INSTRUCTION
-เมื่อฉันให้:รายชื่อเด็ค 
-คุณต้องตอบในรูปแบบที่เป็นกันเองแบบพี่สอนน้อง ไม่ต้องเกริ่นนำ ไม่ต้องแนะนำตัว ไม่ต้องเวิ่นเว้อ เข้าประเด็นทันที
-เริ่มจากการวิเคราะห์ว่า เด็คนี้เป็น Archetype แบบไหน Win condition คืออะไร : คาดการณ์จาก ability ของการ์ด Master และ Boost_Master เป็นลำดับแรก จากนั้นนำไปประกอบกับ ability โดยรวมของการ์ดทั้งหมดใน Main Deck
-เมื่อวิเคราะห์แล้วให้แนะนำแนวทางการเดินเกมจากสิ่งที่วิเคราะห์ โดยนำข้อมูลจาก Meta ปัจจุบันมาประกอบ ใจคตวามสำคัญประกอบด้วย
-Tempo Curve Analysis
-Turn 1–3
-Turn 4 Red Zone spike
-Late game plan
-
-DP Efficiency Breakdown
-คุ้ม DP ไหม Overextend หรือเปล่า มี resource leak ตรงไหน
-
-Red Zone Plan
-ควรลงตัวไหน (ซึ่งตามปกติ ขอแค่ลง Creature อะไรก็ได้เข้า Red Zone เพื่อไปโจมตีคุมความได้เปรียบของบอร์ดได้สำเร็จก็ใช้ได้แล้ว ทางปฏิบัติไม่ได้ซีเรียสกับการคัด Creature เข้า Red Zone)
-ควร bait removal ไหม ควร All-in หรือ Control
-
-Swarm / Fusion Optimization
-ควรรวมแบบไหน
-Fusion คุ้มค่าหรือเสี่ยงเกิน
-
-Risk Map
-แพ้อะไร โดน counter แบบไหน จุด collapse คืออะไร
- Suggested Improvements
-ตัดอะไร เพิ่มอะไร ปรับ ratio เท่าไร แก้ meta ยังไง
-    `
+ANALYSIS FORMAT (ตอบแบบพี่สอนน้อง ไม่เกริ่นนำ เข้าประเด็นทันที):
+1. Archetype & Win Condition (วิเคราะห์จาก Master+BoostMaster ก่อน)
+2. Tempo Curve: Turn 1-3 setup / Turn 4 Red Zone spike / Late game
+3. DP Efficiency: คุ้มไหม overextend ตรงไหน resource leak
+4. Red Zone Plan: ลงตัวไหน bait หรือ all-in
+5. Swarm/Fusion Optimization
+6. Risk Map: แพ้อะไร โดน counter แบบไหน
+7. Suggested Improvements: ตัดอะไร เพิ่มอะไร ปรับ ratio เท่าไร
+`
 };
 
-function getApiKey() {
-    let key = localStorage.getItem('dinomaster_gemini_key');
-    if (!key || key === "null" || key === "undefined") {
-        key = prompt("กรุณาใส่ Google Gemini API Key (ขอรับฟรีได้ที่ aistudio.google.com):");
+// -------------------------------------------------------
+//  GROQ KEY MANAGEMENT
+// -------------------------------------------------------
+function getGroqKey() {
+    let key = localStorage.getItem("dinomaster_groq_key");
+    if (!key || key === "null" || key === "undefined" || key.trim() === "") {
+        key = prompt(
+            "กรุณาใส่ Groq API Key\n" +
+            "ขอรับฟรีได้ที่: console.groq.com\n" +
+            "(สมัครฟรี ไม่มีวันหมดอายุ)"
+        );
         if (key && key.trim() !== "") {
-            localStorage.setItem('dinomaster_gemini_key', key.trim());
+            localStorage.setItem("dinomaster_groq_key", key.trim());
         } else {
             return null;
         }
     }
-    return key;
+    return key.trim();
 }
 
-function clearApiKey() {
-    localStorage.removeItem('dinomaster_gemini_key');
-    alert("ล้าง API Key เรียบร้อยแล้ว");
+function clearGroqKey() {
+    localStorage.removeItem("dinomaster_groq_key");
+    alert("ล้าง Groq API Key เรียบร้อยแล้ว");
 }
 
-// 4. ฟังก์ชันหลัก (กดปุ่มแล้วรันตัวนี้)
+// -------------------------------------------------------
+//  DECK DATA PREPARATION
+// -------------------------------------------------------
+function cleanAbilityText(input) {
+    if (!input || typeof input !== "string") return "ไม่มีความสามารถพิเศษ";
+    return input
+        .replace(/<br\s*\/?>/gi, " | ")
+        .replace(/<[^>]+>/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function prepareAIData() {
+    try {
+        if (typeof myDeck === "undefined" || !myDeck || myDeck.length === 0) {
+            throw new Error("ไม่พบข้อมูลเด็ค กรุณาใส่การ์ดก่อน");
+        }
+
+        const validDeck = myDeck.filter(c => c !== null && c !== undefined);
+        const mainList = validDeck.filter(
+            c => !c.isCommander && !["Master", "Boost_Master", "LC"].includes(c.type)
+        );
+        const extraList = validDeck.filter(
+            c => ["Boost_Creature", "Fusion_Monster", "Armored_Dino", "Illusion", "Legend"].includes(c.type)
+        );
+        const commander = validDeck.find(c => c.isCommander);
+        const master = validDeck.find(c => c.type === "Master" || c.type === "Boost_Master");
+        const lc = validDeck.find(c => c.type === "LC");
+
+        // สร้าง summary ของเด็ค (รวม count)
+        const summarize = (list) => {
+            const map = {};
+            list.forEach(c => {
+                const id = c.id || "unknown";
+                if (!map[id]) {
+                    map[id] = {
+                        name: c.nameTH || "?",
+                        count: 1,
+                        type: c.type || "-",
+                        clan: c.clan || "-",
+                        dp: c.dp != null ? c.dp : "?",
+                        ability: cleanAbilityText(c.ability)
+                    };
+                    // ดึง AT/DF จาก cardStatsData ถ้ามี
+                    if (typeof cardStatsData !== "undefined" && cardStatsData[id]) {
+                        map[id].at = cardStatsData[id].at;
+                        map[id].df = cardStatsData[id].df;
+                    }
+                } else {
+                    map[id].count++;
+                }
+            });
+            return Object.values(map)
+                .map(c => {
+                    const stat = (c.at != null) ? ` AT:${c.at} DF:${c.df}` : "";
+                    return `- ${c.name} x${c.count} [${c.type}/${c.clan}] DP:${c.dp}${stat} | ${c.ability}`;
+                })
+                .join("\n");
+        };
+
+        return {
+            commanderInfo: commander
+                ? `${commander.nameTH} (เผ่า: ${commander.clan}) | ${cleanAbilityText(commander.ability)}`
+                : "ไม่ได้เลือก",
+            masterInfo: master
+                ? `${master.nameTH} [${master.type}] | ${cleanAbilityText(master.ability)}`
+                : "ไม่ได้เลือก",
+            lcInfo: lc
+                ? `${lc.nameTH} | ${cleanAbilityText(lc.ability)}`
+                : "ไม่มี",
+            mainDeckList: summarize(mainList),
+            extraDeckList: extraList.length > 0 ? summarize(extraList) : "ไม่มี",
+            mainCount: mainList.length + (commander ? 1 : 0),
+            extraCount: extraList.length,
+            deckCardIds: validDeck.map(c => c.id),
+        };
+    } catch (e) {
+        console.error("prepareAIData Error:", e);
+        throw e;
+    }
+}
+
+// -------------------------------------------------------
+//  UI HELPERS
+// -------------------------------------------------------
+function setInsightHTML(html) {
+    const box = document.getElementById("aiInsight");
+    if (box) box.innerHTML = html;
+}
+
+function setInsightText(text) {
+    const box = document.getElementById("aiInsight");
+    if (box) box.innerText = text;
+}
+
+function renderMarkdown(text) {
+    // แปลง markdown เบื้องต้นให้อ่านง่ายใน HTML
+    return text
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/^#{1,3}\s(.+)$/gm, "<h4 style='color:#3498db;margin:12px 0 4px'>$1</h4>")
+        .replace(/^[-•]\s(.+)$/gm, "<li style='margin:3px 0'>$1</li>")
+        .replace(/(<li.*<\/li>)/gs, "<ul style='margin:4px 0 4px 20px'>$1</ul>")
+        .replace(/\n{2,}/g, "<br><br>")
+        .replace(/\n/g, "<br>");
+}
+
+// -------------------------------------------------------
+//  MAIN FUNCTION
+// -------------------------------------------------------
 async function askAIForAdvice() {
-    const insightBox = document.getElementById('aiInsight');
-    
-    // ตรวจสอบว่ามีกล่องแสดงผลไหม
+    const insightBox = document.getElementById("aiInsight");
     if (!insightBox) {
-        alert("CRITICAL ERROR: ไม่พบ Element id='aiInsight' ในหน้า HTML ของคุณ!");
+        alert("CRITICAL ERROR: ไม่พบ Element id='aiInsight' ในหน้า HTML");
         return;
     }
 
-    insightBox.innerText = "🔍 กำลังเตรียมข้อมูลและตรวจสอบ API Key...";
+    // ---- Step 1: API Key ----
+    const apiKey = getGroqKey();
+    if (!apiKey) {
+        setInsightHTML("<span style='color:#e74c3c'>❌ ไม่พบ Groq API Key — กดวิเคราะห์อีกครั้งเพื่อใส่ Key</span>");
+        return;
+    }
+
+    // ---- Step 2: เตรียมข้อมูลเด็ค ----
+    let deckData;
+    try {
+        setInsightHTML("<span style='color:#f39c12'>⏳ กำลังอ่านข้อมูลเด็ค...</span>");
+        deckData = prepareAIData();
+    } catch (e) {
+        setInsightHTML(`<span style='color:#e74c3c'>❌ ${e.message}</span>`);
+        return;
+    }
+
+    // ---- Step 3: สร้าง knowledge string ----
+    setInsightHTML("<span style='color:#f39c12'>⏳ กำลังรวบรวมข้อมูลการ์ดในเกม...</span>");
+
+    let cardKnowledgeStr = "";
+    if (typeof window.CARD_KNOWLEDGE !== "undefined") {
+        // inject เฉพาะการ์ดในเด็ค + การ์ดทั้งหมดในเกม
+        const deckCardKnowledge = window.CARD_KNOWLEDGE.forDeck(deckData.deckCardIds);
+        cardKnowledgeStr = `
+=== ฐานข้อมูลการ์ดในเกม (${window.CARD_KNOWLEDGE.totalCards} ใบ) ===
+[format: [ID] ชื่อ | type/clan | DP AT DF | effect]
+${window.CARD_KNOWLEDGE.full}`;
+    } else {
+        console.warn("[AI] CARD_KNOWLEDGE ไม่พบ — วิเคราะห์โดยไม่มีฐานข้อมูลการ์ด");
+        cardKnowledgeStr = "(ไม่มีฐานข้อมูลการ์ด — กรุณาโหลด card_knowledge_builder.js)";
+    }
+
+    // ---- Step 4: สร้าง user prompt ----
+    const userPrompt = `
+=== เด็คที่ต้องการวิเคราะห์ ===
+Commander: ${deckData.commanderInfo}
+Master: ${deckData.masterInfo}
+Life Crystal (LC): ${deckData.lcInfo}
+
+Main Deck (${deckData.mainCount} ใบ):
+${deckData.mainDeckList}
+
+Extra Deck (${deckData.extraCount} ใบ):
+${deckData.extraDeckList}
+
+${cardKnowledgeStr}
+
+วิเคราะห์เด็คนี้ให้ฉันหน่อย
+`;
+
+    // ---- Step 5: เรียก Groq API ----
+    setInsightHTML("<span style='color:#f39c12'>🤖 AI กำลังวิเคราะห์เด็ค...</span>");
 
     try {
-        // ดึง API Key
-        const apiKey = getApiKey();
-        if (!apiKey) {
-            insightBox.innerHTML = "<span style='color:#e74c3c'>❌ ไม่พบ API Key (กรุณากดวิเคราะห์อีกครั้งเพื่อใส่ Key)</span>";
-            return;
-        }
-
-        // เตรียมข้อมูลเด็ค
-        const data = prepareAIData();
-        if (!data) throw new Error("ไม่สามารถอ่านข้อมูลเด็คได้");
-
-        insightBox.innerText = "🤖 AI กำลังคิดคำแนะนำให้คุณ...";
-
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `${AI_CONFIG.systemPrompt}\n\nนี่คือข้อมูลเด็คของฉัน:\n- Commander: ${data.commanderInfo}\n- Master: ${data.masterInfo}\n- รายชื่อการ์ด:\n${data.deckList}`
-                    }]
-                }]
+                model: AI_CONFIG.model,
+                max_tokens: AI_CONFIG.max_tokens,
+                messages: [
+                    { role: "system", content: AI_CONFIG.systemPrompt },
+                    { role: "user",   content: userPrompt }
+                ]
             })
         });
 
         const resData = await response.json();
 
-        if (resData.error) {
-            if (resData.error.message.includes("API key not valid")) {
-                clearApiKey(); // ลบ Key ที่ผิดทิ้งเพื่อให้ผู้ใช้ใส่ใหม่
-                throw new Error("API Key ไม่ถูกต้องหรือถูกระงับ");
+        // ---- Handle error responses ----
+        if (!response.ok) {
+            const errMsg = resData?.error?.message || `HTTP ${response.status}`;
+
+            // Key ผิด → ลบทิ้งให้ใส่ใหม่
+            if (response.status === 401) {
+                localStorage.removeItem("dinomaster_groq_key");
+                throw new Error("API Key ไม่ถูกต้อง — กรุณากดวิเคราะห์อีกครั้งเพื่อใส่ Key ใหม่");
             }
-            throw new Error(resData.error.message);
+            // Rate limit
+            if (response.status === 429) {
+                throw new Error("เรียกใช้ AI บ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่");
+            }
+            // Context เกิน
+            if (errMsg.includes("context") || errMsg.includes("token")) {
+                throw new Error("ข้อมูลเด็คใหญ่เกินไป ลองลดจำนวนการ์ดในเด็คแล้วลองใหม่");
+            }
+            throw new Error(errMsg);
         }
 
-        const aiResponse = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (aiResponse) {
-            insightBox.innerText = aiResponse;
-        } else {
-            insightBox.innerText = "AI ไม่ยอมตอบ (อาจติดระบบกรองคำพูด)";
+        const aiText = resData?.choices?.[0]?.message?.content;
+        if (!aiText) {
+            throw new Error("AI ไม่ส่งคำตอบกลับมา");
         }
+
+        // ---- แสดงผล ----
+        insightBox.innerHTML = `
+            <div style="
+                text-align:left; 
+                line-height:1.7; 
+                font-size:14px;
+                color:#ecf0f1;
+                max-height: 500px;
+                overflow-y: auto;
+                padding-right: 8px;
+            ">
+                ${renderMarkdown(aiText)}
+            </div>
+            <div style="margin-top:12px; font-size:11px; color:#636e72; text-align:right;">
+                Model: ${AI_CONFIG.model} | การ์ดในฐานข้อมูล: ${window.CARD_KNOWLEDGE?.totalCards ?? "N/A"} ใบ
+            </div>
+        `;
 
     } catch (error) {
         console.error("AI Error:", error);
-        insightBox.innerHTML = `<span style='color:#ff7675'>❌ เกิดข้อผิดพลาด: ${error.message}</span>`;
+        setInsightHTML(`
+            <span style='color:#ff7675'>❌ เกิดข้อผิดพลาด: ${error.message}</span>
+            <br><br>
+            <button onclick="clearGroqKey()" style="
+                padding:6px 14px; background:#636e72; color:white;
+                border:none; border-radius:4px; cursor:pointer; font-size:13px;
+            ">🔑 ล้าง API Key แล้วใส่ใหม่</button>
+        `);
     }
 }
-

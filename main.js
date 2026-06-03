@@ -169,9 +169,17 @@ function openModal(cardOrId) {
         isCompatible = isCardCompatibleWithCommander(card);
     }
 
-    const isFull = countInDeck >= 3;
+    const isLegend = Array.isArray(card.type) ? card.type.includes("Legend") : card.type === "Legend";
+    const activeLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
+    const isLegendBlocked = isLegend && activeLegend && String(activeLegend.id) !== String(card.id);
+
+    const isLC = card.type === "LC";
+    const activeLC = myDeck.find(c => c.type === "LC");
+    const isLCBlocked = isLC && activeLC && String(activeLC.id) !== String(card.id);
+
+    const isFull = (isLegend || isLC) ? countInDeck >= 1 : countInDeck >= 3;
     const isMasterDisabled = isMaster && hasMasterInDeck && !myDeck.some(c => String(c.id) === String(card.id));
-    const isDisabled = !isCompatible || isFull || isMasterDisabled;
+    const isDisabled = !isCompatible || isFull || isMasterDisabled || isLegendBlocked || isLCBlocked;
 
     // เตรียม Class สำหรับ Ability Box (แก้ปัญหา ReferenceError: abilityBoxClass)
     let abilityBoxClass = "ability-box";
@@ -235,6 +243,10 @@ function openModal(cardOrId) {
         }
         // กฎ Master เดิม (ใส่ได้ 1)
         if (card.type === "Master" || card.type === "Boost_Master") dynamicMaxLimit = 1;
+        // กฎ Legend (ใส่ได้ 1)
+        if (isLegend) dynamicMaxLimit = 1;
+        // กฎ LC (ใส่ได้ 1)
+        if (isLC) dynamicMaxLimit = 1;
         // ------------------------------------------
 
         let btnText = '+ เพิ่มลงเด็ค';
@@ -255,6 +267,14 @@ function openModal(cardOrId) {
             btnColor = '#b0b0b0'; 
         } else if (isMasterDisabled) {
             btnText = 'มี Master ในเด็คแล้ว';
+            btnColor = '#b0b0b0';
+        } else if (isLegendBlocked) {
+            btnText = `มี Legend อื่นแล้ว (${activeLegend.nameTH})`;
+            warningText = '(ใส่ Legend ได้เพียง 1 ใบต่อเด็ค)';
+            btnColor = '#b0b0b0';
+        } else if (isLCBlocked) {
+            btnText = `มี LC อื่นแล้ว (${activeLC.nameTH})`;
+            warningText = '(ใส่ Life Crystal ได้เพียง 1 ใบต่อเด็ค)';
             btnColor = '#b0b0b0';
         } else if (countInDeck >= dynamicMaxLimit) { 
             // เช็คว่าเต็ม Limit หรือยัง (รองรับทั้ง Limit 1 และ 3)
@@ -299,12 +319,27 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
         }
         
         // 7. พ่น HTML (เพิ่ม rarityTextHTML เข้าไปข้างชื่อการ์ดหรือใต้ชื่อ)
+        // --- AT / DF / Taxonomy จาก cardStatsData ---
+        const statsForModal = (typeof cardStatsData !== 'undefined') ? cardStatsData[String(card.id)] : null;
+        const hasStats = statsForModal && (statsForModal.at != null || statsForModal.df != null);
+        const statHTML = hasStats ? `
+            <div style="display:flex; gap:10px; margin:8px 0; flex-wrap:wrap;">
+                <span style="background:#1a252f; border:1px solid #2c3e50; border-radius:6px; padding:4px 12px; font-size:13px; color:#ecf0f1;">
+                    ⚔️ <strong style="color:#fff;">AT :</strong> ${statsForModal.at ?? '-'}
+                </span>
+                <span style="background:#1a252f; border:1px solid #2c3e50; border-radius:6px; padding:4px 12px; font-size:13px; color:#ecf0f1;">
+                    🛡️ <strong style="color:#fff;">DF :</strong> ${statsForModal.df ?? '-'}
+                </span>
+                ${statsForModal.taxonomy ? `<span style="background:#1a252f; border:1px solid #2c3e50; border-radius:6px; padding:4px 12px; font-size:13px; color:#ecf0f1;">🔬 <strong style="color:#fff;">อนุกรมวิธาน :</strong> ${statsForModal.taxonomy}</span>` : ''}
+            </div>` : '';
+
         modalInfo.innerHTML = `
             <h2>${card.nameEN}</h2>
             <p style="color:#666; margin-bottom:5px;">${card.nameTH} | ID: ${card.id}</p>
             <hr>            
             <p><strong>ประเภท :</strong> ${displayTypes} | <strong>DP :</strong> ${card.dp}</p>
             <p><strong>เผ่า :</strong> ${card.clan || '-'}</p>
+            ${statHTML}
             <p><strong>ชุด :</strong> ${card.set || '-'}</p> <div style="margin: 10px 0;"> ${rarityTextHTML} 
             </div>
 

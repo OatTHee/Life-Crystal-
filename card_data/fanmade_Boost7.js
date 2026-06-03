@@ -351,7 +351,9 @@ clan: "สองขา",
 rarity: "Promo",
 ability: `<span class="hlabi"> Boost Ability Skill :</span> <br> <span class="hlmanual">Manual</span> [รีมูฟ] การ์ดนี้ : สร้างความเสียหาย 800 จุดแก่ Creature คู่แข่ง ไม่เกิน 3 ใบ และเราไม่สามารถสั่งโจมตีได้จนจบเทิร์น.`
 ,
-image: "images/Fanmade/PR08_Pt1/Tyrannosaurus.png"
+image: "images/Fanmade/PR08_Pt1/Tyrannosaurus.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/PR08_Pt1/Tyrannosaurus_Secret.png"
 }
 
     ];

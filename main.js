@@ -28,84 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const container = document.getElementById('cardContainer');
 const searchInput = document.getElementById('searchInput');
-const dpFilter = document.getElementById('dpFilter');
-const typeFilter = document.getElementById('typeFilter');
-const setFilter = document.getElementById('setFilter');
-const clanFilter = document.getElementById('clanFilter');
-const rarityFilter = document.getElementById('rarityFilter');
 
 const modal = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImg');
 const modalInfo = document.getElementById('modalInfo');
 
 // 3. ฟังก์ชัน Filter
-function filterCards() {
-    const searchText = searchInput.value.toLowerCase();
-    const dpValue = dpFilter.value;
-    const typeValue = typeFilter.value;
-    const setValue = setFilter.value;
-    const clanValue = clanFilter.value;
-    const rarityValue = rarityFilter.value;
-
-    const filtered = cardsData.filter(card => {
-
-        // --- Filter เดิม (ไม่แตะ) ---
-        const matchName = (card.nameTH || "").toLowerCase().includes(searchText) || 
-                          (card.nameEN || "").toLowerCase().includes(searchText);
-        const matchDP = dpValue === "" || card.dp == dpValue;
-
-        let matchType = false;
-        if (typeValue === "") {
-            matchType = true; 
-        } else if (typeValue === "Action") {
-            matchType = Array.isArray(card.type) 
-                ? (card.type.includes("Action") || card.type.includes("Action_Field"))
-                : (card.type === "Action" || card.type === "Action_Field");
-        } else if (typeValue === "Field") {
-            matchType = Array.isArray(card.type) 
-                ? (card.type.includes("Field") || card.type.includes("Action_Field"))
-                : (card.type === "Field" || card.type === "Action_Field");
-        } else {
-            matchType = Array.isArray(card.type) 
-                ? card.type.includes(typeValue)
-                : (card.type === typeValue);
-        }
-
-        const matchSet = setValue === "" || card.set === setValue;
-        const matchClan = clanValue === "" || (card.clan && card.clan.includes(clanValue));
-        const matchRarity = rarityValue === "" || card.rarity === rarityValue;
-
-        // --- Advanced Filter (เพิ่มใหม่) ---
-        const s = advancedFilterState;
-
-        const matchAtMin = s.atMin === null || (card.at != null && card.at >= s.atMin);
-        const matchAtMax = s.atMax === null || (card.at != null && card.at <= s.atMax);
-        const matchDfMin = s.dfMin === null || (card.df != null && card.df >= s.dfMin);
-        const matchDfMax = s.dfMax === null || (card.df != null && card.df <= s.dfMax);
-        const matchTaxonomy = s.taxonomy === "" || card.taxonomy === s.taxonomy;
-
-        let matchLegendary = true;
-if (s.legendary === 'yes') {
-    matchLegendary = Array.isArray(card.type)
-        ? card.type.some(t => t.includes("Legend"))
-        : (card.type || "").includes("Legend");
-} else if (s.legendary === 'no') {
-    matchLegendary = Array.isArray(card.type)
-        ? !card.type.some(t => t.includes("Legend"))
-        : !(card.type || "").includes("Legend");
-}
-
-        return matchName && matchDP && matchType && matchSet && matchClan && matchRarity
-            && matchAtMin && matchAtMax && matchDfMin && matchDfMax
-            && matchTaxonomy && matchLegendary;
-    });
-
-    currentFilteredCards = filtered;
-    renderCards(currentFilteredCards);
-}
-
 function resetFilters() {
-    // --- Filter เดิม (ไม่แตะ) ---
     document.getElementById('searchInput').value = "";
     document.getElementById('dpFilter').value = "";
     document.getElementById('typeFilter').value = "";
@@ -113,7 +42,6 @@ function resetFilters() {
     document.getElementById('setFilter').value = "";
     document.getElementById('rarityFilter').value = "";
 
-    // --- รีเซ็ต Advanced Filter ด้วย ---
     advancedFilterState = {
         atMin: null, atMax: null,
         dfMin: null, dfMax: null,
@@ -128,14 +56,95 @@ function resetFilters() {
     setLegendaryFilter('all');
     updateAdvancedFilterIndicator();
 
-    // --- ของเดิม (ไม่แตะ) ---
+    // reset ability search mode ด้วย
+    if (typeof abilitySearchMode !== 'undefined' && abilitySearchMode) {
+        toggleAbilitySearch();
+    }
+
     currentFilteredCards = cardsData;
     renderCards(currentFilteredCards);
     syncDpButtons();
 }
-// เพิ่มบรรทัดนี้ล่างสุดเพื่อให้ Filter ทำงานทันทีที่กดเลือก
-				rarityFilter.addEventListener('change', filterCards);
 
+function filterCards() {
+    const searchText = searchInput.value.toLowerCase();
+    const dpValue = dpFilter.value;
+    const typeValue = typeFilter.value;
+    const setValue = setFilter.value;
+    const clanValue = clanFilter.value;
+    const rarityValue = rarityFilter.value;
+
+    const filtered = cardsData.filter(card => {
+
+        const matchName = abilitySearchMode
+            ? stripAbilityHTML(card.ability).includes(searchText)
+            : ((card.nameTH || "").toLowerCase().includes(searchText) ||
+               (card.nameEN || "").toLowerCase().includes(searchText));
+
+        const matchDP = dpValue === "" || card.dp == dpValue;
+
+        let matchType = false;
+        if (typeValue === "") {
+            matchType = true;
+        } else if (typeValue === "Action") {
+            matchType = Array.isArray(card.type)
+                ? (card.type.includes("Action") || card.type.includes("Action_Field"))
+                : (card.type === "Action" || card.type === "Action_Field");
+        } else if (typeValue === "Field") {
+            matchType = Array.isArray(card.type)
+                ? (card.type.includes("Field") || card.type.includes("Action_Field"))
+                : (card.type === "Field" || card.type === "Action_Field");
+        } else {
+            matchType = Array.isArray(card.type)
+                ? card.type.includes(typeValue)
+                : (card.type === typeValue);
+        }
+
+        const matchSet = setValue === "" || card.set === setValue;
+        const matchClan = clanValue === "" || (card.clan && card.clan.includes(clanValue));
+        const matchRarity = rarityValue === "" || card.rarity === rarityValue;
+
+        const s = advancedFilterState;
+        const matchAtMin = s.atMin === null || (card.at != null && card.at >= s.atMin);
+        const matchAtMax = s.atMax === null || (card.at != null && card.at <= s.atMax);
+        const matchDfMin = s.dfMin === null || (card.df != null && card.df >= s.dfMin);
+        const matchDfMax = s.dfMax === null || (card.df != null && card.df <= s.dfMax);
+        const matchTaxonomy = s.taxonomy === "" || card.taxonomy === s.taxonomy;
+
+        let matchLegendary = true;
+        if (s.legendary === 'yes') {
+            matchLegendary = Array.isArray(card.type)
+                ? card.type.some(t => t.includes("Legend"))
+                : (card.type || "").includes("Legend");
+        } else if (s.legendary === 'no') {
+            matchLegendary = Array.isArray(card.type)
+                ? !card.type.some(t => t.includes("Legend"))
+                : !(card.type || "").includes("Legend");
+        }
+
+        return matchName && matchDP && matchType && matchSet && matchClan && matchRarity
+            && matchAtMin && matchAtMax && matchDfMin && matchDfMax
+            && matchTaxonomy && matchLegendary;
+    });
+
+    currentFilteredCards = filtered;
+    renderCards(currentFilteredCards);
+}
+
+// --- Ability Highlight Helper ---
+function highlightAbilityKeyword(abilityHTML, keyword) {
+    if (!keyword || !abilityHTML) return abilityHTML;
+    // ล้าง HTML tag ชั่วคราวเพื่อหาตำแหน่ง keyword แล้ว wrap ใน span
+    const escaped = keyword.replace(/[.*+?^${}()|\[\]\\]/g, '\$&');
+    const regex = new RegExp(`(${escaped})`, 'gi');
+    // inject highlight เฉพาะใน text node (ไม่ตัด HTML tag)
+    return abilityHTML.replace(/>([^<]*)</g, (match, text) => {
+        const highlighted = text.replace(regex,
+            `<mark style="background:#f39c12; color:#1a1a1a; border-radius:3px; padding:0 2px; font-weight:bold;">$1</mark>`
+        );
+        return `>${highlighted}<`;
+    });
+}
 
 // 4. ฟังก์ชันเปิด Modal (Pop-up) พร้อมสีตาม Type
 function openModal(cardOrId) {
@@ -319,33 +328,20 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
         }
         
         // 7. พ่น HTML (เพิ่ม rarityTextHTML เข้าไปข้างชื่อการ์ดหรือใต้ชื่อ)
-        // --- AT / DF / Taxonomy จาก cardStatsData ---
-        const statsForModal = (typeof cardStatsData !== 'undefined') ? cardStatsData[String(card.id)] : null;
-        const hasStats = statsForModal && (statsForModal.at != null || statsForModal.df != null);
-        const statHTML = hasStats ? `
-            <div style="display:flex; gap:10px; margin:8px 0; flex-wrap:wrap;">
-                <span style="background:#1a252f; border:1px solid #2c3e50; border-radius:6px; padding:4px 12px; font-size:13px; color:#ecf0f1;">
-                    ⚔️ <strong style="color:#fff;">AT :</strong> ${statsForModal.at ?? '-'}
-                </span>
-                <span style="background:#1a252f; border:1px solid #2c3e50; border-radius:6px; padding:4px 12px; font-size:13px; color:#ecf0f1;">
-                    🛡️ <strong style="color:#fff;">DF :</strong> ${statsForModal.df ?? '-'}
-                </span>
-                ${statsForModal.taxonomy ? `<span style="background:#1a252f; border:1px solid #2c3e50; border-radius:6px; padding:4px 12px; font-size:13px; color:#ecf0f1;">🔬 <strong style="color:#fff;">อนุกรมวิธาน :</strong> ${statsForModal.taxonomy}</span>` : ''}
-            </div>` : '';
-
         modalInfo.innerHTML = `
             <h2>${card.nameEN}</h2>
             <p style="color:#666; margin-bottom:5px;">${card.nameTH} | ID: ${card.id}</p>
             <hr>            
             <p><strong>ประเภท :</strong> ${displayTypes} | <strong>DP :</strong> ${card.dp}</p>
             <p><strong>เผ่า :</strong> ${card.clan || '-'}</p>
-            ${statHTML}
             <p><strong>ชุด :</strong> ${card.set || '-'}</p> <div style="margin: 10px 0;"> ${rarityTextHTML} 
             </div>
 
             <div class="${abilityBoxClass}"> 
                 <strong>ความสามารถ : </strong><br>
-                ${card.ability || "ไม่มีความสามารถพิเศษ"}
+                ${(abilitySearchMode && searchInput.value.trim())
+                    ? highlightAbilityKeyword(card.ability || "ไม่มีความสามารถพิเศษ", searchInput.value.trim())
+                    : (card.ability || "ไม่มีความสามารถพิเศษ")}
             </div>
 
             <div id="modalActionArea" style="margin-top: 20px;">
@@ -425,7 +421,6 @@ function navigateModal(direction) {
         newIndex = 0;
     }
 
-    const modalImg = document.getElementById('modalImg');
     
     // --- เริ่ม Step 1: Fade Out รูปเก่า ---
     // ตั้งค่า Opacity เป็น 0 (CSS transition จะทำงานทำให้ค่อยๆ จาง)
@@ -447,7 +442,6 @@ function navigateModal(direction) {
 
 // 2. เพิ่ม Event Listener สำหรับการกดปุ่มลูกศรบนคีย์บอร์ด (เฉพาะตอนเปิด Modal)
 document.addEventListener('keydown', (e) => {
-    const modal = document.getElementById('imageModal');
     if (modal.style.display === "flex") {
         if (e.key === "ArrowLeft") {
             navigateModal(-1);

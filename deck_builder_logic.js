@@ -1,3 +1,43 @@
+// =========================================================
+//  ABILITY SEARCH — วางไว้ที่นี่เพื่อให้โหลดก่อน main.js
+// =========================================================
+let abilitySearchMode = false;
+
+function stripAbilityHTML(str) {
+    if (!str || typeof str !== 'string') return '';
+    return str
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+}
+
+function toggleAbilitySearch() {
+    abilitySearchMode = !abilitySearchMode;
+    const btn = document.getElementById('abilitySearchToggle');
+    const searchInput = document.getElementById('searchInput');
+    if (btn) {
+        if (abilitySearchMode) {
+            btn.textContent = '⚡ Effect';
+            btn.style.background = '#6c3483';
+            btn.style.color = '#e8daef';
+            btn.style.borderColor = '#8e44ad';
+            btn.style.boxShadow = '0 0 12px rgba(142,68,173,0.6)';
+            if (searchInput) searchInput.placeholder = 'ค้นหาจาก Effect / Skill / ความสามารถ...';
+        } else {
+            btn.textContent = '🔍 ชื่อ';
+            btn.style.background = '#07357D';
+            btn.style.color = '#aac4ff';
+            btn.style.borderColor = '#1a4a9e';
+            btn.style.boxShadow = '0 0 8px rgba(255,217,0,0.3)';
+            if (searchInput) searchInput.placeholder = 'ค้นหาชื่อการ์ด (ไทย / EN)...';
+        }
+    }
+    if (searchInput) { searchInput.value = ''; searchInput.focus(); }
+    if (typeof filterCards === 'function') filterCards();
+}
+
 let isUnsaved = false;
 let isHistogramOpen = false; // ตัวแปรเก็บสถานะเปิด/ปิดแผนภูมิ
 let currentEditingDeckId = null;
@@ -835,7 +875,8 @@ const displayTypeName = card.type
          onerror="this.src='images/placeholder.png'">
     
     <div class="qty-control">${(isCommander || isMasterGroup || isLegendCard) ? 
-        `<span style="color:${isCommander ? '#f1c40f' : isLegendCard ? '#9b59b6' : '#3498db'}; font-size:10px; font-weight:bold;">${isCommander ? 'COMMANDER' : displayTypeName}</span>` : 
+        `<span style="color:${isCommander ? '#f1c40f' : isLegendCard ? '#9b59b6' : '#3498db'}; font-size:10px; font-weight:bold;">${isCommander ? 'COMMANDER' : displayTypeName}</span>
+         <button class="qty-btn minus" style="position:absolute; top:3px; right:3px; width:20px; height:20px; font-size:13px; border-radius:50%; z-index:10; padding:0; line-height:1;" onclick="event.stopPropagation(); removeFromDeck(${index})">×</button>` : 
         `<button class="qty-btn minus" onclick="event.stopPropagation(); changeQty('${card.id}', -1, ${index})">-</button>
          <div class="qty-number">${card.count || 1}</div>
          <button class="qty-btn plus" onclick="event.stopPropagation(); changeQty('${card.id}', 1, ${index})">+</button>`
@@ -1199,7 +1240,9 @@ function saveDeckToLocalStorage() {
 
 
 function animateFly(startElement, targetSelector) {
-    const targetElement = document.querySelector(targetSelector);
+    // Escape อักขระพิเศษใน selector เช่น < > ( ) ที่อาจมาจาก card ID
+    const safeSelector = targetSelector.replace(/([<>()[\]{}*+?.,\\^$|#\s])/g, '\\$1');
+    const targetElement = document.querySelector(safeSelector);
     // ถ้าหาการ์ดปลายทางไม่เจอ (เช่น อยู่ในแถบที่ปิดอยู่) ให้บินไปที่ปุ่มเปิดเด็คแทนเป็นแผนสำรอง
     const finalTarget = targetElement || document.querySelector('#openDeckBtn');
     

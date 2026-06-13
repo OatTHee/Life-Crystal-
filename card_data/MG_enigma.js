@@ -759,7 +759,7 @@ const MG_enigmaData = [
     id: "AR035 MG",
     nameTH: "โซ่คล้องคู่หู",
     nameEN: "Duo Chain",
-    dp: 2,
+    dp: 4,
     type: "Armor",
     set: "อินิกม่า",
     clan: "คอยาว",

@@ -3,7 +3,7 @@ const cardsData = [...C_originalData,...MG_originalData,...CharacterData, ...C_E
 ...MG_newmasterData, ...C_StepNextData, ...MS_newmasterData, ...MG_StepNextData,
  ...ReEnigmaData, ...MG_AR1Data, ...Armored_DinoData,
 ...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...Boost5Data, ...icefireData, 
-...Boost6Data,...Boost7Data ]; 
+...Boost6Data,...Boost7Data,...PR09Data ]; 
 
 if (typeof cardStatsData !== 'undefined') {
     cardsData.forEach(card => {

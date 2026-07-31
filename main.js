@@ -878,6 +878,7 @@ dpFilter.addEventListener('change', filterCards);
 typeFilter.addEventListener('change', filterCards);
 clanFilter.addEventListener('change', filterCards);
 setFilter.addEventListener('change', filterCards);
+rarityFilter.addEventListener('change', filterCards);
 
 // เริ่มต้นแสดงผล
 renderCards(cardsData);

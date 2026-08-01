@@ -90,6 +90,7 @@ const banlistData = {
             "2016NE-DE309",   
 
             "DE011 JU",
+            "StegosaurusF1",
             "BambiraptorM1",
             "CompsognathusM1",
             "SiamotyrannusM1",
@@ -128,7 +129,6 @@ const banlistData = {
             "2011NM-A020",
             "2011NM-A030",
             "2011NM-A022",
-            "Megatech Cycling",
             "Super Incendiary Bomb",
             "2011NM-A014",
             "AR004 MG",
@@ -152,11 +152,24 @@ const banlistData = {
             "2016NE-DE302",
             "2016NE-DE604",
             "AC011 MG",
+            "Mega T-Rex Suit",
 
-                ],        
+                ],
         limit_if_no_commander: [],
         conflict_groups: [],
-        conditional_limits: []
+
+        // การ์ดยกเว้นแบน: ถ้ามี Master "Shino" (FM-PRO6-MS03 JU) อยู่ในเด็ค
+        // จะสามารถใส่ FM-PR06-EXC01 JU (ปกติโดนแบนเพราะเป็น Fusion_Monster) ได้ 1 ใบ
+        conditional_limits: [
+            {
+                name: "Shino - Megatech T Rex",
+                trigger: ["FM-PRO6-MS03 JU"],
+                target: ["FM-PR06-EXC01 JU"],
+                limit: 1,
+                overridesBan: true,
+                message: "ถ้าใช้ Shino (FM-PRO6-MS03 JU) => FM-PR06-EXC01 JU จะใส่ได้เพียง 1 ใบ (ต้องเอามาตั้งคอมมานเดอร์เท่านั้น)"
+            }
+        ]
     }
 };
 
@@ -166,6 +179,17 @@ let currentBanlistFormat = localStorage.getItem('dinomaster_banlist_format') || 
 function getCardMaxLimit(card) {
     const format = banlistData[currentBanlistFormat] || banlistData["None"];
     const cardId = String(card.id);
+
+    // 0. เช็คเงื่อนไขยกเว้นแบน: ถ้ามีการ์ด "trigger" อยู่ในเด็ค ให้ข้ามการแบนปกติ/แบนตามประเภท
+    // (ต้องเช็คก่อนขั้นตอนแบน เพราะการ์ดกลุ่มนี้ปกติจะโดนแบน แต่มีข้อยกเว้นตามเงื่อนไข)
+    if (format.conditional_limits && typeof myDeck !== 'undefined') {
+        for (const rule of format.conditional_limits) {
+            if (rule.overridesBan && rule.target.includes(cardId)) {
+                const hasTrigger = myDeck.some(c => rule.trigger.includes(String(c.id)));
+                if (hasTrigger) return rule.limit;
+            }
+        }
+    }
 
     // 1. เช็คว่าโดนแบนหรือไม่ (0 ใบ)
     if (format.banned && format.banned.includes(cardId)) return 0;

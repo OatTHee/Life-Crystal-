@@ -310,8 +310,22 @@ function openModal(cardOrId) {
         if (typeof banlistData !== 'undefined' && typeof currentBanlistFormat !== 'undefined') {
             const format = banlistData[currentBanlistFormat] || banlistData["None"];
             const strId = String(card.id);
-            
-            if (format.banned.includes(strId)) {
+
+            // เช็คเงื่อนไขยกเว้นแบนก่อน (การ์ดที่ปกติโดนแบน แต่มีการ์ดหลัก trigger อยู่ในเด็ค)
+            let overrideBanApplied = false;
+            if (format.conditional_limits && typeof myDeck !== 'undefined') {
+                for (const rule of format.conditional_limits) {
+                    if (rule.overridesBan && rule.target.includes(strId) && myDeck.some(c => rule.trigger.includes(String(c.id)))) {
+                        dynamicMaxLimit = rule.limit;
+                        overrideBanApplied = true;
+                        break;
+                    }
+                }
+            }
+
+            if (overrideBanApplied) {
+                // ข้ามการเช็คแบนปกติ เพราะมีข้อยกเว้นแล้ว
+            } else if (format.banned.includes(strId)) {
                 isBanned = true;
                 dynamicMaxLimit = 0;
             } else if (format.limited.includes(strId)) {

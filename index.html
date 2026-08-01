@@ -22,13 +22,13 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="filterdiv.css?v=1.1">
+    <link rel="stylesheet" href="filterdiv.css?v=1.3">
     <link rel="stylesheet" href="deck_builder.css?v=1.3">
     <link rel="stylesheet" href="hilight_text.css"> 
     <link rel="stylesheet" href="totop.css"> 
     <link rel="stylesheet" href="rarity_inModal.css?v=1.1"> 
     <link rel="stylesheet" href="collection_style.css"> 
-    <link rel="stylesheet" href="responsive.css?v=1.2"> 
+    <link rel="stylesheet" href="responsive.css?v=1.3">
 	<link rel="stylesheet" href="showcase_mode.css?v=1.1"> 
     <link rel="stylesheet" href="bottom_nav.css"> 
     <link rel="stylesheet" href="quickadd.css"> 
@@ -416,63 +416,74 @@ body::before {
             ">
             🔍 ชื่อ
         </button>
+        <button id="filterToggleBtn" onclick="toggleFilterBar()" title="ตัวกรอง">
+            <i class="fas fa-filter"></i> ตัวกรอง <i class="fas fa-chevron-down" id="filterToggleIcon"></i>
+        </button>
     </div>
 
+    <div class="filter-collapsible" id="filterCollapsible">
+    <div class="filter-collapsible-inner">
     <div class="filter-grid">
-        <select id="typeFilter">
-            <option value="">ทุกประเภท</option>
-            <option value="Creature">ครีเจอร์</option>
-            <option value="Action">แอคชั่น</option>
-            <option value="Armor">อาร์เมอร์</option>
-            <option value="Field">พื้นที่</option>
-            <option value="Illusion">อิลูชั่น</option>
-            <option value="Master">มาสเตอร์</option>
-            <option value="Boost_Creature">บูสครีเจอร์</option>
-            <option value="Boost_Master">บูสมาสเตอร์</option>
-            <option value="Fusion_Monster">มอนสเตอร์ฟิวชั่น</option>
-            <option value="Armored_Dino">ครีเจอร์ติดเกราะ</option>
-            <option value="LC">ไลฟ์คริสตัล</option>
+        <div class="multi-select" id="typeFilter">
+            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('typeFilter')">ทุกประเภท</button>
+            <div class="multi-select-panel">
+                <label><input type="checkbox" value="Creature"> ครีเจอร์</label>
+                <label><input type="checkbox" value="Action"> แอคชั่น</label>
+                <label><input type="checkbox" value="Armor"> อาร์เมอร์</label>
+                <label><input type="checkbox" value="Field"> พื้นที่</label>
+                <label><input type="checkbox" value="Illusion"> อิลูชั่น</label>
+                <label><input type="checkbox" value="Master"> มาสเตอร์</label>
+                <label><input type="checkbox" value="Boost_Creature"> บูสครีเจอร์</label>
+                <label><input type="checkbox" value="Boost_Master"> บูสมาสเตอร์</label>
+                <label><input type="checkbox" value="Fusion_Monster"> มอนสเตอร์ฟิวชั่น</label>
+                <label><input type="checkbox" value="Armored_Dino"> ครีเจอร์ติดเกราะ</label>
+                <label><input type="checkbox" value="LC"> ไลฟ์คริสตัล</label>
+            </div>
+        </div>
 
-        </select>
+        <div class="multi-select" id="clanFilter">
+            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('clanFilter')">(ไม่เลือกเผ่า)</button>
+            <div class="multi-select-panel">
+                <label><input type="checkbox" value="สองขา"> เผ่าสองขา</label>
+                <label><input type="checkbox" value="มีเกราะหางหนาม"> เผ่ามีเกราะ</label>
+                <label><input type="checkbox" value="สัตว์น้ำ"> เผ่าสัตว์น้ำ</label>
+                <label><input type="checkbox" value="มีเขา"> เผ่ามีเขา</label>
+                <label><input type="checkbox" value="มีปีก"> เผ่าปีก</label>
+                <label><input type="checkbox" value="คอยาว"> เผ่าคอยาว</label>
+                <label><input type="checkbox" value="จักรกล"> เผ่าจักรกล</label>
+            </div>
+        </div>
 
-        <select id="clanFilter">
-            <option value="">(ไม่เลือกเผ่า)</option>
-            <option value="สองขา">เผ่าสองขา</option>
-            <option value="มีเกราะหางหนาม">เผ่ามีเกราะ</option>
-            <option value="สัตว์น้ำ">เผ่าสัตว์น้ำ</option>
-            <option value="มีเขา">เผ่ามีเขา</option>
-            <option value="มีปีก">เผ่าปีก</option>
-            <option value="คอยาว">เผ่าคอยาว</option>
-            <option value="จักรกล">เผ่าจักรกล</option>
-        </select>
+        <div class="multi-select" id="rarityFilter">
+            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rarityFilter')">ทุกความหายาก</button>
+            <div class="multi-select-panel">
+                <label><input type="checkbox" value="Silver_Rare"> Silver Rare (แรร์เงิน)</label>
+                <label><input type="checkbox" value="Golden_Rare"> Golden Rare (แรร์ทอง)</label>
+                <label><input type="checkbox" value="Promo"> การ์ดฟอยล์โปรโม</label>
+            </div>
+        </div>
 
-        <select id="rarityFilter">
-            <option value="">ทุกความหายาก</option>
-            <option value="Silver_Rare">Silver Rare (แรร์เงิน)</option>
-            <option value="Golden_Rare">Golden Rare (แรร์ทอง)</option>
-            <option value="Promo">การ์ดฟอยล์โปรโม</option>
-        </select>
-
-        <select id="setFilter">
-            <option value="">ทุกชุด</option>
-            <option value="ออริจินอล">ภาค 1 : ออริจินอล</option>
-            <option value="อินิกม่า">ภาค 2 : อินิกม่า</option>
-            <option value="คาแร็คเตอร์">ภาค 2.5 : คาแร็คเตอร์</option>
-            <option value="นิวมาสเตอร์">ภาค 3 : นิวมาสเตอร์</option>
-            <option value="สเต็ปเน็ก">ภาค 4 : สเต็ปเน็ก</option>
-            <option value="รีอินิกม่า">ภาค 5 : รีอินิกม่า</option>
-            <option value="AR1">ภาค 6 : AR1</option>
-            <option value="PR01">แฟนเมด : PR01</option>            
-            <option value="PR02">แฟนเมด : PR02</option>              
-            <option value="PR03">แฟนเมด : PR03</option>   
-            <option value="PR04">แฟนเมด : PR04</option>
-            <option value="PR05">แฟนเมด : PR05</option>
-            <option value="PR06">แฟนเมด : PR06</option>
-            <option value="PR07">แฟนเมด : PR07</option> 
-            <option value="PR08">แฟนเมด : PR08</option> 
-            <option value="PR09">แฟนเมด : PR09</option> 
-
-        </select>
+        <div class="multi-select" id="setFilter">
+            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('setFilter')">ทุกชุด</button>
+            <div class="multi-select-panel">
+                <label><input type="checkbox" value="ออริจินอล"> ภาค 1 : ออริจินอล</label>
+                <label><input type="checkbox" value="อินิกม่า"> ภาค 2 : อินิกม่า</label>
+                <label><input type="checkbox" value="คาแร็คเตอร์"> ภาค 2.5 : คาแร็คเตอร์</label>
+                <label><input type="checkbox" value="นิวมาสเตอร์"> ภาค 3 : นิวมาสเตอร์</label>
+                <label><input type="checkbox" value="สเต็ปเน็ก"> ภาค 4 : สเต็ปเน็ก</label>
+                <label><input type="checkbox" value="รีอินิกม่า"> ภาค 5 : รีอินิกม่า</label>
+                <label><input type="checkbox" value="AR1"> ภาค 6 : AR1</label>
+                <label><input type="checkbox" value="PR01"> แฟนเมด : PR01</label>
+                <label><input type="checkbox" value="PR02"> แฟนเมด : PR02</label>
+                <label><input type="checkbox" value="PR03"> แฟนเมด : PR03</label>
+                <label><input type="checkbox" value="PR04"> แฟนเมด : PR04</label>
+                <label><input type="checkbox" value="PR05"> แฟนเมด : PR05</label>
+                <label><input type="checkbox" value="PR06"> แฟนเมด : PR06</label>
+                <label><input type="checkbox" value="PR07"> แฟนเมด : PR07</label>
+                <label><input type="checkbox" value="PR08"> แฟนเมด : PR08</label>
+                <label><input type="checkbox" value="PR09"> แฟนเมด : PR09</label>
+            </div>
+        </div>
 
         <button id="resetBtn" onclick="resetFilters()">ล้างการค้นหา</button>
         <div style="display: flex; justify-content: flex-end; margin-top: 6px;">
@@ -505,7 +516,9 @@ body::before {
         <div id="dp-crystal-bar" class="dp-crystal-container"></div>
     </div>
     </div>
-        
+    </div>
+    </div>
+
 
         <div id="cardContainer"></div>
 		<div id="deckShowcaseOverlay" class="showcase-overlay" style="display:none;">
@@ -940,7 +953,7 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="quickadd_logic.js?v=1.2"></script>
     <script src="dynamic_bg.js"></script>    
     <script src="card_stats.js"></script>
-    <script src="main.js?v=1.4.4"></script>
+    <script src="main.js?v=1.5.1"></script>
     <script src="clan_identity_logic.js"></script>
     <script src="card_knowledge_builder.js"></script>
 

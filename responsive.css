@@ -218,6 +218,50 @@
         margin: 0 !important;
     }
 
+    /* ปุ่มพับ/กางแถบตัวกรอง (ให้แถบค้นหาไม่กินพื้นที่จอเกินจำเป็น) */
+    #filterToggleBtn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        flex-shrink: 0;
+        height: 45px;
+        padding: 0 12px;
+        background: #07357D;
+        color: #aac4ff;
+        border: 2px solid #1a4a9e;
+        border-radius: 8px;
+        font-family: 'Kanit', sans-serif;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    #filterToggleIcon {
+        transition: transform 0.25s ease;
+    }
+
+    #searchBar.filters-open #filterToggleIcon {
+        transform: rotate(180deg);
+    }
+
+    /* พับแถบตัวกรองไว้เป็นค่าเริ่มต้น เพื่อไม่ให้กินพื้นที่จอเกิน ~20% */
+    .filter-collapsible {
+        display: grid;
+        grid-template-rows: 0fr;
+        overflow: hidden;
+        transition: grid-template-rows 0.25s ease;
+    }
+
+    .filter-collapsible-inner {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #searchBar.filters-open .filter-collapsible {
+        grid-template-rows: 1fr;
+    }
+
     /* 2. จัด Dropdown เป็นตาราง 2 คอลัมน์ (ซ้าย-ขวา) ประหยัดที่ */
     .filter-grid {
         display: grid;

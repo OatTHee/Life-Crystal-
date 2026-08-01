@@ -33,14 +33,85 @@ const modal = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImg');
 const modalInfo = document.getElementById('modalInfo');
 
-// 3. ฟังก์ชัน Filter
+// 3. ฟังก์ชัน Filter (Multi-select: type / clan / rarity / set เลือกได้หลายค่าพร้อมกัน)
+const MULTI_SELECT_DEFAULT_LABELS = {
+    typeFilter: 'ทุกประเภท',
+    clanFilter: '(ไม่เลือกเผ่า)',
+    rarityFilter: 'ทุกความหายาก',
+    setFilter: 'ทุกชุด'
+};
+
+function getMultiSelectValues(id) {
+    const container = document.getElementById(id);
+    if (!container) return [];
+    return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+}
+
+function updateMultiSelectLabel(id) {
+    const container = document.getElementById(id);
+    if (!container) return;
+    const btn = container.querySelector('.multi-select-btn');
+    const checked = Array.from(container.querySelectorAll('input[type="checkbox"]:checked'));
+    const defaultLabel = MULTI_SELECT_DEFAULT_LABELS[id] || 'เลือก';
+
+    if (checked.length === 0) {
+        btn.textContent = defaultLabel;
+    } else if (checked.length === 1) {
+        btn.textContent = checked[0].closest('label').textContent.trim();
+    } else {
+        btn.textContent = `เลือกแล้ว ${checked.length} รายการ`;
+    }
+    container.classList.toggle('has-selection', checked.length > 0);
+}
+
+function clearMultiSelect(id) {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => cb.checked = false);
+    updateMultiSelectLabel(id);
+}
+
+function toggleMultiSelect(id) {
+    document.querySelectorAll('.multi-select.open').forEach(el => {
+        if (el.id !== id) el.classList.remove('open');
+    });
+    const container = document.getElementById(id);
+    if (container) container.classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+    document.querySelectorAll('.multi-select.open').forEach(el => {
+        if (!el.contains(e.target)) el.classList.remove('open');
+    });
+});
+
+function initMultiSelect(id) {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            updateMultiSelectLabel(id);
+            filterCards();
+        });
+    });
+    updateMultiSelectLabel(id);
+}
+
+['typeFilter', 'clanFilter', 'rarityFilter', 'setFilter'].forEach(initMultiSelect);
+
+// พับ/กางแถบตัวกรองบนมือถือ เพื่อไม่ให้กินพื้นที่จอเกินจำเป็น
+function toggleFilterBar() {
+    const searchBar = document.getElementById('searchBar');
+    if (searchBar) searchBar.classList.toggle('filters-open');
+}
+
 function resetFilters() {
     document.getElementById('searchInput').value = "";
     document.getElementById('dpFilter').value = "";
-    document.getElementById('typeFilter').value = "";
-    document.getElementById('clanFilter').value = "";
-    document.getElementById('setFilter').value = "";
-    document.getElementById('rarityFilter').value = "";
+    clearMultiSelect('typeFilter');
+    clearMultiSelect('clanFilter');
+    clearMultiSelect('setFilter');
+    clearMultiSelect('rarityFilter');
 
     advancedFilterState = {
         atMin: null, atMax: null,
@@ -66,13 +137,29 @@ function resetFilters() {
     syncDpButtons();
 }
 
+function cardMatchesTypeValue(card, typeValue) {
+    if (typeValue === "Action") {
+        return Array.isArray(card.type)
+            ? (card.type.includes("Action") || card.type.includes("Action_Field"))
+            : (card.type === "Action" || card.type === "Action_Field");
+    } else if (typeValue === "Field") {
+        return Array.isArray(card.type)
+            ? (card.type.includes("Field") || card.type.includes("Action_Field"))
+            : (card.type === "Field" || card.type === "Action_Field");
+    } else {
+        return Array.isArray(card.type)
+            ? card.type.includes(typeValue)
+            : (card.type === typeValue);
+    }
+}
+
 function filterCards() {
     const searchText = searchInput.value.toLowerCase();
     const dpValue = dpFilter.value;
-    const typeValue = typeFilter.value;
-    const setValue = setFilter.value;
-    const clanValue = clanFilter.value;
-    const rarityValue = rarityFilter.value;
+    const typeValues = getMultiSelectValues('typeFilter');
+    const setValues = getMultiSelectValues('setFilter');
+    const clanValues = getMultiSelectValues('clanFilter');
+    const rarityValues = getMultiSelectValues('rarityFilter');
 
     const filtered = cardsData.filter(card => {
 
@@ -83,26 +170,11 @@ function filterCards() {
 
         const matchDP = dpValue === "" || card.dp == dpValue;
 
-        let matchType = false;
-        if (typeValue === "") {
-            matchType = true;
-        } else if (typeValue === "Action") {
-            matchType = Array.isArray(card.type)
-                ? (card.type.includes("Action") || card.type.includes("Action_Field"))
-                : (card.type === "Action" || card.type === "Action_Field");
-        } else if (typeValue === "Field") {
-            matchType = Array.isArray(card.type)
-                ? (card.type.includes("Field") || card.type.includes("Action_Field"))
-                : (card.type === "Field" || card.type === "Action_Field");
-        } else {
-            matchType = Array.isArray(card.type)
-                ? card.type.includes(typeValue)
-                : (card.type === typeValue);
-        }
+        const matchType = typeValues.length === 0 || typeValues.some(v => cardMatchesTypeValue(card, v));
 
-        const matchSet = setValue === "" || card.set === setValue;
-        const matchClan = clanValue === "" || (card.clan && card.clan.includes(clanValue));
-        const matchRarity = rarityValue === "" || card.rarity === rarityValue;
+        const matchSet = setValues.length === 0 || setValues.includes(card.set);
+        const matchClan = clanValues.length === 0 || (card.clan && clanValues.some(v => card.clan.includes(v)));
+        const matchRarity = rarityValues.length === 0 || rarityValues.includes(card.rarity);
 
         const s = advancedFilterState;
         const matchAtMin = s.atMin === null || (card.at != null && card.at >= s.atMin);
@@ -758,10 +830,10 @@ function limitedSearch() {
 
     // (Optional) ล้างค่าในช่องค้นหาและ Filter อื่นๆ เพื่อไม่ให้งง
     if(document.getElementById('searchInput')) document.getElementById('searchInput').value = "";
-    if(document.getElementById('typeFilter')) document.getElementById('typeFilter').value = "";
-    if(document.getElementById('clanFilter')) document.getElementById('clanFilter').value = "";
-    if(document.getElementById('setFilter')) document.getElementById('setFilter').value = "";
-    if(document.getElementById('rarityFilter')) document.getElementById('rarityFilter').value = "";
+    clearMultiSelect('typeFilter');
+    clearMultiSelect('clanFilter');
+    clearMultiSelect('setFilter');
+    clearMultiSelect('rarityFilter');
     if(document.getElementById('dpFilter')) document.getElementById('dpFilter').value = "";
 
     // แจ้งเตือนเล็กน้อยว่ากำลังแสดงผลอะไร
@@ -885,10 +957,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // 5. Event Listeners
 searchInput.addEventListener('input', filterCards);
 dpFilter.addEventListener('change', filterCards);
-typeFilter.addEventListener('change', filterCards);
-clanFilter.addEventListener('change', filterCards);
-setFilter.addEventListener('change', filterCards);
-rarityFilter.addEventListener('change', filterCards);
+// typeFilter / clanFilter / rarityFilter / setFilter เป็น multi-select แล้ว
+// (change listener ผูกไว้ที่ checkbox แต่ละอันใน initMultiSelect() ด้านบน)
 
 // เริ่มต้นแสดงผล
 renderCards(cardsData);

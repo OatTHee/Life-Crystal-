@@ -1,3 +1,8 @@
+/* ปุ่มพับ/กางแถบตัวกรอง: ใช้เฉพาะมือถือ (แสดงจริงใน responsive.css) */
+#filterToggleBtn {
+    display: none;
+}
+
 /* --- 1. Global Form Controls (ไม่กระทบโครงสร้างปุ่ม +- ในเด็ค) --- */
 input, 
 select, 
@@ -71,6 +76,84 @@ input:focus, select:focus {
 
         .filter-grid select:hover {
             border-color: #ff9f43;
+        }
+
+        /* --- Multi-select dropdown (type / clan / rarity / set) --- */
+        .multi-select {
+            position: relative;
+        }
+
+        .multi-select-btn {
+            width: 100%;
+            height: 42px;
+            padding: 0 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #1e272e;
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-sizing: border-box;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .multi-select-btn:hover {
+            border-color: #ff9f43;
+        }
+
+        .multi-select.has-selection .multi-select-btn {
+            border-color: #ffd900;
+            color: #ffd900;
+        }
+
+        .multi-select-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 100%;
+            max-height: 260px;
+            overflow-y: auto;
+            background: #1e272e;
+            border: 1px solid rgba(255, 217, 0, 0.4);
+            border-radius: 6px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            z-index: 1001;
+            padding: 6px;
+        }
+
+        .multi-select.open .multi-select-panel {
+            display: block;
+        }
+
+        .multi-select-panel label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 6px;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-family: 'Kanit', sans-serif;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .multi-select-panel label:hover {
+            background: rgba(255, 159, 67, 0.15);
+        }
+
+        .multi-select-panel input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #ffd900;
+            flex-shrink: 0;
+            cursor: pointer;
         }
 
 /* --- 2. ปุ่มทั่วไป (ใช้คลาสเจาะจงเพื่อไม่ให้กระทบปุ่ม +- ในเด็ค) --- */

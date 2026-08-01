@@ -338,8 +338,10 @@ body.panel-open .add-to-deck-btn {
 .deck-body {
     flex: 1 1 auto;
     overflow-y: auto !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
     padding: 20px;
-    
+
     /* สีพื้นหลังดำเทา แบบมีความโปร่งแสงนิดๆ (Glassmorphism Dark) */
     background-color: rgba(30, 30, 30, 0.95) !important; 
     backdrop-filter: blur(10px); /* เบลอฉากหลังที่ซ้อนอยู่ */
@@ -405,6 +407,7 @@ body.panel-open .add-to-deck-btn {
     border-radius: 8px;
     margin-bottom: 12px;
     padding: 8px;
+    box-sizing: border-box; /* กัน width:100% + padding/border ดันความกว้างล้นจอ */
     transition: all 0.3s ease;
     position: relative;
     overflow: visible; /* ยอมให้รูปภาพ Hover แล้วลอยทะลุออกมาได้ */

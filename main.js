@@ -249,6 +249,16 @@ function openModal(cardOrId) {
                  const hasCommander = typeof myDeck !== 'undefined' && myDeck.some(c => c.isCommander);
                  if (!hasCommander) dynamicMaxLimit = 1;
             }
+
+            // เช็คเงื่อนไข: มีการ์ดหลัก (trigger) อยู่ในเด็คแล้วหรือไม่ ถ้ามีให้ Limit ตามกฎ
+            if (format.conditional_limits && typeof myDeck !== 'undefined') {
+                for (const rule of format.conditional_limits) {
+                    if (rule.target.includes(strId) && myDeck.some(c => rule.trigger.includes(String(c.id)))) {
+                        dynamicMaxLimit = rule.limit;
+                        break;
+                    }
+                }
+            }
         }
         // กฎ Master เดิม (ใส่ได้ 1)
         if (card.type === "Master" || card.type === "Boost_Master") dynamicMaxLimit = 1;

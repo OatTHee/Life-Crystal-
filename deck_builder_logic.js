@@ -447,6 +447,10 @@ function canAddCardToDeck(targetCard, silent = false) {
         if (!silent) {
             if (maxLimit === 1) {
                 // เช็คว่าเป็นกฎ Limit_if_no_commander หรือไม่
+                const conditionalRule = format && format.conditional_limits &&
+                    format.conditional_limits.find(rule => rule.limit === 1 && rule.target.includes(cardId) &&
+                        myDeck.some(c => rule.trigger.includes(String(c.id))));
+
                 if (format && format.limit_if_no_commander && format.limit_if_no_commander.includes(cardId)) {
                     const hasCommander = myDeck.some(c => c.isCommander);
                     if (!hasCommander) {
@@ -454,6 +458,8 @@ function canAddCardToDeck(targetCard, silent = false) {
                     } else {
                         alert(`⚠️ การ์ดใบนี้ใส่ได้เพียง 1 ใบเท่านั้น`);
                     }
+                } else if (conditionalRule) {
+                    alert(`⚠️ ${conditionalRule.message || "การ์ดใบนี้ใส่ได้เพียง 1 ใบเท่านั้น เนื่องจากมีการ์ดหลักอยู่ในเด็คแล้ว"}`);
                 } else {
                     alert(`⚠️ การ์ดใบนี้ใส่ได้เพียง 1 ใบเท่านั้น`);
                 }

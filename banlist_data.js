@@ -1,6 +1,6 @@
 // banlist_data.js
 const banlistData = {
-    "None": { name: "ไม่จำกัด (No Limit)", banned: [], limited: [], limit_commander: [], conflict_groups: [] },
+    "None": { name: "ไม่จำกัด (No Limit)", banned: [], limited: [], limit_commander: [], conflict_groups: [], conditional_limits: [] },
 
     "Standard": {
         name: "ฟอร์แมตหลัก",
@@ -9,11 +9,13 @@ const banlistData = {
         ], 
 
         limited: [
+            "D021 JU",
             "D049 JU", 
             "AC005 MG",
             "ARC004 MG",
             "DE011 JU",
             "DE019 JU",
+            "DE020 JU",
             "DE063 JU",
             "AC016 MG",
             "AC022 MG",
@@ -48,27 +50,35 @@ const banlistData = {
                 groupC: ["Super Incendiary Bomb"], // ใบที่ 3
                 message: "ไม่สามารถใส่การ์ดล้างสนามเรื้อนๆรวมกันได้ (เลือกได้แค่แบบใดแบบหนึ่ง)"
             },
-            {
-                name: "เนโก อามาก้า",
-                groupA: ["D021 JU"],
-                groupB: ["AC030 MG"],
-                message: "การ์ดสองใบนี้ห้ามใส่ด้วยกัน มันโหดเกิน ถือว่าขอล่ะ"
-            },
                         {
                 name: "อายุ-อีกัว",
                 groupA: ["FM-PRO2 MS02 JU"],
                 groupB: ["DE011 JU"],
                 message: "การ์ดสองใบนี้ห้ามใส่ด้วยกัน มันโหดเกิน ถือว่าขอล่ะ"
             },
-                                    {
-                name: "อายุ-อเบลิ",
-                groupA: ["FM-PRO2 MS02 JU"],
-                groupB: ["FM-PR07 D17 JU"],
-                message: "การ์ดสองใบนี้ห้ามใส่ด้วยกัน มันโหดเกิน ถือว่าขอล่ะ"
-            },
+
+        ],
+
+        // 5. การ์ดจำกัดตามเงื่อนไข: ถ้ามีการ์ด "trigger" (การ์ดหลัก) อยู่ในเด็ค (ไม่ว่า Starter/Main/Extra)
+        // การ์ดใน "target" จะถูกจำกัดเหลือ "limit" ใบ (ต่างจาก conflict_groups ที่ห้ามใส่ร่วมกันเลย)
+        conditional_limits: [
+                {
+                    name: "Lost Feel",
+                    trigger: ["FM-PR08 MSLostFeel"],
+                 target: ["Mega T-Rex Suit"],
+                 limit: 1,
+                 message: "ถ้าใช้ Lost Feel => Mega T-Rex Suitจะใส่ได้เพียง 1 ใบ"
+                },
+                {
+                    name: "Lost Lovena",
+                    trigger: ["FM-PR08 MSLostLovena"],
+                 target: ["2011NM-R015"],
+                 limit: 1,
+                 message: "ถ้าใช้ LostLovena => Harmonic Rope Plateจะใส่ได้เพียง 1 ใบ"
+                }
         ]
     },
-    
+
     "No_Meta": {
         name: "โนเมต้า",
         banned: [
@@ -145,7 +155,8 @@ const banlistData = {
 
                 ],        
         limit_if_no_commander: [],
-        conflict_groups: []
+        conflict_groups: [],
+        conditional_limits: []
     }
 };
 
@@ -169,6 +180,16 @@ function getCardMaxLimit(card) {
         const hasCommander = typeof myDeck !== 'undefined' && myDeck.some(c => c.isCommander);
         if (!hasCommander) {
             return 1; 
+        }
+    }
+
+    // 4. เช็คกฎพิเศษ: ถ้ามีการ์ด "หลัก" (trigger) อยู่ในเด็คแล้ว การ์ดนี้จะโดน Limit
+    if (format.conditional_limits && typeof myDeck !== 'undefined') {
+        for (const rule of format.conditional_limits) {
+            if (rule.target.includes(cardId)) {
+                const hasTrigger = myDeck.some(c => rule.trigger.includes(String(c.id)));
+                if (hasTrigger) return rule.limit;
+            }
         }
     }
 

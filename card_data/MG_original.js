@@ -239,7 +239,8 @@ const MG_originalData = [
         type: "Armor",
         set: "ออริจินอล",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> เมื่อ Creature ที่สวมใส่ตกเป็นเป้าหมายการโจมตี : นำการ์ดใบนี้และ Creature ตัวที่สั่งโจมตีลงสุสาน`,
+        ability: `<span class="hlabi">Effect :</span> <br> เมื่อ Creature ที่สวมใส่ตกเป็นเป้าหมายการโจมตี : 
+       [ทำลาย] การ์ดใบนี้และ Creature ที่โจมตี.`,
         image: "images/OriginalMG/Symbol of Ruin.jpg"
     },
     {

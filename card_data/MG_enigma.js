@@ -713,7 +713,7 @@ const MG_enigmaData = [
     type: "Armor",
     set: "อินิกม่า",
     clan: "สองขา",
-    ability: `<span class="hlabi">Skill :</span> <br> • เพิ่ม AT+200 <br> • เมื่อ Creature ที่สวมใส่ตกเป็นเป้าหมายของ Action Card จ่าย DP 1 : ปรับเพิ่ม AT+200 จนจบเทิร์น`,
+    ability: `<span class="hlabi">Skill :</span> <br> • เพิ่ม AT+200 <br> • เมื่อ Creature ที่สวมใส่ตกเป็นเป้าหมายของ Magic Card จ่าย DP 1 : ปรับเพิ่ม AT+200 จนจบเทิร์น`,
     image: "images/EnigmaMG/Double Edge Steel.jpg"
 },
 

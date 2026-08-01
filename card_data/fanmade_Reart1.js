@@ -143,7 +143,7 @@
         set: "PR01",
         clan: "มีปีก",
         ability: `<span class="hlabi">Effect :</span> <br>
-		• <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature ของเราและคู่แข่งอย่างละ 1 เป้าหมาย : นำเป้าหมายทั้งสองกลับขึ้นมือ<br>
+		• <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature ตัวอื่นของเราและคู่แข่งอย่างละ 1 เป้าหมาย : นำเป้าหมายทั้งสองกลับขึ้นมือ<br>
 		• <span class="hlcont">Cont.</span> หาก Master เราชื่อ [Keiko] การ์ดนี้ไม่รับผลสำแดงจาก Creature ที่ไม่ใช่มีปีก`
         ,
         image: "images/Fanmade/reartboost1/Anurognathus.png"

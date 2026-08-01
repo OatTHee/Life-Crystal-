@@ -268,8 +268,7 @@
     clan: "สองขา",
         rarity: "Promo",
 
-    ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">Cont.</span> [วงศ์ Abelisauridae] ของเรา DP ในการลง -1 และถ้า [เข้าสนามจากการเรียก] จะไม่เสีย DP บูส.
-<br> • <span class="hlcont">Cont.</span> [วงศ์ Abelisauridae] ของเราได้รับ Effect [Fast Run].
+    ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">Cont.</span> [วงศ์ Abelisauridae] ของเรา DP ในการลง -1 และถ้า [เข้าสนามจากการเรียก] จะไม่เสีย DP บูสต์.
 <br> • <span class="hlauto">Auto</span> เทิร์นละครั้ง : ชื่อเดียวกัน [Hunter Strike] เมื่อเข้ามาในสนาม, สามารถ เลือก [วงศ์ Abelisauridae] ตัวอื่นใน AT Line ของเรา 1 ใบ : การ์ดนั้น [โจมตีแบบพิเศษ] ใส่ Creature คู่แข่ง 1 ใบ ทันที (โจมตีแบบพิเศษ คือการโจมตี ต้องเลือกเป้าหมายและต่อสู้ตามกฎของเกม, การโจมตีด้วยวิธีนี้ไม่ถูกทำให้ไร้ผล).`,
     image: "images/Fanmade/Boost6/Abelisaurus comahuensis.png"
 },

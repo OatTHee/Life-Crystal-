@@ -84,7 +84,7 @@ const MG_enigmaData = [
         type: "Action",
         set: "อินิกม่า",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> Creature ในสนามทั้งหมดไม่สามารถสั่งโจมตีหรือใช้ Skill ได้เป็นเวลา 2 เทิร์น (การ์ดนี้ใช้ได้เฉพาะ Turn โจมตีเท่านั้น) <br> <span class="hlred">*(ใส่ได้ 1 ใบในเด็ค)*</span>`,
+        ability: `<span class="hlabi">Effect :</span> <br> [Action ค้างสนาม] [ระยะคงอยู่ : 2 Tn.] <br> (ร่ายการ์ดนี้ได้ในเทิร์นของเรา) <br> Creature ในสนามทั้งหมดไม่สามารถโจมตีได้ และSkill ของการ์ดเหล่านั้นไร้ผล.`,
         image: "images/EnigmaMG/Frozen Throne.jpg"
     },
     {
@@ -557,7 +557,7 @@ const MG_enigmaData = [
     type: "Armor",
     set: "อินิกม่า",
     clan: "",
-    ability: `<span class="hlabi">Skill :</span> <br> เพิ่ม AT+300 สามารถเพิ่มค่า AT ตามจำนวน DP ที่ใช้ X 100 จนจบเทิร์น`,
+    ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> Creature ที่สวมใส่ AT+300 <br> • <span class="hlmanual">Manual</span> จ่าย X DP : Creature ที่สวมใส่ AT+(X x 100) จนจบเทิร์น`,
     image: "images/EnigmaMG/Dinogenesis Burn.jpg"
 },
 

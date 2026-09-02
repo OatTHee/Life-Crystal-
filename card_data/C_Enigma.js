@@ -512,7 +512,7 @@ const C_EnigmaData = [
         type: "Creature",
         set: "อินิกม่า",
         clan: "คอยาว",
-        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlmanual">Manual</span> สั่งทำลายการ์ด เผ่าคอยาว 1 ใบ นำการ์ดใบนี้จากใน สุสาน กลับลงสนาม <br> <span class="hlabi">Skill :</span> <br> <span class="hlmanual">Manual</span> ใช้ DP 4 นำ Creature 1 ใบ ใน สุสาน กลับเข้ามาในสนาม แต่ความสามารถต่างๆของการ์ดนั้นจะไม่สามารถใช้งานได้`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlmanual">Manual</span> <span style="color:#E8AB00;">[ทำลาย]</span> Creature เผ่าคอยาวของเรา 1 ใบ ถ้าทำ, <span class="hlkw">[คืนชีพ]</span> การ์ดนี้ <br> <span class="hlabi">Skill :</span> <br> <span class="hlmanual">Manual</span> จ่าย 4 DP + กำหนด Creature ในสุสานเรา 1 ใบ : <span class="hlkw">[คืนชีพ]</span> การ์ดนั้น > ความสามารถทั้งหมดของการ์ดนั้นไร้ผล.`,
         image: "images/Enigma/Barapasaurus.jpg"
     },
     {
@@ -523,7 +523,7 @@ const C_EnigmaData = [
         type: "Creature",
         set: "อินิกม่า",
         clan: "คอยาว",
-        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกสุสาน หากมีการ์ดเผ่าเดียวกันในสุสานเกิน 3 ใบ เลือก 1 ที่ไม่ใช่ใบนี้กลับขึ้นมือ`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้ตกสุสาน, หากมีการ์ดเผ่าเดียวกันในสุสานมากกว่า 3 ใบ, เลือกการ์ด 1 ใบจากเผ่าดังกล่าวที่ไม่ใช่การ์ดนี้ : นำการ์ดที่เลือกจากสุสานกลับขึ้นมือ.`,
         image: "images/Enigma/Nigersaurus.jpg"
     },
    {

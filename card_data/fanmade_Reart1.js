@@ -76,7 +76,7 @@
         ,
         image: "images/Fanmade/reartboost1/KEIKO.png",
     secretArt: true,
-    secretArt_img: "images/Fanmade/reartboost1/KEIKO_Secret.png"
+    secretArt_img: "images/Fanmade/reartboost1/Keiko_Secret.png"
     },
 
         {

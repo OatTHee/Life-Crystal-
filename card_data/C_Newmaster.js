@@ -84,7 +84,7 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีเขา",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> "หลบฝูง" (ตราบที่การ์ดใบนี้อยู่ในตำแหน่งลูกฝูง เมื่อฝูงที่การ์ดใบนี้รวมอยู่จะถูกทำลายจากการต่อสู้ การ์ดใบนี้จะไม่ถูกทำลายตามไปด้วย) <br> • <span class="hlcont">Cont.</span> ตราบที่ Creature ตัวนี้รวมฝูง Creature ที่อยู่ในฝูงเดียวกับ Creature ตัวนี้ปรับค่า AT +200 DF + 200`,
+        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlextra">Extra.</span> หลบฝูง (หากการ์ดนี้ถูก [ทำลาย] จากการโจมตีของ Creature คู่แข่ง, สามารถส่งลูกฝูงของการ์ดนี้ 1 ใบลงสุสาน > การ์ดนี้คงอยู่บนสนามต่อ). <br> • <span class="hlcont">Cont.</span> ตราบที่ Creature ตัวนี้รวมฝูง Creature ที่อยู่ในฝูงเดียวกับ Creature ตัวนี้ปรับค่า AT +200 DF + 200`,
         image: "images/Newmaster/Zuniceratops.jpg"
     },
     {
@@ -140,7 +140,7 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "สัตว์น้ำ",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> หลบฝูง (คู่ต่อสู้ไม่สามารถสร้างความเสียหายให้กับ Creature ที่มี Skill หลบฝูงได้ นอกเหนือจากจะสร้างความเสียหายให้กับสมาชิกตัวอื่นๆในฝูงดังกล่าวก่อน) <br> • <span class="hlcont">Cont.</span> Creature ตัวนี้ไม่สามารถมี สภาวะต่างปกติชนิดสับสน และ หลับ ได้`,
+        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlextra">Extra.</span> หลบฝูง (หากการ์ดนี้ถูก [ทำลาย] จากการโจมตีของ Creature คู่แข่ง, สามารถส่งลูกฝูงของการ์ดนี้ 1 ใบลงสุสาน > การ์ดนี้คงอยู่บนสนามต่อ). <br> • <span class="hlcont">Cont.</span> Creature ตัวนี้ไม่สามารถมี สภาวะต่างปกติชนิดสับสน และ หลับ ได้`,
         image: "images/Newmaster/Cryptoclidus.jpg"
     },
     {
@@ -606,7 +606,7 @@ const C_NewmasterData = [
         type: "Creature",
         set: "นิวมาสเตอร์",
         clan: "มีเกราะหางหนาม",
-        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlcont">Cont.</span> "หลบฝูง" <br> • <span class="hlauto">Auto</span> เมื่อมีการ์ดเข้าสุสานจากเด็ค > เรารับ DP 1 จุด`,
+        ability: `<span class="hlabi">Skill :</span> <br> • <span class="hlextra">Extra.</span> หลบฝูง (หากการ์ดนี้ถูก [ทำลาย] จากการโจมตีของ Creature คู่แข่ง, สามารถส่งลูกฝูงของการ์ดนี้ 1 ใบลงสุสาน > การ์ดนี้คงอยู่บนสนามต่อ). <br> • <span class="hlauto">Auto</span> เมื่อมีการ์ดเข้าสุสานจากเด็ค > เรารับ DP 1 จุด`,
         rarity:"Silver_Rare",
 		image: "images/Newmaster/Crichtonsaurus bohlini.jpg"
     },

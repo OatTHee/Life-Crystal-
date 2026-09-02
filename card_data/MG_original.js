@@ -184,7 +184,7 @@ const MG_originalData = [
         type: "Armor",
         set: "ออริจินอล",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> เมื่อ Creature ของเราสั่งโจมตี : การ์ดทุกใบของเรา AT+200 จนจบเทิร์น`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlcont">Cont.</span> Creature ฝ่ายเราทุกครั้งที่โจมตีปรับ AT+200 จนจบเทิร์น.`,
         image: "images/OriginalMG/Front of Armament.jpg"
     },
     {
@@ -206,7 +206,7 @@ const MG_originalData = [
         type: "Armor",
         set: "ออริจินอล",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> Creature ที่สวมใส่ไม่สามารถตกเป็นเป้าหมายการโจมตีได้ (1 เทิร์น)`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlcont">Cont.</span> Creature ที่สวมใส่ไม่ตกเป็นเป้าหมายการโจมตี 1 เทิร์นนับจากเทิร์นที่การ์ดนี้เข้าสนาม.`,
         image: "images/OriginalMG/Guard the Right.jpg"
     },
     {
@@ -228,7 +228,7 @@ const MG_originalData = [
         type: "Armor",
         set: "ออริจินอล",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> Creature ที่สวมใส่ลด AT ตามค่า DP ของการ์ดที่ทิ้ง x100`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlmanual">Manual</span> ทิ้งการ์ด 1 ใบ : Creature ที่สวมใส่ปรับ AT-100 ตามค่า DP ของการ์ดที่ทิ้ง.`,
         image: "images/OriginalMG/Spirits of Sacrifice.jpg"
     },
     {
@@ -251,7 +251,7 @@ const MG_originalData = [
         type: "Armor",
         set: "ออริจินอล",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> Creature ที่สวมใส่ไม่สามารถใช้ Skill ได้`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlcont">Cont.</span> Skill ของ Creature ที่สวมใส่ไร้ผล`,
         image: "images/OriginalMG/Terrible Talent.jpg"
     },
     {
@@ -262,7 +262,7 @@ const MG_originalData = [
         type: "Armor",
         set: "ออริจินอล",
         clan: "",
-        ability: `<span class="hlabi">Effect :</span> <br> เมื่อ Creature ที่สวมใส่สั่งโจมตี : เพิ่ม AT ตามค่า DP ของการ์ดที่ทิ้ง x100 จนจบเทิร์น`,
+        ability: `<span class="hlabi">Effect :</span> <br> <span class="hlauto">Auto</span> เมื่อ Creature ที่สวมใส่โจมตี, สามารถทิ้งการ์ด 1 ใบ : Creature ที่สวมใส่ปรับ AT+100 ตามค่า DP ของการ์ดที่ทิ้ง จนจบเทิร์น.`,
         image: "images/OriginalMG/Troop of Blood.jpg"
     },
 

@@ -1,0 +1,5 @@
+
+# Large archives - never commit
+*.zip
+*.7z
+*.rar

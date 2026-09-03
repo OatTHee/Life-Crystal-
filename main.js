@@ -18,6 +18,25 @@ if (typeof cardStatsData !== 'undefined') {
 
 let myDeck = JSON.parse(localStorage.getItem('dinomaster_deck')) || [];
 let currentFilteredCards = cardsData;
+
+// --- ตัวกรอง DP แบบเลือกได้หลายค่าพร้อมกัน (เช่น 2 + 3 + 6) ---
+// เก็บเป็น Array ของ string เช่น ["2","3","6"] / [] = ไม่กรอง (แสดงทั้งหมด)
+let selectedDpValues = [];
+
+// รายการค่า DP ทั้งหมด (ใช้ร่วมกันทั้งตอนสร้างปุ่มและตอน sync/แสดงผล)
+const DP_FILTER_VALUES = [
+    { val: "0", label: "0" },
+    { val: "1", label: "1" },
+    { val: "2", label: "2" },
+    { val: "3", label: "3" },
+    { val: "4", label: "4" },
+    { val: "5", label: "5" },
+    { val: "6", label: "6" },
+    { val: "7", label: "7" },
+    { val: "8", label: "8" },
+    { val: "X", label: "X" },
+    { val: "ไร้DP", label: "Ø" } // ใช้สัญลักษณ์ Ø แทนไร้ DP เพื่อความสวยงาม
+];
 let myCollections = JSON.parse(localStorage.getItem('dinomaster_collections')) || [];
 // เรียกใช้ฟังก์ชันแสดงผลทันที เพื่อให้การ์ดที่ค้างอยู่แสดงออกมา
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,9 +76,19 @@ function updateMultiSelectLabel(id) {
     if (checked.length === 0) {
         btn.textContent = defaultLabel;
     } else if (checked.length === 1) {
-        btn.textContent = checked[0].closest('label').textContent.trim();
+        // คัดลอกเนื้อหาใน label มาทั้งก้อน (ตัด checkbox ออก) เพื่อให้ไอคอนเผ่าติดมาด้วย
+        const clone = checked[0].closest('label').cloneNode(true);
+        clone.querySelectorAll('input').forEach(i => i.remove());
+        btn.innerHTML = clone.innerHTML.trim();
     } else {
-        btn.textContent = `เลือกแล้ว ${checked.length} รายการ`;
+        // ถ้าทุกตัวที่เลือกมีไอคอน (เช่นตัวกรองเผ่า) ให้โชว์ไอคอนเรียงกัน + จำนวน
+        const icons = checked.map(cb => cb.closest('label').querySelector('img'));
+        if (icons.every(Boolean)) {
+            btn.innerHTML = icons.map(img => img.outerHTML).join('') +
+                            ` <span class="ms-count">(${checked.length})</span>`;
+        } else {
+            btn.textContent = `เลือกแล้ว ${checked.length} รายการ`;
+        }
     }
     container.classList.toggle('has-selection', checked.length > 0);
 }
@@ -107,7 +136,7 @@ function toggleFilterBar() {
 
 function resetFilters() {
     document.getElementById('searchInput').value = "";
-    document.getElementById('dpFilter').value = "";
+    clearDpFilter(true); // ล้างค่า DP ที่เลือกไว้ทั้งหมด (ยังไม่สั่งกรอง เดี๋ยวท้ายฟังก์ชันสั่งเอง)
     clearMultiSelect('typeFilter');
     clearMultiSelect('clanFilter');
     clearMultiSelect('setFilter');
@@ -155,7 +184,7 @@ function cardMatchesTypeValue(card, typeValue) {
 
 function filterCards() {
     const searchText = searchInput.value.toLowerCase();
-    const dpValue = dpFilter.value;
+    // DP: เลือกได้หลายค่า — ว่าง = ไม่กรอง
     const typeValues = getMultiSelectValues('typeFilter');
     const setValues = getMultiSelectValues('setFilter');
     const clanValues = getMultiSelectValues('clanFilter');
@@ -168,7 +197,8 @@ function filterCards() {
             : ((card.nameTH || "").toLowerCase().includes(searchText) ||
                (card.nameEN || "").toLowerCase().includes(searchText));
 
-        const matchDP = dpValue === "" || card.dp == dpValue;
+        const matchDP = selectedDpValues.length === 0 ||
+            selectedDpValues.some(v => String(card.dp) === String(v));
 
         const matchType = typeValues.length === 0 || typeValues.some(v => cardMatchesTypeValue(card, v));
 
@@ -260,7 +290,10 @@ function openModal(cardOrId) {
 
     const isFull = (isLegend || isLC) ? countInDeck >= 1 : countInDeck >= 3;
     const isMasterDisabled = isMaster && hasMasterInDeck && !myDeck.some(c => String(c.id) === String(card.id));
-    const isDisabled = !isCompatible || isFull || isMasterDisabled || isLegendBlocked || isLCBlocked;
+    // LC กับ Commander ใช้ร่วมกันไม่ได้
+    const lcConflict = (typeof findCommanderLcConflict === 'function') ? findCommanderLcConflict(card) : null;
+
+    const isDisabled = !isCompatible || isFull || isMasterDisabled || isLegendBlocked || isLCBlocked || !!lcConflict;
 
     // เตรียม Class สำหรับ Ability Box (แก้ปัญหา ReferenceError: abilityBoxClass)
     let abilityBoxClass = "ability-box";
@@ -275,7 +308,7 @@ function openModal(cardOrId) {
     // --- 3. จัดการรูปภาพและ Rarity ---
     modalImg.src = card.image;
     modalImg.style.opacity = '1';
-    modalImg.classList.remove('img-silver-rare', 'img-golden-rare');
+    modalImg.classList.remove('img-silver-rare', 'img-golden-rare', 'img-Promo');
     
     let rarityTextHTML = ''; 
     if (card.rarity === 'Silver_Rare') {
@@ -306,6 +339,7 @@ function openModal(cardOrId) {
         // --- [ส่วนที่เพิ่ม] คำนวณ Banlist และ Limit ---
         let dynamicMaxLimit = 3;
         let isBanned = false;
+        let conditionalBanMessage = '';
         
         if (typeof banlistData !== 'undefined' && typeof currentBanlistFormat !== 'undefined') {
             const format = banlistData[currentBanlistFormat] || banlistData["None"];
@@ -339,8 +373,14 @@ function openModal(cardOrId) {
             // เช็คเงื่อนไข: มีการ์ดหลัก (trigger) อยู่ในเด็คแล้วหรือไม่ ถ้ามีให้ Limit ตามกฎ
             if (format.conditional_limits && typeof myDeck !== 'undefined') {
                 for (const rule of format.conditional_limits) {
+                    if (rule.overridesBan) continue;
                     if (rule.target.includes(strId) && myDeck.some(c => rule.trigger.includes(String(c.id)))) {
                         dynamicMaxLimit = rule.limit;
+                        // limit: 0 = ห้ามใส่เลย (ให้ปุ่มขึ้นสถานะแบน พร้อมเหตุผลของกฎ)
+                        if (rule.limit === 0) {
+                            isBanned = true;
+                            conditionalBanMessage = rule.message || '';
+                        }
                         break;
                     }
                 }
@@ -363,12 +403,24 @@ function openModal(cardOrId) {
 
         // เรียงลำดับเงื่อนไข (เพิ่ม isBanned และใช้ dynamicMaxLimit แทนเลข 3)
         if (isBanned) {
-            btnText = 'โดนแบน (BANNED)';
-            warningText = `(ห้ามใส่ในฟอร์แมต ${banlistData[currentBanlistFormat]?.name || 'ปัจจุบัน'})`;
+            btnText = conditionalBanMessage ? '🚫 ห้ามใส่ (ติดเงื่อนไข)' : 'โดนแบน (BANNED)';
+            warningText = conditionalBanMessage
+                ? `(${conditionalBanMessage})`
+                : `(ห้ามใส่ในฟอร์แมต ${banlistData[currentBanlistFormat]?.name || 'ปัจจุบัน'})`;
+            btnColor = '#b0b0b0';
+        } else if (lcConflict) {
+            btnText = '🔒 ' + lcConflict.short;
+            warningText = '(คอมมานเดอร์กับไลฟ์คริสตัลใช้ร่วมกันไม่ได้)';
             btnColor = '#b0b0b0';
         } else if (!isCompatible) {
-            btnText = '⚠️ เผ่าไม่ตรงกับคอมมานเดอร์';
-            warningText = '(ไม่สามารถใส่การ์ดข้ามเผ่าได้)';
+            const clanRule = (typeof findClanRestrictionViolation === 'function')
+                ? findClanRestrictionViolation(card) : null;
+            btnText = clanRule && clanRule.source === 'lc'
+                ? '⚠️ เผ่าไม่ตรงกับไลฟ์คริสตัล'
+                : '⚠️ เผ่าไม่ตรงกับคอมมานเดอร์';
+            warningText = clanRule
+                ? `(เด็คนี้ใส่ได้เฉพาะเผ่า ${clanRule.clans.join(' / ')})`
+                : '(ไม่สามารถใส่การ์ดข้ามเผ่าได้)';
             btnColor = '#b0b0b0'; 
         } else if (isMasterDisabled) {
             btnText = 'มี Master ในเด็คแล้ว';
@@ -428,16 +480,20 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
             <h2>${card.nameEN}</h2>
             <p style="color:#666; margin-bottom:5px;">${card.nameTH} | ID: ${card.id}</p>
             <hr>            
-            <p><strong>ประเภท :</strong> ${displayTypes} | <strong>DP :</strong> ${card.dp}</p>
-            <p><strong>เผ่า :</strong> ${card.clan || '-'}</p>
+            <p><strong>ประเภท :</strong> ${displayTypes} | <strong>DP :</strong> ${typeof renderDpCrystal === 'function' ? renderDpCrystal(card.dp, 'lg') : card.dp}</p>
+            <p><strong>เผ่า :</strong> ${typeof renderClanIcons === 'function' ? renderClanIcons(card.clan, 'lg') : (card.clan || '-')}</p>
             <p><strong>ชุด :</strong> ${card.set || '-'}</p> <div style="margin: 10px 0;"> ${rarityTextHTML} 
             </div>
 
             <div class="${abilityBoxClass}"> 
                 <strong>ความสามารถ : </strong><br>
-                ${(abilitySearchMode && searchInput.value.trim())
-                    ? highlightAbilityKeyword(card.ability || "ไม่มีความสามารถพิเศษ", searchInput.value.trim())
-                    : (card.ability || "ไม่มีความสามารถพิเศษ")}
+                ${(() => {
+                    // ใส่ไอคอนเผ่า + คริสตัล DP ลงในเนื้อความสกิลก่อน แล้วค่อยไฮไลท์คำค้น
+                    let ab = card.ability || "ไม่มีความสามารถพิเศษ";
+                    if (typeof decorateAbilityHTML === 'function') ab = decorateAbilityHTML(ab);
+                    if (abilitySearchMode && searchInput.value.trim()) ab = highlightAbilityKeyword(ab, searchInput.value.trim());
+                    return ab;
+                })()}
             </div>
 
             <div id="modalActionArea" style="margin-top: 20px;">
@@ -578,6 +634,24 @@ function updateModalForCommander(card) {
     // เงื่อนไข: เป็นกรณีพิเศษ (specialCommander) แต่ยังไม่มี Boost Master ในเด็ค
     const isLockedSpecial = card.specialCommander && !hasBoostMaster;
 
+    // เงื่อนไข: เด็คมีไลฟ์คริสตัลอยู่ -> ตั้งคอมมานเดอร์ไม่ได้ (ใช้ร่วมกันไม่ได้)
+    const lcBlock = (typeof findLcBlockingCommander === 'function') ? findLcBlockingCommander() : null;
+    if (lcBlock) {
+        const lockBtn = document.createElement('button');
+        lockBtn.id = "setCommanderBtn";
+        lockBtn.innerHTML = "🔒 " + lcBlock.short;
+        lockBtn.title = lcBlock.message;
+        lockBtn.disabled = true;
+        lockBtn.style = `
+            margin-top: 10px; width: 100%; padding: 10px;
+            background-color: #bdc3c7; color: #7f8c8d;
+            border: none; border-radius: 5px; font-weight: bold;
+            cursor: not-allowed; font-family: 'Kanit', sans-serif;
+        `;
+        infoDiv.appendChild(lockBtn);
+        return;
+    }
+
     // ถ้าผ่านเงื่อนไข (isEligible) ให้สร้างปุ่มกดได้ปกติ
     // หรือถ้าเป็นใบพิเศษแต่ล็อคอยู่ (isLockedSpecial) ให้สร้างปุ่มแบบกดไม่ได้ (Disabled) เพื่อแจ้งเตือนผู้ใช้
     if (isEligible || isLockedSpecial) {
@@ -655,6 +729,15 @@ function setCommander(card) {
         }
     }
 
+    // 2.5 กฎ "คอมมานเดอร์ กับ ไลฟ์คริสตัล ใช้ร่วมกันไม่ได้"
+    if (typeof findLcBlockingCommander === 'function') {
+        const lcBlock = findLcBlockingCommander();
+        if (lcBlock) {
+            alert(`❌ ไม่สามารถแต่งตั้งได้!\n${lcBlock.message}`);
+            return;
+        }
+    }
+
     // 3. กฎ DP: ตรวจสอบเงื่อนไข DP 4 หรือ Boost Master
     if (!canSetAsCommander(card)) {
         alert("การ์ดใบนี้ไม่ตรงตามเงื่อนไขการเป็นคอมมานเดอร์ (ต้อง DP 4+ หรือมี Boost Master)");
@@ -701,100 +784,93 @@ function renderCommanderButton(container, card, color, text, disabled = false) {
     container.appendChild(cmdBtn);
 }
 
-// ฟังก์ชันสร้างปุ่ม DP Crystal
+// ฟังก์ชันสร้างปุ่ม DP Crystal (รองรับเลือกหลายค่าพร้อมกัน)
 function initDpFilterUI() {
-    const dpSelect = document.getElementById('dpFilter');
     const container = document.getElementById('dp-crystal-bar');
-    
-    if (!dpSelect || !container) return;
+    if (!container) return;
 
-    // ค่าที่จะสร้างปุ่ม (รวม "ไร้DP" และ ปุ่มเคลียร์ค่า)
-    const dpValues = [
-        { val: "0", label: "0" },
-        { val: "1", label: "1" },
-        { val: "2", label: "2" },
-        { val: "3", label: "3" },
-        { val: "4", label: "4" },
-        { val: "5", label: "5" },
-        { val: "6", label: "6" },
-        { val: "7", label: "7" },
-        { val: "8", label: "8" },
-        { val: "X", label: "X" },
-        { val: "ไร้DP", label: "Ø" } // ใช้สัญลักษณ์ Ø แทนไร้ DP เพื่อความสวยงาม
-    ];
+    container.innerHTML = '';
 
-    // 1. สร้างปุ่มเคลียร์ (Reset)
+    // 1. ปุ่มเคลียร์ (Reset) — ล้างค่าที่เลือกทั้งหมด
     const resetBtn = document.createElement('div');
-    resetBtn.className = 'dp-crystal-btn special';
-    resetBtn.innerHTML = '<i class="fa-solid fa-rotate-left" style="font-size:14px"></i>'; // ใช้ไอคอนถ้ามี หรือใช้ text "All"
-    resetBtn.title = "แสดงทั้งหมด";
-    resetBtn.onclick = () => {
-        updateDpSelection(""); // ส่งค่าว่าง
-    };
+    resetBtn.className = 'dp-crystal-btn special dp-reset-btn';
+    resetBtn.innerHTML = '<i class="fa-solid fa-rotate-left" style="font-size:14px"></i>';
+    resetBtn.title = "แสดงทั้งหมด (ล้างค่า DP ที่เลือก)";
+    resetBtn.onclick = () => clearDpFilter();
     container.appendChild(resetBtn);
 
-    // 2. สร้างปุ่มตัวเลข 0-8
-    dpValues.forEach(item => {
+    // 2. ปุ่มค่า DP — กดเพิ่ม/กดซ้ำเพื่อเอาออก (Toggle) เลือกพร้อมกันได้หลายค่า
+    DP_FILTER_VALUES.forEach(item => {
         const btn = document.createElement('div');
         btn.className = 'dp-crystal-btn';
-        if (item.val === "ไร้DP") btn.classList.add('special'); // เปลี่ยนสีสำหรับไร้ DP
-        
+        if (item.val === "ไร้DP") btn.classList.add('special');
+
+        btn.dataset.dp = item.val;      // ใช้ data-dp แทนการอ่าน innerText (แม่นกว่า)
         btn.innerText = item.label;
-        btn.onclick = () => {
-            // ถ้ากดปุ่มเดิมซ้ำ ให้ยกเลิกการเลือก (Toggle)
-            if (dpSelect.value === item.val) {
-                updateDpSelection(""); 
-            } else {
-                updateDpSelection(item.val);
-            }
-        };
+        btn.title = `DP ${item.label} (กดซ้ำเพื่อเอาออก)`;
+        btn.onclick = () => toggleDpValue(item.val);
+
         container.appendChild(btn);
     });
 
-    // ฟังก์ชันอัปเดตค่าและ UI
-    function updateDpSelection(value) {
-        // 1. เปลี่ยนค่าใน Select ที่ซ่อนอยู่
-        dpSelect.value = value;
-        
-        // 2. สั่งให้แจ้งเตือนว่ามีการเปลี่ยนแปลง (Trigger Event)
-        // เพื่อให้ Logic ค้นหาเดิมทำงาน (filterCards)
-        dpSelect.dispatchEvent(new Event('change'));
-
-        // 3. อัปเดต UI (ไฮไลท์ปุ่มที่เลือก)
-        const allBtns = container.querySelectorAll('.dp-crystal-btn');
-        allBtns.forEach(b => {
-            b.classList.remove('active');
-            // เช็คว่าปุ่มไหนตรงกับค่าที่เลือก
-            if (b.innerText === value || (value === "ไร้DP" && b.innerText === "Ø")) {
-                b.classList.add('active');
-            }
-        });
-        
-        // ถ้าเป็นค่าว่าง ให้ไฮไลท์ปุ่ม Reset (ตัวแรก)
-        if (value === "") {
-            allBtns[0].classList.add('active');
-        }
-    }
+    syncDpButtons();
 }
-function syncDpButtons() {
+
+// สลับสถานะเลือก/ไม่เลือก ของค่า DP หนึ่งค่า
+function toggleDpValue(value) {
+    const i = selectedDpValues.indexOf(value);
+    if (i === -1) selectedDpValues.push(value);
+    else selectedDpValues.splice(i, 1);
+
+    // เรียงตามลำดับปุ่ม เพื่อให้ข้อความสรุปอ่านง่าย (0,1,2,...,X,ไร้DP)
+    const order = v => DP_FILTER_VALUES.findIndex(x => x.val === v);
+    selectedDpValues.sort((a, b) => order(a) - order(b));
+
+    applyDpSelection(selectedDpValues);
+}
+
+// ล้างค่า DP ที่เลือกทั้งหมด (silent = true คือไม่สั่งกรองใหม่ ให้ผู้เรียกจัดการเอง)
+function clearDpFilter(silent = false) {
+    applyDpSelection([], silent);
+}
+
+// ตั้งค่าที่เลือก + sync UI + สั่งกรองใหม่
+function applyDpSelection(values, silent = false) {
+    selectedDpValues = Array.isArray(values) ? [...values] : [];
+
+    // sync <select id="dpFilter"> ที่ซ่อนอยู่ ไว้เผื่อโค้ดส่วนอื่นที่ยังอ่าน .value
+    // (เลือกค่าเดียว = ใส่ค่านั้น / เลือกหลายค่าหรือไม่เลือก = ว่าง)
     const dpSelect = document.getElementById('dpFilter');
+    if (dpSelect) dpSelect.value = (selectedDpValues.length === 1) ? selectedDpValues[0] : "";
+
+    syncDpButtons();
+    if (!silent && typeof filterCards === 'function') filterCards();
+}
+
+// อัปเดตหน้าตาปุ่ม (ไฮไลท์ทุกค่าที่เลือกไว้) + ข้อความสรุป
+function syncDpButtons() {
     const container = document.getElementById('dp-crystal-bar');
-    if (!dpSelect || !container) return;
+    if (!container) return;
 
-    const currentValue = dpSelect.value;
-    const allBtns = container.querySelectorAll('.dp-crystal-btn');
-
-    allBtns.forEach(btn => {
-        btn.classList.remove('active');
-        
-        // ตรวจสอบเงื่อนไขเพื่อให้ปุ่มสว่างตามค่า
-        const isResetBtn = btn.classList.contains('special') && (btn.innerHTML.includes('fa-rotate-left') || btn.innerText === "All");
-        const isTargetValue = btn.innerText === currentValue || (currentValue === "ไร้DP" && btn.innerText === "Ø");
-
-        if ((currentValue === "" && isResetBtn) || isTargetValue) {
-            btn.classList.add('active');
-        }
+    container.querySelectorAll('.dp-crystal-btn').forEach(btn => {
+        const v = btn.dataset.dp;
+        if (v === undefined) return; // ข้ามปุ่ม Reset
+        btn.classList.toggle('active', selectedDpValues.includes(v));
     });
+
+    // ปุ่ม Reset จะสว่างเมื่อไม่ได้เลือกอะไรเลย (= แสดงทั้งหมด)
+    const resetBtn = container.querySelector('.dp-reset-btn');
+    if (resetBtn) resetBtn.classList.toggle('active', selectedDpValues.length === 0);
+
+    // ข้อความสรุปข้างหัวข้อ เช่น "ค้นหาตาม DP : 2, 3, 6"
+    const summary = document.getElementById('dpFilterSummary');
+    if (summary) {
+        const labels = selectedDpValues.map(v => {
+            const item = DP_FILTER_VALUES.find(x => x.val === v);
+            return item ? (v === "ไร้DP" ? "ไร้ DP" : item.label) : v;
+        });
+        summary.innerText = labels.length ? ` : ${labels.join(', ')}` : '';
+    }
 }
 
 // เรียกใช้งานเมื่อโหลดหน้าเว็บ
@@ -805,6 +881,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // ----------------------
     initDpFilterUI()
+    if (typeof initClanFilterIcons === 'function') initClanFilterIcons(); // เติมไอคอนเผ่าในตัวกรอง
     updateDeckUI();
     
     // ถ้าอยากให้ปุ่มในคลังการ์ดแสดงสถานะ "ใส่ครบแล้ว" ตามเด็คที่ค้างอยู่ด้วย
@@ -848,7 +925,7 @@ function limitedSearch() {
     clearMultiSelect('clanFilter');
     clearMultiSelect('setFilter');
     clearMultiSelect('rarityFilter');
-    if(document.getElementById('dpFilter')) document.getElementById('dpFilter').value = "";
+    if (typeof clearDpFilter === 'function') clearDpFilter(true);
 
     // แจ้งเตือนเล็กน้อยว่ากำลังแสดงผลอะไร
     if (typeof showQuickFeedback === 'function') {
@@ -970,7 +1047,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 5. Event Listeners
 searchInput.addEventListener('input', filterCards);
-dpFilter.addEventListener('change', filterCards);
+// DP filter ใช้ปุ่ม dp-crystal-bar (เลือกได้หลายค่า) — ดู initDpFilterUI / toggleDpValue
 // typeFilter / clanFilter / rarityFilter / setFilter เป็น multi-select แล้ว
 // (change listener ผูกไว้ที่ checkbox แต่ละอันใน initMultiSelect() ด้านบน)
 

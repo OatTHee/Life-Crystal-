@@ -64,7 +64,7 @@ const Armored_DinoData = [
     id: "Armored Stegosaurus2",
     nameTH: "อาร์เมอร์ สเตโกซอรัส",
     nameEN: "Armored Stegosaurus",
-    dp: "ไร้DP",
+    dp: 2,
     type: "Armored_Dino",
         rarity:"Golden_Rare",
 

@@ -53,6 +53,12 @@ function updateAllButtonStates() {
     const activeLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
     const commander = myDeck.find(c => c.isCommander);
 
+    // เช็คโหมดแก้ไข เพื่อให้ Badge โชว์/ซ่อน ตรงกับ renderCards
+    const sidePanel = document.getElementById('deckSidePanel');
+    const isPcEditing = sidePanel && sidePanel.classList.contains('open');
+    const isMobileEditModeNow = (typeof isEditMode !== 'undefined') ? isEditMode : false;
+    const showBadges = isPcEditing || isMobileEditModeNow;
+
     // วนลูปการ์ดทุกใบที่แสดงอยู่ในหน้าจอ
     const visibleCards = document.querySelectorAll('.card');
     
@@ -70,29 +76,33 @@ function updateAllButtonStates() {
         let btnText = ""; 
         let btnColor = "#28a745"; 
 
-        // --- 1. คำนวณ Limit ตาม Banlist (แทรกตรงนี้) ---
-        let dynamicMaxLimit = 3; // ค่าเริ่มต้นคือ 3
-        if (typeof banlistData !== 'undefined' && typeof currentBanlistFormat !== 'undefined') {
-            const format = banlistData[currentBanlistFormat] || banlistData["None"];
-            if (format.banned.includes(String(card.id))) {
-                dynamicMaxLimit = 0; // ถ้าแบน ให้ Limit เป็น 0
-            } else if (format.limited.includes(String(card.id))) {
-                dynamicMaxLimit = 1; // ถ้าจำกัด ให้ Limit เป็น 1
-            }
-        }
+        // --- 1. คำนวณ Limit ตาม Banlist (ใช้ helper กลางตัวเดียวกับ renderCards) ---
+        // สำคัญ: ต้องคำนวณใหม่ทุกครั้ง เพราะกฎบางข้อขึ้นกับการ์ดที่อยู่ในเด็ค ณ ตอนนั้น
+        // (เช่น เอา Master บ็อบบี้ออก => FM-PR07 D11 JU ต้องกลับมาใส่ได้ทันที)
+        const banStatus = (typeof computeCardBanStatus === 'function')
+            ? computeCardBanStatus(card)
+            : { maxLimit: 3, isBanned: false, isLimited: false, reason: '' };
 
-        // เช็คเงื่อนไข Commander/Master/Limit (ยกมาจาก Logic renderCards ของคุณ)
-        let isIllegalByCommander = false;
-        const isArmor = card.nameTH && card.nameTH.includes("Armor");
-        if (commander && card.type === "Creature" && !isArmor) {
-            const targetClans = Array.isArray(card.clan) ? card.clan : [card.clan];
-            const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
-            if (!targetClans.some(clan => commClans.includes(clan))) isIllegalByCommander = true;
-        }
+        let dynamicMaxLimit = banStatus.maxLimit;
+        const isPermanentlyBanned = banStatus.isBanned;
 
-        if (isIllegalByCommander) {
+        // เช็คกฎเผ่าประจำเด็ค (Commander และ/หรือ Life Crystal) — ดู clan_identity_logic.js
+        const clanRule = (typeof findClanRestrictionViolation === 'function')
+            ? findClanRestrictionViolation(card) : null;
+        // กฎเสริม: LC กับ Commander ใช้ร่วมกันไม่ได้
+        const lcConflict = (typeof findCommanderLcConflict === 'function')
+            ? findCommanderLcConflict(card) : null;
+        const isIllegalByCommander = !!clanRule || !!lcConflict;
+
+        if (isPermanentlyBanned) {
             isDisabled = true;
-            btnText = "เผ่าไม่ตรงกับ Commander";
+            btnText = "โดนแบน (BANNED)";
+            btnColor = "#b0b0b0";
+        } else if (isIllegalByCommander) {
+            isDisabled = true;
+            btnText = lcConflict ? lcConflict.short
+                : ((typeof clanRestrictionShortLabel === 'function')
+                    ? clanRestrictionShortLabel(clanRule) : "เผ่าไม่ตรงกับ Commander");
             btnColor = "#b0b0b0";
         } else if (card.type === "Master") {
             if (activeMaster) {
@@ -138,12 +148,23 @@ function updateAllButtonStates() {
             }
         }
 
+        // --- อัปเดต Badge (BAN / Limit 1) แบบสดๆ โดยไม่ต้องวาดการ์ดใหม่ ---
+        const badgeWrap = cardDiv.querySelector('.status-badge-wrap');
+        if (badgeWrap && typeof buildBanlistBadgeHtml === 'function') {
+            const newBadge = showBadges ? buildBanlistBadgeHtml(banStatus) : '';
+            if (badgeWrap.innerHTML.trim() !== newBadge.trim()) badgeWrap.innerHTML = newBadge;
+        }
+
+        // --- อัปเดตสถานะ "การ์ดเทา" ให้ตรงกับความจริงปัจจุบัน (toggle ไม่ใช่ add อย่างเดียว) ---
+        cardDiv.classList.toggle('disabled-card', isIllegalByCommander || isPermanentlyBanned);
+
         // สั่งอัปเดตที่ Element ปุ่มโดยตรง
         const addBtn = cardDiv.querySelector('.add-to-deck-btn');
         if (addBtn) {
             addBtn.innerText = btnText;
             addBtn.style.backgroundColor = btnColor;
             addBtn.disabled = isDisabled;
+            addBtn.style.cursor = isDisabled ? 'not-allowed' : 'pointer';
         }
     });
 }
@@ -183,66 +204,36 @@ function renderCards(cards) {
         // --- [สำคัญ] ต้องใส่ relative เพื่อให้ badge ที่เป็น absolute เกาะอยู่ที่มุมการ์ดนี้ ---
         cardDiv.style.position = 'relative';
 
-        // --- Logic เช็คเผ่าไม่ตรง Commander ---
-        let isIllegalByCommander = false;
-        
-        // แก้ไข: เช็คก่อนว่าเป็น Armor หรือไม่ ถ้าเป็น Armor ให้ข้ามกฎการเช็คเผ่าไปเลย
-        const isArmor = card.nameTH && card.nameTH.includes("Armor");
+        // --- Logic เช็คเผ่าไม่ตรงกับกฎประจำเด็ค (Commander และ/หรือ Life Crystal) ---
+        // รวมไว้ที่ clan_identity_logic.js ที่เดียว จะได้ไม่หลุดเวลาเพิ่มกฎใหม่
+        const clanRule = (typeof findClanRestrictionViolation === 'function')
+            ? findClanRestrictionViolation(card) : null;
+        // กฎเสริม: LC กับ Commander ใช้ร่วมกันไม่ได้
+        const lcConflict = (typeof findCommanderLcConflict === 'function')
+            ? findCommanderLcConflict(card) : null;
+        const isIllegalByCommander = !!clanRule || !!lcConflict;
 
-        if (commander && card.type === "Creature" && !isArmor) {
-            const targetClans = Array.isArray(card.clan) ? card.clan : [card.clan];
-            const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
-            if (!targetClans.some(clan => commClans.includes(clan))) {
-                isIllegalByCommander = true;                
-            }
-        }
+        // --- 1. คำนวณ Limit และเช็คการแบนล่วงหน้า (ใช้ helper กลางใน banlist_data.js) ---
+        const banStatus = (typeof computeCardBanStatus === 'function')
+            ? computeCardBanStatus(card)
+            : { maxLimit: 3, isBanned: false, isLimited: false, reason: '' };
 
-        // --- 1. คำนวณ Limit และเช็คการแบนล่วงหน้า ---
-        let dynamicMaxLimit = 3;
-        let isPermanentlyBanned = false;
-        let isBanlistLimited = false; // ตัวแปรใหม่: เช็คว่าโดนลิมิตจาก Banlist หรือไม่
-        
-        if (typeof banlistData !== 'undefined' && typeof currentBanlistFormat !== 'undefined') {
-            const format = banlistData[currentBanlistFormat] || banlistData["None"];
-            const cardIdStr = String(card.id);
-            
-            if (format.banned.includes(cardIdStr)) {
-                isPermanentlyBanned = true;
-                dynamicMaxLimit = 0;
-            } else if (format.limited.includes(cardIdStr)) {
-                dynamicMaxLimit = 1;
-                isBanlistLimited = true; // ✅ เป็น Limit จาก Banlist ให้โชว์ Badge
-            } else if (format.limit_if_no_commander && format.limit_if_no_commander.includes(cardIdStr)) {
-                // เช็คเงื่อนไขพิเศษ (ถ้าไม่มีคอมให้ลิมิต 1)
-                const hasCommander = typeof myDeck !== 'undefined' && myDeck.some(c => c.isCommander);
-                if (!hasCommander) {
-                    dynamicMaxLimit = 1;
-                    isBanlistLimited = true; // ✅ เป็น Limit จากเงื่อนไข Banlist ให้โชว์ Badge
-                }
-            }
-        }
+        let dynamicMaxLimit = banStatus.maxLimit;
+        let isPermanentlyBanned = banStatus.isBanned;
+        let isBanlistLimited = banStatus.isLimited;
 
-        // กฎ Master / Boost Master (กำหนด Max เป็น 1 แต่ "ไม่" นับว่าเป็น Banlist Limit)
+        // กฎ Master / Boost Master / LC (กำหนด Max เป็น 1 แต่ "ไม่" นับว่าเป็น Banlist Limit)
         if (card.type === "Master" || card.type === "Boost_Master" || card.type === "LC") {
-            dynamicMaxLimit = 1;
-            // ❌ ไม่ต้อง set isBanlistLimited = true
+            if (!isPermanentlyBanned) dynamicMaxLimit = 1;
         }
 
         // --- 2. สร้าง Badge Html (ถ้าอยู่ในโหมดแก้ไข) ---
-        let badgeHtml = '';
-        if (showBadges) {
-            if (isPermanentlyBanned) {
-                // ใช้ class "status-badge" แทน style ยาวๆ
-                badgeHtml = `<img src="images/icon_ban.png" class="status-badge" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Banned"><div class="status-badge-fallback ban">BAN</div>`;
-            } 
-            else if (isBanlistLimited) { 
-                badgeHtml = `<img src="images/icon_limit1.png" 
-                             class="status-badge"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-                             alt="Limit 1">
-                             <div class="status-badge-fallback limit">1</div>`;
-            }
-        }
+        // ห่อด้วย <span class="status-badge-wrap"> เพื่อให้ updateAllButtonStates อัปเดต Badge ได้ทันที
+        // โดยไม่ต้องวาดการ์ดใหม่ทั้งหน้า
+        const badgeInner = (showBadges && typeof buildBanlistBadgeHtml === 'function')
+            ? buildBanlistBadgeHtml({ isBanned: isPermanentlyBanned, isLimited: isBanlistLimited })
+            : '';
+        const badgeHtml = `<span class="status-badge-wrap">${badgeInner}</span>`;
 
         // --- Logic การคำนวณจำนวนและสถานะปุ่ม ---
         const countInDeck = myDeck.filter(c => String(c.id) === String(card.id)).length;
@@ -256,7 +247,9 @@ function renderCards(cards) {
             btnColor = "#b0b0b0";
         } else if (isIllegalByCommander) {
             isDisabled = true;
-            btnText = "เผ่าไม่ตรงกับ Commander";
+            btnText = lcConflict ? lcConflict.short
+                : ((typeof clanRestrictionShortLabel === 'function')
+                    ? clanRestrictionShortLabel(clanRule) : "เผ่าไม่ตรงกับ Commander");
             btnColor = "#b0b0b0";
         } else if (card.type === "Master") {
             if (activeMaster) {
@@ -295,7 +288,7 @@ function renderCards(cards) {
             }
         }
 
-        if (isIllegalByCommander || isPermanentlyBanned) cardDiv.classList.add('disabled-card');
+        cardDiv.classList.toggle('disabled-card', isIllegalByCommander || isPermanentlyBanned);
 
         const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
         const imgVersion = "1.2";
@@ -439,7 +432,15 @@ function canAddCardToDeck(targetCard, silent = false) {
     const totalCount = myDeck.filter(c => String(c.id) === cardId).length;
 
     if (maxLimit === 0) {
-        if (!silent) alert(`🚫 การ์ดใบนี้ถูก "BANNED" ใน${format ? format.name : 'ฟอร์แมตปัจจุบัน'}\nไม่สามารถใส่ในเด็คได้`);
+        if (!silent) {
+            // ถ้าโดนห้ามจาก "กฎตามเงื่อนไข" (เช่น มี Master บ็อบบี้อยู่) ให้ขึ้นข้อความของกฎนั้นแทน
+            const condRule = (typeof getActiveConditionalRule === 'function') ? getActiveConditionalRule(cardId) : null;
+            if (condRule && condRule.limit === 0) {
+                alert(`🚫 ${condRule.message || "การ์ดใบนี้ห้ามใส่ เนื่องจากมีการ์ดหลักอยู่ในเด็คแล้ว"}`);
+            } else {
+                alert(`🚫 การ์ดใบนี้ถูก "BANNED" ใน${format ? format.name : 'ฟอร์แมตปัจจุบัน'}\nไม่สามารถใส่ในเด็คได้`);
+            }
+        }
         return false;
     }
 
@@ -507,6 +508,24 @@ function canAddCardToDeck(targetCard, silent = false) {
     }
     // ----------------------------------------------------
 
+    // 2.5 เช็คย้อนกลับ: ถ้าการ์ดที่จะเพิ่มเป็น "การ์ดหลัก (trigger)" ของกฎตามเงื่อนไข
+    // แต่ในเด็คมีการ์ด target เกินโควต้าอยู่แล้ว => ห้ามเพิ่ม (กันเด็คผิดกฎย้อนหลัง)
+    if (format && format.conditional_limits) {
+        for (const rule of format.conditional_limits) {
+            if (rule.overridesBan) continue;
+            if (!rule.trigger || !rule.trigger.includes(cardId)) continue;
+
+            const inDeck = myDeck.filter(c => rule.target.includes(String(c.id)));
+            if (inDeck.length > (rule.limit || 0)) {
+                if (!silent) {
+                    const names = [...new Set(inDeck.map(c => c.nameTH || c.nameEN || c.id))].join(', ');
+                    alert(`❌ ผิดกฎการจัดเด็ค: ${rule.message || "การ์ดคู่นี้ใช้ร่วมกันไม่ได้"}\n(เนื่องจากในเด็คมี ${names} อยู่ ${inDeck.length} ใบ — ต้องเหลือไม่เกิน ${rule.limit || 0} ใบก่อน)`);
+                }
+                return false;
+            }
+        }
+    }
+
     // 3. กฎ Master/Boost Master (คงเดิม)
     if (targetCard.type === "Master") {
         const hasAnyMaster = myDeck.some(c => c.type === "Master");
@@ -522,15 +541,36 @@ function canAddCardToDeck(targetCard, silent = false) {
         }
     }
 
-    // 4. เงื่อนไข Commander: เช็คเผ่า (คงเดิม)
-    const commander = myDeck.find(c => c.isCommander);
-    if (commander && targetCard.type === "Creature") {
-        const targetClans = Array.isArray(targetCard.clan) ? targetCard.clan : [targetCard.clan];
-        const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
-        
-        const isSameClan = targetClans.some(clan => commClans.includes(clan));
-        if (!isSameClan) {
-            if (!silent) alert(`เด็คนี้มี ${commander.nameTH} เป็นคอมมานเดอร์\nใส่ได้เฉพาะเผ่า ${commClans.join(', ')} เท่านั้น!`);
+    // 4. เงื่อนไขเผ่าประจำเด็ค: Commander และ/หรือ Life Crystal (ดู clan_identity_logic.js)
+    if (typeof findClanRestrictionViolation === 'function') {
+        const clanRule = findClanRestrictionViolation(targetCard);
+        if (clanRule) {
+            if (!silent) alert(clanRestrictionMessage(clanRule));
+            return false;
+        }
+    }
+
+    // 5. กฎ "คอมมานเดอร์ กับ ไลฟ์คริสตัล ใช้ร่วมกันไม่ได้"
+    if (typeof findCommanderLcConflict === 'function') {
+        const conflict = findCommanderLcConflict(targetCard);
+        if (conflict) {
+            if (!silent) alert(`❌ ${conflict.message}`);
+            return false;
+        }
+    }
+
+    // 6. กฎใส่ Life Crystal: ถ้าในเด็คมี Creature เผ่าอื่นอยู่แล้ว ใส่ LC ใบนี้ไม่ได้
+    // (กฎเดียวกับตอนแต่งตั้ง Commander — กันเด็คผิดกฎย้อนหลัง)
+    if (targetCard.type === "LC" && typeof findCreaturesBlockingLC === 'function') {
+        const blockers = findCreaturesBlockingLC(targetCard);
+        if (blockers.length > 0) {
+            if (!silent) {
+                const names = [...new Set(blockers.map(c => c.nameTH || c.nameEN || c.id))];
+                const lcClans = getClanArray(targetCard.clan).join(' / ');
+                alert(`ใส่ ${targetCard.nameTH} ไม่ได้!\nไลฟ์คริสตัลใบนี้บังคับเผ่า ${lcClans}\n` +
+                      `แต่ในเด็คมี Creature เผ่าอื่นอยู่ : ${names.slice(0, 3).join(', ')}` +
+                      `${names.length > 3 ? ` และอีก ${names.length - 3} ใบ` : ''}`);
+            }
             return false;
         }
     }
@@ -607,6 +647,9 @@ function handleAddToDeck(e, cardOrId) {
 function canSetAsCommander(card) {
 if (card.type !== "Creature") return false;
 
+    // 0. ถ้าเด็คมี Life Crystal อยู่ จะตั้งคอมมานเดอร์ไม่ได้ (ใช้ร่วมกันไม่ได้)
+    if (typeof findLcBlockingCommander === 'function' && findLcBlockingCommander()) return false;
+
     // 1. เช็คว่าในเด็คมี Boost Master หรือไม่
     const hasBoostMaster = myDeck.some(c => c.type === "Boost_Master");
     const cardDP = parseInt(card.dp) || 0;
@@ -624,22 +667,13 @@ if (card.type !== "Creature") return false;
 
 // ฟังก์ชันใหม่: เช็คว่า "ลูกน้อง" ใบนี้ เข้ากับ "หัวหน้า" ที่เลือกไว้หรือไม่
 function isCardCompatibleWithCommander(card) {
-    // หาว่าตอนนี้ในเด็คมี Commander หรือยัง
-    const currentCommander = myDeck.find(c => c.isCommander === true);
-    
-    // กฎที่ 1: ถ้ายังไม่มีหัวหน้า หรือการ์ดเป็นประเภท Master/Action/Armor/Field ให้ผ่านเสมอ
-    if (!currentCommander || card.type.includes("Master")|| card.type.includes("Armor")|| card.type.includes("Action")|| card.type.includes("Field")
-    || card.type.includes("Fusion_Monster")|| card.type.includes("Boost_Creature")|| card.type.includes("Armored_Dino")
-    ) 
-		return true;
-
-    // กฎที่ 2: ถ้ามีหัวหน้าแล้ว ลูกน้องที่จะเพิ่มต้องมี "เผ่า" (Clan) ตรงกับหัวหน้า
-    // (เปรียบเทียบเผ่าของลูกน้อง กับเผ่าของหัวหน้า)
-    if (card.clan && currentCommander.clan) {
-        return card.clan === currentCommander.clan;
+    // เช็คกฎเผ่าประจำเด็คทั้งหมดผ่านตัวกลางที่เดียว (clan_identity_logic.js)
+    // ตัวกลางจะคัดเองว่าการ์ดประเภทไหนโดนกฎ (เฉพาะ Creature)
+    // และเด็คตอนนี้มีตัวบังคับเผ่าอะไรบ้าง (Commander และ/หรือ Life Crystal)
+    if (typeof findClanRestrictionViolation === 'function') {
+        return !findClanRestrictionViolation(card);
     }
-
-    return true; // กรณีที่ไม่มีข้อมูลเผ่าให้เช็ค ให้ผ่านไปก่อน
+    return true; // ถ้าโหลดตัวกลางไม่สำเร็จ ให้ผ่านไปก่อน
 }
 
 function createDeckCardElement(card, index) {

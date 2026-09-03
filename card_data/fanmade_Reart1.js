@@ -6,6 +6,7 @@
         dp: "ไร้DP",
         type: "Boost_Master",
         set: "PR01",
+        rarity: "Promo",
         clan: "",
         ability: `<span class="hlabi">Commander Bless :</span> <br>
 		• <span class="hlauto">Auto</span> เมื่อ Creature ของเราสวม Armor สำเร็จ : เปลี่ยน [คอมมานเดอร์ไดโน] บนคอมมานเดอร์โซนของเราเป็นวางตั้ง<br>
@@ -21,6 +22,7 @@
         dp: "ไร้DP",
         type: "Boost_Master",
         set: "PR01",
+        rarity: "Promo",
         clan: "",
         ability: `<span class="hlabi">Commander Bless :</span> <br> 
 		• <span class="hlauto">Auto</span> เทิร์นละครั้ง เมื่อ Creature ของเราเพิ่ม AT จากผลของ Magic, <span class="hlabi">Effect</span> หรือ <span class="hlabi">Skill</span> ได้สำเร็จ : เราจั่วการ์ด 1 ใบ<br> 
@@ -37,6 +39,7 @@
         dp: "ไร้DP",
         type: "Boost_Master",
         set: "PR01",
+        rarity: "Promo",
         clan: "",
         ability: `<span class="hlabi">Commander Bless :</span> <br> 
 		• <span class="hlauto">Auto</span> เมื่อ Armor เผ่าเกราะหางหนาม ของเราตกสุสานจากสนาม : นำ Armor ชิ้นนั้นที่ตกสุสานกลับขึ้นมือ (ตกสุสานพร้อมกันหลายใบนำกลับขึ้นมือได้ใบเดียว)<br> 
@@ -52,6 +55,7 @@
         dp: "ไร้DP",
         type: "Boost_Master",
         set: "PR01",
+        rarity: "Promo",
         clan: "",
         ability: `<span class="hlabi">Commander Bless :</span> <br>
 		• <span class="hlcont">Cont.</span> [การ์ดของเรา], [Armor] [เข้าสนาม] เมื่อเข้าเงื่อนไข, +1 CP บนการ์ดนี้<br>
@@ -68,6 +72,7 @@
         dp: "ไร้DP",
         type: "Boost_Master",
         set: "PR01",
+        rarity: "Promo",
         clan: "",
         ability: `<span class="hlabi">Commander Bless :</span> <br> 
 		• <span class="hlcont">Cont.</span> Creature มีปีก ที่เราควบคุมปรับ AT+100, และสามารถข้ามไปโจมตี Creature ใน DF Line ได้ในเทิร์นที่เข้าสนาม แม้คู่แข่งจะมี Creature ใน AT Line ก็ตาม<br> 
@@ -86,6 +91,7 @@
         dp: 1,
         type: "Boost_Creature",
         set: "PR01",
+        rarity: "Promo",
         clan: "มีเขา",
         ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Armor ในสุสานเรา 1 ใบ : นำการ์ดนั้นกลับขึ้นมือ<br> • <span class="hlcont">Cont.</span> ตราบที่สวม Armor อยู่, การ์ดนี้ได้รับ [Fast Run]`
         ,
@@ -98,6 +104,7 @@
         dp: 1,
         type: "Boost_Creature",
         set: "PR01",
+        rarity: "Promo",
         clan: "สองขา",
         ability: `<span class="hlabi">Effect :</span> <br>
 		• <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน], กำหนด Creature ที่เข้ามาจากสุสาน 1 เป้าหมาย : ทำลายความสามารถทั้งหมดของการ์ดนั้น, และการ์ดนั้นไม่สามารถสั่งการได้จนกว่าจะออกจากสนาม<br>
@@ -112,6 +119,7 @@
         dp: 1,
         type: "Boost_Creature",
         set: "PR01",
+        rarity: "Promo",
         clan: "มีเกราะหางหนาม",
         ability: `<span class="hlabi">Effect :</span> <br> 
 		• <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน], กำหนด Creature 1 เป้าหมาย : สร้างความเสียหาย 300 จุด ให้การ์ดนั้น, ถ้าการ์ดนั้นอยู่ใน AT Line ติด [สภาวะสับสน] 1 เทิร์นด้วย<br>
@@ -126,6 +134,7 @@
         dp: 1,
         type: "Boost_Creature",
         set: "PR01",
+        rarity: "Promo",
         clan: "มีเขา",
         ability: `<span class="hlabi">Effect :</span> <br> 
 		• <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, หากเกมนี้เราเลือกใช้ [คอมมานเดอร์ไดโน], กำหนด Creature 1 เป้าหมาย : การ์ดนั้นติด [สภาวะสับสน] 1 เทิร์น<br>
@@ -141,6 +150,7 @@
         dp: 1,
         type: "Boost_Creature",
         set: "PR01",
+        rarity: "Promo",
         clan: "มีปีก",
         ability: `<span class="hlabi">Effect :</span> <br>
 		• <span class="hlauto">Auto</span> เมื่อเข้ามาในสนาม, กำหนด Creature ตัวอื่นของเราและคู่แข่งอย่างละ 1 เป้าหมาย : นำเป้าหมายทั้งสองกลับขึ้นมือ<br>

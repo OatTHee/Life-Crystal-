@@ -41,7 +41,9 @@
 
     ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">Cont.</span> ระหว่างสู้กับ Creature ที่ติด [สภาวะผิดปกติ], การ์ดนี้ปรับ AT + 600 จนจบการต่อสู้.`
     ,
-    image: "images/Fanmade/PR08_Pt1/Mu_Titanus.png"
+    image: "images/Fanmade/PR08_Pt1/Mu_Titanus.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/PR08_Pt1/Mu_Titanus_Secret.png"
 },
 
 {

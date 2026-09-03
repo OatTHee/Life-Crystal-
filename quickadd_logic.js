@@ -43,15 +43,11 @@ function handleQuickMultiAdd(e, card) {
     if (e.cancelable) e.preventDefault();
     e.stopPropagation();
 
-    // --- ส่วนตรวจสอบเผ่า (Clan) ก่อนเริ่มทำงานส่วนอื่น เพื่อให้ alert ครั้งเดียว ---
-    const commander = myDeck.find(c => c.isCommander);
-    if (commander && card.type === "Creature") {
-        const targetClans = Array.isArray(card.clan) ? card.clan : [card.clan];
-        const commClans = Array.isArray(commander.clan) ? commander.clan : [commander.clan];
-        const isSameClan = targetClans.some(clan => commClans.includes(clan));
-
-        if (!isSameClan) {
-            alert(`เด็คนี้มี ${commander.nameTH} เป็นคอมมานเดอร์ ใส่ได้เฉพาะเผ่า ${commClans.join(', ')} เท่านั้น!`);
+    // --- ตรวจกฎเผ่าประจำเด็ค (Commander และ/หรือ Life Crystal) ก่อน เพื่อให้ alert ครั้งเดียว ---
+    if (typeof findClanRestrictionViolation === 'function') {
+        const clanRule = findClanRestrictionViolation(card);
+        if (clanRule) {
+            alert(clanRestrictionMessage(clanRule));
             return; // หยุดการทำงานทันที
         }
     }

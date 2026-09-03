@@ -590,7 +590,7 @@
 				<span class="hlcont">Cont.</span> Fast Run (เมื่อการ์ดใบนี้เข้ามาในสนามสามารถใช้งานได้ทันที) <br> 
 				<span class="hlcont">Cont.</span> สามารถโจมตี Creature ใน DF Line ได้ถึงแม้จะมี Creature ใน AT Line <br> 
 				<span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เข้ามาในสนาม นำการ์ด เผ่ามีปีก 1 ใบในสนามฝ่ายเราขึ้นมือ  <br><br>
-				(ไม่สามารถลงการ์ดใบนี้ได้หากไม่มี Creature เผ่ามีปีกในสนาม)`
+				(ไม่สามารถลงการ์ดใบนี้ได้หากไม่มีการ์ด เผ่ามีปีกในสนาม)`
 				,
 				image: "images/Original/Quetzalcoatlus.jpg"
 			},

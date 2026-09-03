@@ -1,0 +1,120 @@
+/* ===== คริสตัล DP แบบ inline (สไตล์เดียวกับปุ่มกรอง DP ใน filterdiv.css) ===== */
+.dp-crystal-inline {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #145a32;
+
+    background: linear-gradient(0deg, #0b3d0b 0%, #27ae60 60%, #ffffff 120%);
+
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    text-shadow: 1px 1px 2px black;
+
+    box-shadow: 0 2px 4px rgba(0,0,0,0.45), inset 0 -2px 4px rgba(0,0,0,0.3);
+
+    vertical-align: middle;
+    margin: 0 2px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+/* ไร้ DP (Ø) — สีเทาเหมือนปุ่ม special */
+.dp-crystal-inline.special {
+    background: linear-gradient(0deg, #555 0%, #999 60%, #ccc 120%);
+    border-color: #333;
+}
+
+/* ขนาดใหญ่ สำหรับบรรทัด "DP :" ใน Modal */
+.dp-crystal-inline.lg {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    border-width: 2px;
+}
+
+/* ===== ชิพเผ่า : ไอคอน + ชื่อ ===== */
+/* ใช้สีโปร่งแบบเทากลาง เพื่อให้อ่านออกทั้งบนกล่องสกิลสีอ่อนและสีเข้ม */
+.clan-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 1px 8px 1px 3px;
+    border-radius: 999px;
+
+    background: rgba(127,127,127,0.16);
+    border: 1px solid rgba(127,127,127,0.38);
+    color: inherit;
+
+    vertical-align: middle;
+    line-height: 1.2;
+    white-space: nowrap;
+    margin: 0 1px;
+}
+
+.clan-chip .clan-icon {
+    height: 21px;
+    width: auto;
+    max-width: 26px;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35));
+}
+
+.clan-chip .clan-name {
+    font-weight: 600;
+}
+
+/* ขนาดใหญ่ สำหรับบรรทัด "เผ่า :" ใน Modal */
+.clan-chip.lg .clan-icon { height: 30px; max-width: 36px; }
+.clan-chip.lg { font-size: 15px; padding: 2px 10px 2px 4px; }
+
+/* จอเล็ก: ย่อลงเล็กน้อยไม่ให้ดันบรรทัด */
+@media (max-width: 600px) {
+    .dp-crystal-inline { width: 22px; height: 22px; font-size: 12px; }
+    .dp-crystal-inline.lg { width: 28px; height: 28px; font-size: 16px; }
+    .clan-chip .clan-icon { height: 18px; max-width: 22px; }
+    .clan-chip.lg .clan-icon { height: 26px; max-width: 30px; }
+}
+
+/* ===== ไอคอนเผ่าในตัวกรอง (multi-select) ===== */
+.clan-filter-icon {
+    height: 24px;
+    width: auto;
+    max-width: 30px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+}
+
+/* ไอคอนที่โผล่บนปุ่มตัวกรอง (ตอนเลือกแล้ว) — ปุ่มเป็นข้อความ inline จึงจัดกึ่งกลางแนวตั้ง */
+.multi-select-btn .clan-filter-icon {
+    height: 24px;
+    max-width: 28px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 1px;
+}
+
+.multi-select-btn .ms-count {
+    vertical-align: middle;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+    .clan-filter-icon { height: 22px; max-width: 26px; }
+    .multi-select-btn .clan-filter-icon { height: 20px; max-width: 24px; }
+}
+
+/* แถวในแผงสูงขึ้นเพราะมีไอคอน — ขยายความสูงแผงให้เผ่าทั้ง 7 ขึ้นครบโดยไม่ต้องเลื่อน */
+#clanFilter .multi-select-panel {
+    max-height: 340px;
+}

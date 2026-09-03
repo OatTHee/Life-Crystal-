@@ -126,7 +126,9 @@
     ability: `• <span class="hlcont">Cont.</span> หากสวม Armor การ์ดนี้สามารถเลือกโจมตีที่ค่า DF ได้, แต่หากสวมการ์ด "Drill Horn" อยู่, การ์ดนี้ปรับ AT+500 และไม่ตกเป็นเป้าหมายจาก Action แทน
 <br>• <span class="hlauto">Auto</span> (เทิร์นละครั้ง : ชื่อเดียวกัน) เมื่อ Armor ของเราถูก [ทำลาย] สามารถ [สำรวจกอง : 5] นำ Armor 1 ใบจากที่แสดงเข้าสนามทันที > การ์ดที่เหลือเรียงไว้บนสุดเด็คตามลำดับที่ต้องการ`
     ,
-    image: "images/Fanmade/Boost6/Centrosaurus.png"
+    image: "images/Fanmade/Boost6/Centrosaurus.png",
+    secretArt: true,
+    secretArt_img: "images/Fanmade/Boost6/Centrosaurus_Secret.png"
 },
 {
     id: "FM-PR07 D09 JU",
@@ -164,7 +166,7 @@
 
 {
     id: "FM-PR07 D11 JU",
-    nameTH: "ถัวเจียงโกซอรัส",
+    nameTH: "ตูเจียงโกซอรัส",
     nameEN: "Tuojiangosaurus",
     dp: 1,
     type: "Boost_Creature",

@@ -132,7 +132,7 @@ const cardStatsData = {
     "DE050 JU": { at: 700, df: 600, taxonomy: null },
     "DE051": { at: 600, df: 300, taxonomy: null },
     "DE052 JU": { at: 800, df: 600, taxonomy: null },
-    "DE053": { at: 500, df: 300, taxonomy: null },
+    "DE053": { at: 500, df: 300, taxonomy: "Tyrannosauridae" },
     "DE054": { at: 500, df: 600, taxonomy: null },
     "DE055": { at: 600, df: 600, taxonomy: null },
     "DE056 JU": { at: 900, df: 600, taxonomy: null },

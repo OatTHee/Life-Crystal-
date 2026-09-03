@@ -18,7 +18,6 @@ const banlistData = {
             "DE020 JU",
             "DE063 JU",
             "AC016 MG",
-            "AC022 MG",
             "AC026 MG",
             "AC028 MG",
             "2011NM-C001",
@@ -51,6 +50,13 @@ const banlistData = {
                 message: "ไม่สามารถใส่การ์ดล้างสนามเรื้อนๆรวมกันได้ (เลือกได้แค่แบบใดแบบหนึ่ง)"
             },
                         {
+                name: "อีกัวโน / เกออส / ซิกม่า",
+                groupA: ["DE011 JU"],              // Iguanodon
+                groupB: ["2011NM-C056"],           // Geos
+                groupC: ["FM-PR08 EXC02 JU"],      // Sigma Rynchus
+                message: "อีกัวโนดอน / จีโอสเทิร์นเบอร์เกีย / ซิกม่า ริงคัส ห้ามใช้ร่วมกัน (เลือกได้แค่ใบใดใบหนึ่ง)"
+            },
+                        {
                 name: "อายุ-อีกัว",
                 groupA: ["FM-PRO2 MS02 JU"],
                 groupB: ["DE011 JU"],
@@ -62,6 +68,13 @@ const banlistData = {
         // 5. การ์ดจำกัดตามเงื่อนไข: ถ้ามีการ์ด "trigger" (การ์ดหลัก) อยู่ในเด็ค (ไม่ว่า Starter/Main/Extra)
         // การ์ดใน "target" จะถูกจำกัดเหลือ "limit" ใบ (ต่างจาก conflict_groups ที่ห้ามใส่ร่วมกันเลย)
         conditional_limits: [
+                {
+                    name: "Lost Bobby",
+                    trigger: ["FM-PR08 MSLostBobby"],
+                 target: ["FM-PR07 D11 JU"],
+                 limit: 0,
+                 message: "ถ้า Master เป็น บ็อบบี้ (FM-PR08 MSLostBobby) => ห้ามใส่ บูสต์ตูเจียงโกซอรัส (FM-PR07 D11 JU) ใน Extra Deck"
+                },
                 {
                     name: "Lost Feel",
                     trigger: ["FM-PR08 MSLostFeel"],
@@ -172,6 +185,88 @@ const banlistData = {
         ]
     }
 };
+
+// --- Helper: หา "กฎตามเงื่อนไข" (conditional_limits) ที่กำลังมีผลกับการ์ดใบนี้ ---
+// คืนค่า rule object ถ้าในเด็คมีการ์ด trigger อยู่แล้ว, ไม่งั้นคืน null
+// ใช้ได้ทั้งกรณี limit: 0 (ห้ามใส่เลย) และ limit: 1 (ลิมิต 1 ใบ)
+function getActiveConditionalRule(cardId) {
+    if (typeof banlistData === 'undefined' || typeof currentBanlistFormat === 'undefined') return null;
+    const format = banlistData[currentBanlistFormat] || banlistData["None"];
+    if (!format || !format.conditional_limits || typeof myDeck === 'undefined') return null;
+
+    const strId = String(cardId);
+    for (const rule of format.conditional_limits) {
+        if (!rule.target || !rule.target.includes(strId)) continue;
+        if (myDeck.some(c => rule.trigger.includes(String(c.id)))) return rule;
+    }
+    return null;
+}
+
+// --- Helper: คำนวณสถานะ Banlist ของการ์ด 1 ใบ (ใช้ร่วมกันทั้ง renderCards และ updateAllButtonStates) ---
+// คืนค่า { maxLimit, isBanned, isLimited, reason }
+// รวมทุกกฎ: banned / bannedTypes / limited / limit_if_no_commander / conditional_limits (รวม limit:0 และ overridesBan)
+function computeCardBanStatus(card) {
+    const result = { maxLimit: 3, isBanned: false, isLimited: false, reason: '' };
+    if (typeof banlistData === 'undefined' || typeof currentBanlistFormat === 'undefined') return result;
+
+    const format = banlistData[currentBanlistFormat] || banlistData["None"];
+    if (!format) return result;
+
+    const id = String(card.id);
+    const types = Array.isArray(card.type) ? card.type : (card.type ? [card.type] : []);
+
+    // 0) ข้อยกเว้นแบน (overridesBan) ต้องเช็คก่อนเสมอ
+    if (format.conditional_limits && typeof myDeck !== 'undefined') {
+        for (const rule of format.conditional_limits) {
+            if (!rule.overridesBan || !rule.target.includes(id)) continue;
+            if (myDeck.some(c => rule.trigger.includes(String(c.id)))) {
+                result.maxLimit = rule.limit;
+                result.isLimited = (rule.limit === 1);
+                result.reason = rule.message || '';
+                return result;
+            }
+        }
+    }
+
+    // 1) แบนถาวร
+    if (format.banned && format.banned.includes(id)) {
+        result.isBanned = true; result.maxLimit = 0; return result;
+    }
+    if (format.bannedTypes && types.some(t => format.bannedTypes.includes(t))) {
+        result.isBanned = true; result.maxLimit = 0; return result;
+    }
+
+    // 2) ลิมิต 1
+    if (format.limited && format.limited.includes(id)) {
+        result.maxLimit = 1; result.isLimited = true;
+    } else if (format.limit_if_no_commander && format.limit_if_no_commander.includes(id)) {
+        const hasCommander = typeof myDeck !== 'undefined' && myDeck.some(c => c.isCommander);
+        if (!hasCommander) { result.maxLimit = 1; result.isLimited = true; }
+    }
+
+    // 3) กฎตามเงื่อนไข (มีการ์ด trigger อยู่ในเด็ค) — limit: 0 = ห้ามใส่, limit: 1 = ลิมิต 1
+    const condRule = getActiveConditionalRule(id);
+    if (condRule && !condRule.overridesBan) {
+        result.maxLimit = condRule.limit;
+        result.reason = condRule.message || '';
+        result.isBanned = (condRule.limit === 0);
+        result.isLimited = (condRule.limit === 1);
+    }
+
+    return result;
+}
+
+// --- Helper: สร้าง HTML ของ Badge (BAN / Limit 1) จากสถานะที่คำนวณได้ ---
+function buildBanlistBadgeHtml(status) {
+    if (!status) return '';
+    if (status.isBanned) {
+        return `<img src="images/icon_ban.png" class="status-badge" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Banned"><div class="status-badge-fallback ban">BAN</div>`;
+    }
+    if (status.isLimited) {
+        return `<img src="images/icon_limit1.png" class="status-badge" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Limit 1"><div class="status-badge-fallback limit">1</div>`;
+    }
+    return '';
+}
 
 let currentBanlistFormat = localStorage.getItem('dinomaster_banlist_format') || "None";
 

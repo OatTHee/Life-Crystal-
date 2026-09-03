@@ -160,7 +160,7 @@ const C_EnigmaData = [
         id: "DE015 JU",
         nameTH: "อัลเบอร์ต้าเซราทอปส์",
         nameEN: "Albertaceratops",
-        dp: 3,
+        dp: 2,
         type: "Creature",
         set: "อินิกม่า",
         clan: "มีเขา",

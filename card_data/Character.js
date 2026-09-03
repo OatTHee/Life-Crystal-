@@ -194,7 +194,11 @@ const CharacterData = [
     type: "Creature",
     set: "คาแร็คเตอร์",
     clan: "มีปีก",
-    ability: `<span class="hlabi">Effect :</span> <br> • <span class="hlcont">Cont.</span> Fast Run [การ์ดนี้สามารถใช้งานได้ทันทีที่ลงสนาม] <br> • <span class="hlcont">Cont.</span> สามารถโจมตี Dino Card ใน DF Line ได้ถึงแม้จะมี Dino Card ใน AT Line <br> • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เข้ามาในสนาม : นำการ์ดเผ่ามีปีก 1 ใบในสนามฝ่ายเราขึ้นมือ`,
+    ability: `<span class="hlabi">Effect :</span> <br> 
+    • <span class="hlcont">Cont.</span> Fast Run [การ์ดนี้สามารถใช้งานได้ทันทีที่ลงสนาม] <br> 
+    • <span class="hlcont">Cont.</span> สามารถโจมตี Dino Card ใน DF Line ได้ถึงแม้จะมี Dino Card ใน AT Line <br> 
+    • <span class="hlauto">Auto</span> เมื่อการ์ดใบนี้เข้ามาในสนาม : นำการ์ดเผ่ามีปีก 1 ใบในสนามฝ่ายเราขึ้นมือ <br><br>
+    (ไม่สามารถลงการ์ดใบนี้ได้หากไม่มีการ์ด เผ่ามีปีก ในสนาม)`,
     image: "images/Character/Quetzalcoatlus K.jpg"
 },
 

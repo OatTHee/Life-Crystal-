@@ -5,6 +5,9 @@ const cardsData = [...C_originalData,...MG_originalData,...CharacterData, ...C_E
 ...BoostMaster2Data,...Boost3Data, ...Boost4Data, ...Reart1Data, ...Boost5Data, ...icefireData, 
 ...Boost6Data,...Boost7Data,...PR09Data,...PR10Data ]; 
 
+// สร้างรายการแบนอัตโนมัติของฟอร์แมตที่จำกัดชุด (เช่น คลาสสิค)
+if (typeof applySetRestrictedFormats === 'function') applySetRestrictedFormats(cardsData);
+
 if (typeof cardStatsData !== 'undefined') {
     cardsData.forEach(card => {
         const stats = cardStatsData[String(card.id)];
@@ -12,9 +15,24 @@ if (typeof cardStatsData !== 'undefined') {
             card.at = stats.at;
             card.df = stats.df;
             card.taxonomy = stats.taxonomy;
+            if (stats.herd) card.herd = stats.herd; // ค่าพลังเมื่อรวมฝูง
         }
     });
 }
+
+// ค่ารวมฝูงตามกฎฟอร์แมตหลัก สำหรับ Creature ที่หน้าการ์ดไม่ได้ระบุค่ารวมฝูงไว้
+// (รวม Newmaster / StepNext ทั้งหมด) : รวมได้ถึง x3, AT +600 ต่อตัวที่เพิ่ม, DF ใช้ค่าเดิมไม่ปรับ
+const HERD_RULE_STEP = 600;
+const HERD_RULE_MAX = 3;
+cardsData.forEach(card => {
+    const types = Array.isArray(card.type) ? card.type : String(card.type || '').split(' ');
+    if (!types.includes('Creature') || card.herd) return;
+    const at = Number(card.at);
+    if (card.at == null || isNaN(at)) return;
+    card.herd = [];
+    for (let x = 2; x <= HERD_RULE_MAX; x++) card.herd.push({ x, at: at + HERD_RULE_STEP * (x - 1) });
+    card.herdByRule = true;
+});
 
 let myDeck = JSON.parse(localStorage.getItem('dinomaster_deck')) || [];
 let currentFilteredCards = cardsData;
@@ -145,14 +163,14 @@ function resetFilters() {
     advancedFilterState = {
         atMin: null, atMax: null,
         dfMin: null, dfMax: null,
-        taxonomy: '',
+        taxonomy: [],
         legendary: 'all'
     };
     document.getElementById('advAtMin').value = '';
     document.getElementById('advAtMax').value = '';
     document.getElementById('advDfMin').value = '';
     document.getElementById('advDfMax').value = '';
-    document.getElementById('advTaxonomy').value = '';
+    setSelectedTaxonomies([]);
     setLegendaryFilter('all');
     updateAdvancedFilterIndicator();
 
@@ -211,7 +229,7 @@ function filterCards() {
         const matchAtMax = s.atMax === null || (card.at != null && card.at <= s.atMax);
         const matchDfMin = s.dfMin === null || (card.df != null && card.df >= s.dfMin);
         const matchDfMax = s.dfMax === null || (card.df != null && card.df <= s.dfMax);
-        const matchTaxonomy = s.taxonomy === "" || card.taxonomy === s.taxonomy;
+        const matchTaxonomy = !s.taxonomy.length || s.taxonomy.includes(card.taxonomy);
 
         let matchLegendary = true;
         if (s.legendary === 'yes') {
@@ -247,6 +265,46 @@ function highlightAbilityKeyword(abilityHTML, keyword) {
         return `>${highlighted}<`;
     });
 }
+
+// --- ข้อมูลขั้นสูง (จาก card_stats.js) : ซ่อนไว้เป็นค่าเริ่มต้น กดปุ่มรูปตาเพื่อเปิด/ปิด ---
+// จำสถานะไว้ระหว่างเลื่อนดูการ์ดใบอื่น (รีเฟรชหน้าแล้วกลับไปเป็นซ่อน)
+let showAdvancedStats = false;
+
+const ADV_EYE_OPEN = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/></svg>`;
+const ADV_EYE_CLOSED = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/><path d="M3 21 21 3"/></svg>`;
+
+function renderAdvancedStats(card) {
+    const rows = [];
+    if (card.at != null || card.df != null) {
+        rows.push(`<p><strong>AT / DF :</strong> ${card.at ?? '-'} / ${card.df ?? '-'}</p>`);
+    }
+    if (card.taxonomy && typeof renderTaxonomyBadge === 'function') {
+        rows.push(`<p><strong>อนุกรมวิธาน :</strong> ${renderTaxonomyBadge(card.taxonomy)}</p>`);
+    }
+    if (card.herd && typeof renderHerdPower === 'function') rows.push(renderHerdPower(card));
+    if (!rows.length) return '';
+
+    return `<button type="button" id="advToggleBtn" class="adv-toggle${showAdvancedStats ? ' on' : ''}"
+                aria-pressed="${showAdvancedStats}" aria-controls="advStats"
+                title="${showAdvancedStats ? 'ซ่อน' : 'แสดง'}ข้อมูลขั้นสูง" onclick="toggleAdvancedStats()">
+                ${showAdvancedStats ? ADV_EYE_OPEN : ADV_EYE_CLOSED}<span>ข้อมูลขั้นสูง</span>
+            </button>
+            <div id="advStats" class="adv-stats"${showAdvancedStats ? '' : ' hidden'}>${rows.join('')}</div>`;
+}
+
+function toggleAdvancedStats() {
+    showAdvancedStats = !showAdvancedStats;
+    const box = document.getElementById('advStats');
+    const btn = document.getElementById('advToggleBtn');
+    if (box) box.hidden = !showAdvancedStats;
+    if (btn) {
+        btn.classList.toggle('on', showAdvancedStats);
+        btn.setAttribute('aria-pressed', String(showAdvancedStats));
+        btn.title = (showAdvancedStats ? 'ซ่อน' : 'แสดง') + 'ข้อมูลขั้นสูง';
+        btn.innerHTML = (showAdvancedStats ? ADV_EYE_OPEN : ADV_EYE_CLOSED) + '<span>ข้อมูลขั้นสูง</span>';
+    }
+}
+window.toggleAdvancedStats = toggleAdvancedStats;
 
 // 4. ฟังก์ชันเปิด Modal (Pop-up) พร้อมสีตาม Type
 function openModal(cardOrId) {
@@ -392,20 +450,28 @@ function openModal(cardOrId) {
         if (isLegend) dynamicMaxLimit = 1;
         // กฎ LC (ใส่ได้ 1)
         if (isLC) dynamicMaxLimit = 1;
+        // กฎใบซ้ำของฟอร์แมต (deck_format.js) เช่น คลาสสิค: DP 4+ ใบเดียว / Action-Armor-Field สูงสุด 2
+        const formatCopy = (typeof getFormatCopyLimit === 'function') ? getFormatCopyLimit(card, currentBanlistFormat) : null;
+        if (!isBanned && formatCopy && formatCopy.limit < dynamicMaxLimit) dynamicMaxLimit = formatCopy.limit;
         // ------------------------------------------
 
         let btnText = '+ เพิ่มลงเด็ค';
         
         // ปรับ warningText ให้โชว์เลข Limit ที่ถูกต้อง (เช่น / 1 หรือ / 3)
         let warningText = isMaster ? '(Master ใส่ได้เพียงใบเดียว)' : `(ในเด็คมีแล้ว ${countInDeck} / ${dynamicMaxLimit} ใบ)`;
+        if (!isMaster && formatCopy && formatCopy.limit === dynamicMaxLimit && dynamicMaxLimit < 3) {
+            warningText += `<br><span style="color:#e67e22;">${formatCopy.reason}</span>`;
+        }
         
         let btnColor = '#28a745'; 
 
         // เรียงลำดับเงื่อนไข (เพิ่ม isBanned และใช้ dynamicMaxLimit แทนเลข 3)
         if (isBanned) {
             btnText = conditionalBanMessage ? '🚫 ห้ามใส่ (ติดเงื่อนไข)' : 'โดนแบน (BANNED)';
+            const setBanReason = (typeof getSetBanReason === 'function') ? getSetBanReason(card.id) : null;
             warningText = conditionalBanMessage
                 ? `(${conditionalBanMessage})`
+                : setBanReason ? `(${setBanReason})`
                 : `(ห้ามใส่ในฟอร์แมต ${banlistData[currentBanlistFormat]?.name || 'ปัจจุบัน'})`;
             btnColor = '#b0b0b0';
         } else if (lcConflict) {
@@ -475,6 +541,20 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
             warningText = `<span style="color:#e67e22;">(ต้องมี Boost Master ในเด็คก่อนจึงจะตั้งเป็น Commander ได้)</span>`;
         }
         
+        // โหมดดูการ์ด: ไม่มีปุ่มเพิ่ม/คำเตือนจากเด็ค แสดงแค่สถานะแบน/ลิมิตตามฟอร์แมต
+        const building = (typeof isBuildMode !== 'function') || isBuildMode();
+        let browseInfoHTML = '';
+        if (!building && typeof computeCardBanStatus === 'function') {
+            const st = computeCardBanStatus(card);
+            const fmtName = (typeof banlistData !== 'undefined' && banlistData[currentBanlistFormat]?.name) || 'ปัจจุบัน';
+            const setBanReason = (typeof getSetBanReason === 'function') ? getSetBanReason(card.id) : null;
+            if (st.isBanned) {
+                browseInfoHTML = `<p class="modal-browse-note is-banned">🚫 ${setBanReason || `ห้ามใส่ในฟอร์แมต ${fmtName}`}</p>`;
+            } else if (st.isLimited) {
+                browseInfoHTML = `<p class="modal-browse-note is-limited">⚠️ ลิมิต ${st.maxLimit} ใบ ในฟอร์แมต ${fmtName}</p>`;
+            }
+        }
+
         // 7. พ่น HTML (เพิ่ม rarityTextHTML เข้าไปข้างชื่อการ์ดหรือใต้ชื่อ)
         modalInfo.innerHTML = `
             <h2>${card.nameEN}</h2>
@@ -482,6 +562,7 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
             <hr>            
             <p><strong>ประเภท :</strong> ${displayTypes} | <strong>DP :</strong> ${typeof renderDpCrystal === 'function' ? renderDpCrystal(card.dp, 'lg') : card.dp}</p>
             <p><strong>เผ่า :</strong> ${typeof renderClanIcons === 'function' ? renderClanIcons(card.clan, 'lg') : (card.clan || '-')}</p>
+            ${renderAdvancedStats(card)}
             <p><strong>ชุด :</strong> ${card.set || '-'}</p> <div style="margin: 10px 0;"> ${rarityTextHTML} 
             </div>
 
@@ -497,6 +578,7 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
             </div>
 
             <div id="modalActionArea" style="margin-top: 20px;">
+                ${building ? `
                 <button id="modalAddBtn" class="add-to-deck-btn" 
                     ${isDisabled ? 'disabled' : ''} 
                     style="background-color: ${btnColor}; color: white; width:100%; cursor: ${isDisabled ? 'not-allowed' : 'pointer'}; border:none; padding:12px; border-radius:8px; font-weight:bold;">
@@ -504,11 +586,14 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
                 </button>
                 <p style="text-align: center; font-size: 12px; color: ${!isCompatible ? '#ff4757' : '#666'}; margin-top: 8px; font-weight: ${!isCompatible ? 'bold' : 'normal'};">
                     ${warningText}
-                </p>
+                </p>` : browseInfoHTML}
                 <div id="commanderBtnArea"></div> 
                 ${secretArtHTML}
             </div>
         `;
+
+        // 7.1 ทำคีย์เวิร์ด (อภิธานศัพท์) + ชื่อการ์ดในความสามารถให้กดได้ (ability_enhance.js)
+        if (typeof enhanceAbilityBox === 'function') enhanceAbilityBox(modalInfo.querySelector('.ability-box'), card);
 
         // 8. ผูก Event Click ให้ปุ่มเพิ่มลงเด็ค
         const modalAddBtn = document.getElementById('modalAddBtn'); // แก้ไขการประกาศตัวแปรให้ถูกต้อง
@@ -519,11 +604,8 @@ const secretArtHTML = card.secretArt && card.secretArt_img ? `
             };
         }
         
-        // 9. อัปเดตส่วนปุ่มตั้งค่าคอมมานเดอร์
-        const sidePanel = document.querySelector('.side-panel');
-        const isDeckOpen = sidePanel && sidePanel.classList.contains('open');
-
-        if (typeof updateModalForCommander === 'function' && isCompatible && isDeckOpen) {
+        // 9. อัปเดตส่วนปุ่มตั้งค่าคอมมานเดอร์ (เฉพาะโหมดจัดเด็ค — ย่อพาเนลอยู่ก็ตั้งได้)
+        if (typeof updateModalForCommander === 'function' && isCompatible && building) {
             updateModalForCommander(card); 
         } else {
             // ถ้าไม่ได้เปิดหน้าต่างจัดเด็ค ให้ล้างพื้นที่ปุ่มคอมมานเดอร์ทิ้ง (กันปุ่มค้าง)
@@ -882,6 +964,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ----------------------
     initDpFilterUI()
     if (typeof initClanFilterIcons === 'function') initClanFilterIcons(); // เติมไอคอนเผ่าในตัวกรอง
+    if (typeof initTaxonomyFilter === 'function') initTaxonomyFilter(cardsData); // ตัวเลือกอนุกรมวิธาน (หลายอัน) + ไอคอนเผ่า
     updateDeckUI();
     
     // ถ้าอยากให้ปุ่มในคลังการ์ดแสดงสถานะ "ใส่ครบแล้ว" ตามเด็คที่ค้างอยู่ด้วย
@@ -943,33 +1026,15 @@ function limitedSearch() {
 // ==========================================
 
 // 1. ฟังก์ชันสำหรับสร้าง Link และคัดลอกลง Clipboard
+//    ใช้รหัสแบบสั้น v2 (deck_code.js) — พกชื่อเด็ค + ฟอร์แมต + อาร์ตที่เลือกไปด้วย
 function copyDeckLink() {
     if (myDeck.length === 0) {
         alert("กรุณาเลือกการ์ดลงเด็คก่อนแชร์ครับ");
         return;
     }
 
-    // รวบรวมข้อมูล: {id: count, isCommander: true/false}
-    // รูปแบบข้อมูลสั้นๆ: "ID:Count:isCmd"
-    const deckData = myDeck.reduce((acc, card) => {
-        const found = acc.find(item => item.id === card.id);
-        if (found) {
-            found.count++;
-            if (card.isCommander) found.isCmd = 1;
-        } else {
-            acc.push({ id: card.id, count: 1, isCmd: card.isCommander ? 1 : 0 });
-        }
-        return acc;
-    }, []);
-
-    const shareString = deckData.map(item => `${item.id}|${item.count}|${item.isCmd}`).join(',');
-    
-    // เข้ารหัส Base64 เพื่อให้ URL ไม่เสียรูป
-    const encodedDeck = btoa(encodeURIComponent(shareString));
-    const finalUrl = `${window.location.origin}${window.location.pathname}?deck=${encodedDeck}`;
-
-    // คัดลอกลง Clipboard
-    navigator.clipboard.writeText(finalUrl).then(() => {
+    copyTextAsync(buildDeckShareURL()).then(ok => {
+        if (!ok) return;
         if (typeof showQuickFeedback === 'function') {
             showQuickFeedback({clientX: window.innerWidth/2, clientY: 50}, "คัดลอกลิงก์เด็คแล้ว!", "#2ecc71");
         } else {
@@ -978,36 +1043,25 @@ function copyDeckLink() {
     });
 }
 
-// 2. ฟังก์ชันสำหรับแกะรหัสเด็คจาก String
-function processImport(encodedData) {
+// 2. ฟังก์ชันสำหรับแกะรหัสเด็ค (รับได้ทั้งลิงก์ / รหัสใหม่ / รหัสแบบเก่า) — คืน Promise<boolean>
+async function processImport(encodedData) {
     try {
-        const decodedString = decodeURIComponent(atob(encodedData));
-        const cardRows = decodedString.split(',');
-        
-        let newDeck = [];
-        cardRows.forEach(row => {
-            const [id, count, isCmd] = row.split('|');
-            const cardTemplate = cardsData.find(c => String(c.id) === String(id));
-            
-            if (cardTemplate) {
-                for (let i = 0; i < parseInt(count); i++) {
-                    // สร้าง Object ใหม่จากการ์ดต้นแบบ
-                    let cardToAdd = { ...cardTemplate };
-                    if (i === 0 && isCmd === "1") {
-                        cardToAdd.isCommander = true;
-                    }
-                    newDeck.push(cardToAdd);
-                }
-            }
-        });
+        const result = await decodeDeckCode(encodedData);
+        if (!result || result.cards.length === 0) return false;
 
-        if (newDeck.length > 0) {
-            myDeck = newDeck;
-            saveDeckToLocalStorage();
-            updateDeckUI();
-            if (typeof renderCards === 'function') renderCards(currentFilteredCards);
-            return true;
+        // ฟอร์แมต + ชื่อเด็คที่แนบมากับรหัส v2
+        if (result.format && typeof applyDeckFormat === 'function') applyDeckFormat(result.format);
+        if (result.name) {
+            const nameInput = document.getElementById('deckNameInput');
+            if (nameInput) nameInput.value = result.name;
         }
+
+        myDeck = result.cards;
+        if (typeof currentEditingDeckId !== 'undefined') currentEditingDeckId = null; // เด็คจากลิงก์ = ยังไม่ได้เซฟในคอลเล็คชั่น
+        saveDeckToLocalStorage();
+        updateDeckUI();
+        if (typeof renderCards === 'function') renderCards(currentFilteredCards);
+        return true;
     } catch (e) {
         console.error("Import Error:", e);
         return false;
@@ -1015,16 +1069,11 @@ function processImport(encodedData) {
 }
 
 // 3. ฟังก์ชันปุ่มกด Manual Import
-function importDeckPrompt() {
+async function importDeckPrompt() {
     const link = prompt("วางลิงก์เด็ค หรือรหัสเด็คที่ได้รับมาที่นี่:");
     if (!link) return;
 
-    let code = link;
-    if (link.includes("?deck=")) {
-        code = link.split("?deck=")[1];
-    }
-
-    if (processImport(code)) {
+    if (await processImport(link)) {
         alert("นำเข้าเด็คสำเร็จ!");
     } else {
         alert("รหัสเด็คไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
@@ -1032,16 +1081,19 @@ function importDeckPrompt() {
 }
 
 // 4. ตรวจสอบ URL เมื่อโหลดหน้าเว็บ (Auto-Import)
-document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const deckParam = urlParams.get('deck');
+document.addEventListener('DOMContentLoaded', async () => {
+    // อ่านจาก location.search ตรงๆ (URLSearchParams จะแปลง + เป็นช่องว่าง ทำให้รหัสแบบเก่าเพี้ยน)
+    const m = window.location.search.match(/[?&]deck=([^&#]+)/);
+    const deckParam = m ? m[1] : null;
 
     if (deckParam) {
         if (confirm("พบข้อมูลเด็คจากลิงก์ คุณต้องการโหลดเด็คนี้แทนที่เด็คปัจจุบันหรือไม่?")) {
-            processImport(deckParam);
-            // ล้าง URL parameter เพื่อไม่ให้เด้งถามซ้ำตอน Refresh
-            window.history.replaceState({}, document.title, window.location.pathname);
+            const ok = await processImport(deckParam);
+            if (!ok) alert("ลิงก์เด็คไม่ถูกต้อง หรือเสียหาย");
+            if (typeof setAppMode === 'function') setAppMode('build');
         }
+        // ล้าง URL parameter เพื่อไม่ให้เด้งถามซ้ำตอน Refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
 
@@ -1060,11 +1112,13 @@ renderCards(cardsData);
 let advancedFilterState = {
     atMin: null, atMax: null,
     dfMin: null, dfMax: null,
-    taxonomy: '',
+    taxonomy: [],
     legendary: 'all'   // 'all' | 'yes' | 'no'
 };
 
 function openAdvancedFilter() {
+    if (typeof initTaxonomyFilter === 'function') initTaxonomyFilter(cardsData);
+    setSelectedTaxonomies(advancedFilterState.taxonomy);
     document.getElementById('advancedFilterModal').style.display = 'flex';
 }
 
@@ -1096,7 +1150,7 @@ function applyAdvancedFilter() {
     advancedFilterState.atMax = parseInt(document.getElementById('advAtMax').value) || null;
     advancedFilterState.dfMin = parseInt(document.getElementById('advDfMin').value) || null;
     advancedFilterState.dfMax = parseInt(document.getElementById('advDfMax').value) || null;
-    advancedFilterState.taxonomy = document.getElementById('advTaxonomy').value;
+    advancedFilterState.taxonomy = getSelectedTaxonomies();
 
     closeAdvancedFilter();
     filterCards(); // เรียก function filter หลักที่มีอยู่แล้ว
@@ -1104,12 +1158,12 @@ function applyAdvancedFilter() {
 }
 
 function resetAdvancedFilter() {
-    advancedFilterState = { atMin: null, atMax: null, dfMin: null, dfMax: null, taxonomy: '', legendary: 'all' };
+    advancedFilterState = { atMin: null, atMax: null, dfMin: null, dfMax: null, taxonomy: [], legendary: 'all' };
     document.getElementById('advAtMin').value = '';
     document.getElementById('advAtMax').value = '';
     document.getElementById('advDfMin').value = '';
     document.getElementById('advDfMax').value = '';
-    document.getElementById('advTaxonomy').value = '';
+    setSelectedTaxonomies([]);
     setLegendaryFilter('all');
     filterCards();
     updateAdvancedFilterIndicator();
@@ -1120,7 +1174,7 @@ function updateAdvancedFilterIndicator() {
     const s = advancedFilterState;
     const isActive = s.atMin !== null || s.atMax !== null ||
                      s.dfMin !== null || s.dfMax !== null ||
-                     s.taxonomy !== '' || s.legendary !== 'all';
+                     s.taxonomy.length > 0 || s.legendary !== 'all';
     const btn = document.getElementById('advancedFilterBtn');
     btn.style.color = isActive ? '#ff9f43' : '#aaa';
     btn.style.background = isActive ? 'rgba(255,159,67,0.15)' : 'none';

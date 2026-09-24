@@ -73,6 +73,8 @@ function renderCollection() {
                     <div class="deck-info">
                         <h4>${item.name}</h4>
                         <span>🃏 ${item.cards.length} ใบ</span>
+                        ${item.format && typeof getDeckFormatName === 'function'
+                            ? `<span class="coll-format-badge">${getDeckFormatName(item.format)}</span>` : ''}
                     </div>
                 </div>
                 <button class="delete-deck-btn" title="ลบเด็ค" 
@@ -159,6 +161,9 @@ function loadFromCollection(id) {
         myDeck = [...targetDeck.cards];
         currentEditingDeckId = targetDeck.id;
         document.getElementById('deckNameInput').value = targetDeck.name;
+
+        // ฟอร์แมตรายเด็ค: สลับเป็นฟอร์แมตที่เด็คนี้เซฟไว้ (เด็คเก่าที่ไม่มีข้อมูล = คงฟอร์แมตเดิม)
+        if (targetDeck.format && typeof applyDeckFormat === 'function') applyDeckFormat(targetDeck.format);
         
         if (typeof updateDeckUI === 'function') updateDeckUI();
         toggleDeckViewMode(); // กลับไปหน้าจัดเด็ค

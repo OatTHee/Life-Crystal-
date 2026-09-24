@@ -118,3 +118,256 @@
 #clanFilter .multi-select-panel {
     max-height: 340px;
 }
+
+/* ===== อนุกรมวิธาน (Taxonomy) ===== */
+.taxo-badge {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #eafaf0;
+    border: 1px solid #7fd19e;
+    color: #1d5e36;
+    line-height: 1.3;
+    vertical-align: middle;
+}
+.taxo-badge .clan-icon { height: 22px; width: auto; }
+.taxo-badge .taxo-rank {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: #2e9e5b;
+    color: #fff;
+}
+.taxo-badge .taxo-name { font-weight: bold; font-style: italic; }
+.taxo-badge .taxo-sub { font-size: 12px; color: #4b7a5d; }
+
+/* ตัวกรองอนุกรมวิธาน (เลือกได้หลายอัน) */
+#advTaxonomy {
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+.taxo-group { margin-bottom: 10px; }
+.taxo-group-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+.taxo-group-title .clan-filter-icon { height: 18px; }
+.taxo-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.taxo-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid #444;
+    background: #0d0d1a;
+    color: #ddd;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+}
+.taxo-chip input { display: none; }
+.taxo-chip .clan-filter-icon { height: 18px; max-width: 22px; }
+.taxo-chip small { color: #888; font-size: 11px; }
+.taxo-chip:has(input:checked) {
+    border-color: #ff9f43;
+    background: rgba(255, 159, 67, 0.18);
+    color: #fff;
+}
+.taxo-chip:has(input:checked) small { color: #ffcf9e; }
+
+/* ===== ค่าพลังเมื่อรวมฝูง (จำลองแถบบนหน้าการ์ด) ===== */
+.herd-power { margin: 10px 0 8px; }
+.herd-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+.herd-board {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 45%),
+        linear-gradient(135deg, #1f4d33 0%, #2c5f3f 45%, #5a1f1f 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 2px 8px rgba(0,0,0,0.35);
+    max-width: 100%;
+}
+.herd-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 16px 3px 8px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(226,229,232,0.9) 55%, rgba(196,201,206,0.88) 100%);
+    border: 2px solid rgba(255,255,255,0.95);
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.22), 0 2px 5px rgba(0,0,0,0.45);
+    font-family: Impact, "Haettenschweiler", "Arial Black", "Arial Narrow Bold", sans-serif;
+    font-weight: 900;
+    line-height: 1;
+    white-space: nowrap;
+}
+.herd-clan {
+    height: 32px;
+    width: 34px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+}
+.herd-x {
+    color: #151515;
+    font-size: 30px;
+    letter-spacing: 1px;
+}
+.herd-x small { font-size: 20px; margin-right: 5px; }
+.herd-arrow {
+    width: 34px;
+    height: 22px;
+    flex: none;
+}
+.herd-arrow path {
+    fill: #e8141c;
+    stroke: #111;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+}
+.herd-stats {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    column-gap: 8px;
+}
+.herd-lbl {
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    paint-order: stroke fill;
+    -webkit-text-stroke: 2.5px #2b1d00;
+}
+.herd-lbl.at { color: #ffd400; }
+.herd-lbl.df { color: #b98cff; -webkit-text-stroke-color: #1c0a3a; }
+.herd-val {
+    font-size: 32px;
+    color: #111;
+    text-align: right;
+    min-width: 2.6em;
+    paint-order: stroke fill;
+    -webkit-text-stroke: 4px #fff;
+    letter-spacing: 0.5px;
+}
+.herd-pill.two .herd-lbl { font-size: 13px; }
+.herd-pill.two .herd-val { font-size: 22px; }
+
+@media (max-width: 480px) {
+    .herd-clan { height: 26px; width: 28px; }
+    .herd-x { font-size: 24px; }
+    .herd-x small { font-size: 16px; }
+    .herd-arrow { width: 26px; height: 18px; }
+    .herd-lbl { font-size: 14px; }
+    .herd-val { font-size: 26px; }
+    .herd-pill.two .herd-val { font-size: 19px; }
+}
+.herd-note {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* ===== ปุ่มเปิด/ปิดข้อมูลขั้นสูงใน Modal ===== */
+.adv-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 6px;
+    padding: 5px 12px 5px 9px;
+    border-radius: 999px;
+    border: 1px solid #888;
+    background: transparent;
+    color: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity .15s, background .15s, border-color .15s;
+}
+.adv-toggle:hover { opacity: 1; }
+.adv-toggle.on {
+    opacity: 1;
+    border-color: #ff9f43;
+    background: rgba(255, 159, 67, 0.15);
+}
+.adv-toggle svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.adv-stats[hidden] { display: none; }
+.adv-stats { margin-bottom: 4px; }
+
+/* ===== แถบเรียงลำดับการ์ด (card_sort_logic.js) ===== */
+/* ใช้ #cardSortBar นำหน้า เพื่อชนะสไตล์ button:not(.qty-btn) ทั่วไปใน filterdiv.css */
+.card-sort-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.card-sort-label {
+    color: #f1c40f;
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 2px;
+    white-space: nowrap;
+    font-family: 'Kanit', sans-serif;
+}
+#cardSortBar .card-sort-btn {
+    padding: 3px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.28);
+    background: rgba(30,39,46,0.85);
+    color: #e0e0e0;
+    font-family: 'Kanit', sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1.5;
+    box-shadow: none;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: border-color .2s, color .2s, background .2s;
+}
+#cardSortBar .card-sort-btn:hover {
+    border-color: #ff9f43;
+    background: rgba(30,39,46,0.95);
+    color: #fff;
+    transform: none;
+    box-shadow: none;
+}
+#cardSortBar .card-sort-btn.active {
+    border-color: #ffd900;
+    background: #ffd900;
+    color: #1a1a1a;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    /* มือถือ: ปุ่มเรียงอยู่บรรทัดเดียว เลื่อนซ้ายขวาได้ ไม่กินหลายบรรทัด */
+    .card-sort-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    .card-sort-bar::-webkit-scrollbar { display: none; }
+    #cardSortBar .card-sort-btn { padding: 2px 10px; font-size: 12px; }
+}

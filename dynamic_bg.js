@@ -1,7 +1,9 @@
 function updateDynamicBackground() {
     const searchBar = document.getElementById('searchBar');
     const mainTitle = document.querySelector('.main-title span'); 
-    const commander = myDeck.find(c => c.isCommander);
+    // Smart BG ทำงานเฉพาะโหมดจัดเด็ค (โหมดดูการ์ดใช้พื้นหลังปกติเสมอ)
+    const inBuildMode = (typeof isBuildMode !== 'function') || isBuildMode();
+    const commander = inBuildMode ? myDeck.find(c => c.isCommander) : null;
 
     // 1. ค่าเริ่มต้น
     const defaultBg = "url('images/smart_bg/defult_bg.jpg')"; 

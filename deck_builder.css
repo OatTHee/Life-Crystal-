@@ -56,9 +56,17 @@ body.panel-open #main-wrapper {
 
 
 
-/* เมื่อหน้าจัดเด็คเปิด ให้โชว์ปุ่มเพิ่มลงเด็คในการ์ดทุกใบ */
-body.panel-open .add-to-deck-btn {
+/* โหมดจัดเด็ค ให้โชว์ปุ่มเพิ่มลงเด็คในการ์ดทุกใบ (ย่อพาเนลอยู่ก็ยังโชว์) */
+body.mode-build .add-to-deck-btn {
     display: block;
+}
+
+/* โหมดดูการ์ด: ไม่มีพาเนลเด็คและปุ่มดึงพาเนล การ์ดเต็มจอ */
+body.mode-browse .deck-toggle-handle {
+    display: none;
+}
+body.mode-browse .side-panel {
+    visibility: hidden;
 }
 
 /* การ์ดจำลองที่ใช้ทำแอนิเมชั่น */

@@ -475,3 +475,172 @@ header {
     overflow: visible !important;
     padding: 0 !important; /* padding อยู่ใน div ข้างใน แล้วอยู่แล้ว */
 }
+/* =====================================================================
+   Layout ใหม่ของแถบค้นหา (แนวเดียวกับเว็บ Battle of Talingchan)
+   แถว 1 : [ช่องค้นหา + ปุ่มโหมดชื่อ/Effect] [ฟอร์แมต + โดนจำกัด]
+   แถว 2 : ปุ่มเรียงตาม (เล็ก)
+   แถว 3+: ตัวกรอง (เหมือนเดิม)
+   ===================================================================== */
+
+/* หัวเว็บ: ลดระยะห่างบนล่าง ไม่ให้กินจอเกินจำเป็น */
+h1.main-title {
+    padding: 14px 0 !important;
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+}
+
+.search-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+/* ช่องค้นหา: ไม่ยืดยาวเกินจำเป็น (เพดาน 620px) ที่เหลือให้ฟอร์แมตมาต่อท้าย */
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 360px;
+    max-width: 620px;
+    min-width: 0;
+}
+.search-box #searchInput {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+}
+
+.format-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.format-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #f1c40f;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#banlistFormatSelect {
+    height: 45px;
+    min-width: 190px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    background: #1a1a1a;
+    color: #fff;
+    font-family: 'Kanit', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+#banlistFormatSelect:hover,
+#banlistFormatSelect:focus { border-color: #ff9f43; }
+
+#limitedSearch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 45px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 2px solid #1a4a9e;
+    background: #07357D;
+    color: #fff;
+    font-family: 'Kanit', sans-serif;
+    font-size: 13px;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color .2s;
+}
+#limitedSearch:hover { border-color: #ff9f43; }
+
+/* --- ปุ่มสลับโหมด ดูการ์ด / จัดเด็ค --- */
+.app-mode-switch {
+    display: flex;
+    flex: 0 0 auto;
+    height: 45px;
+    padding: 3px;
+    gap: 3px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid #1a4a9e;
+    box-sizing: border-box;
+}
+.app-mode-switch button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: #aac4ff;
+    font-family: 'Kanit', sans-serif;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.app-mode-switch button:hover { color: #ffffff; }
+.app-mode-switch button.active[data-mode="browse"] {
+    background: #07357D;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 217, 0, 0.35);
+}
+.app-mode-switch button.active[data-mode="build"] {
+    background: #28a745;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+}
+
+/* หมายเหตุใน modal ตอนอยู่โหมดดูการ์ด (สถานะแบน/ลิมิตตามฟอร์แมต) */
+.modal-browse-note {
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 0 8px;
+    padding: 8px;
+    border-radius: 8px;
+}
+.modal-browse-note.is-banned  { color: #ff4757; background: rgba(255, 71, 87, 0.1); }
+.modal-browse-note.is-limited { color: #e67e22; background: rgba(230, 126, 34, 0.1); }
+
+/* แถวปุ่มเรียงตาม: อยู่ติดใต้ช่องค้นหา ไม่ต้องมีระยะเพิ่ม */
+#searchBar .card-sort-bar { margin-top: -4px; }
+
+/* --- มือถือ --- */
+@media (max-width: 768px) {
+    /* มือถือใช้ปุ่มลอย "โหมดจัดเด็ค" เป็นตัวสลับโหมดแทน */
+    .app-mode-switch { display: none; }
+
+    /* แถว 1: ช่องค้นหา + ปุ่มตัวกรอง / แถว 2: ฟอร์แมต (เต็มแถว) */
+    .search-box   { order: 1; flex: 1 1 0; max-width: none; }
+    #filterToggleBtn { order: 2; }
+    .format-box   { order: 3; flex: 1 1 100%; }
+
+    #banlistFormatSelect { flex: 1 1 auto; min-width: 0; height: 40px; }
+    #limitedSearch       { height: 40px; padding: 0 10px; }
+
+    /* จอแคบ: เหลือแต่ไอคอน ประหยัดที่ */
+    .format-label span,
+    #limitedSearch span { display: none; }
+
+    /* หัวเว็บบนมือถือ: เล็กลง บรรทัดเดียว */
+    h1.main-title { font-size: 22px; gap: 10px; padding: 8px 0 !important; }
+    h1.main-title img { width: 34px; }
+
+    /* ปุ่มในแถวค้นหาให้กะทัดรัด ช่องพิมพ์จะได้กว้างขึ้น */
+    #abilitySearchToggle { padding: 0 10px !important; }
+    #filterToggleBtn { padding: 0 10px; }
+}

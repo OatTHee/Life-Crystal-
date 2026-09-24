@@ -53,11 +53,10 @@ function updateAllButtonStates() {
     const activeLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
     const commander = myDeck.find(c => c.isCommander);
 
-    // เช็คโหมดแก้ไข เพื่อให้ Badge โชว์/ซ่อน ตรงกับ renderCards
-    const sidePanel = document.getElementById('deckSidePanel');
-    const isPcEditing = sidePanel && sidePanel.classList.contains('open');
-    const isMobileEditModeNow = (typeof isEditMode !== 'undefined') ? isEditMode : false;
-    const showBadges = isPcEditing || isMobileEditModeNow;
+    // Badge แบน/ลิมิต แสดงทั้ง 2 โหมด (โหมดดูการ์ดคิดตามฟอร์แมตอย่างเดียว ไม่คิดตามเด็ค)
+    const showBadges = true;
+    // การ์ดเทาเป็นเรื่องของโหมดจัดเด็คเท่านั้น
+    const building = (typeof isBuildMode !== 'function') || isBuildMode();
 
     // วนลูปการ์ดทุกใบที่แสดงอยู่ในหน้าจอ
     const visibleCards = document.querySelectorAll('.card');
@@ -156,7 +155,7 @@ function updateAllButtonStates() {
         }
 
         // --- อัปเดตสถานะ "การ์ดเทา" ให้ตรงกับความจริงปัจจุบัน (toggle ไม่ใช่ add อย่างเดียว) ---
-        cardDiv.classList.toggle('disabled-card', isIllegalByCommander || isPermanentlyBanned);
+        cardDiv.classList.toggle('disabled-card', building && (isIllegalByCommander || isPermanentlyBanned));
 
         // สั่งอัปเดตที่ Element ปุ่มโดยตรง
         const addBtn = cardDiv.querySelector('.add-to-deck-btn');
@@ -188,11 +187,10 @@ function renderCards(cards) {
     const activeLegend = myDeck.find(c => Array.isArray(c.type) ? c.type.includes("Legend") : c.type === "Legend");
     const commander = myDeck.find(c => c.isCommander);
 
-    // ตรวจสอบสถานะการเปิดแผงจัดเด็ค/แก้ไข (ย้ายมาเช็คตรงนี้เพื่อให้ใช้ได้ทั่วถึง)
-    const sidePanel = document.getElementById('deckSidePanel');
-    const isPcEditing = sidePanel && sidePanel.classList.contains('open');
-    const isMobileEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
-    const showBadges = isPcEditing || isMobileEditMode;
+    // โหมดของเว็บ (ดู small_script.js) — ย่อพาเนลเด็คแล้วยังนับเป็นโหมดจัดเด็ค
+    const building = (typeof isBuildMode !== 'function') || isBuildMode();
+    // Badge แบน/ลิมิต แสดงทั้ง 2 โหมด (โหมดดูการ์ดคิดตามฟอร์แมตอย่างเดียว ไม่คิดตามเด็ค)
+    const showBadges = true;
 
     // แก้ไข: เติมวงเล็บครอบ (card, index)
     cards.forEach((card, index) => {
@@ -288,7 +286,7 @@ function renderCards(cards) {
             }
         }
 
-        cardDiv.classList.toggle('disabled-card', isIllegalByCommander || isPermanentlyBanned);
+        cardDiv.classList.toggle('disabled-card', building && (isIllegalByCommander || isPermanentlyBanned));
 
         const fullImgUrl = window.location.origin + window.location.pathname.replace('index.html', '') + card.image;        
         const imgVersion = "1.2";
@@ -333,11 +331,8 @@ function renderCards(cards) {
         let isLongPress = false;
 
         const startPress = (e) => {
-            const sidePanel = document.getElementById('deckSidePanel');
-            const isPcEditing = sidePanel && sidePanel.classList.contains('open');
-            const isMobileEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
-            
-            if (!isPcEditing && !isMobileEditMode) return;
+            // กดค้างเพื่อเพิ่ม ใช้ได้เฉพาะโหมดจัดเด็ค
+            if (typeof isBuildMode === 'function' && !isBuildMode()) return;
 
             isLongPress = false;
             pressTimer = setTimeout(() => {
@@ -384,12 +379,8 @@ function renderCards(cards) {
             
             cancelPress(); // ยกเลิกการกดค้าง (Logic เดิม)
 
-            // ทำงาน Logic เพิ่มการ์ดตามปกติ
-            const sidePanel = document.getElementById('deckSidePanel');
-            const isPcEditing = sidePanel && sidePanel.classList.contains('open');
-            const isMobileEditMode = (typeof isEditMode !== 'undefined') ? isEditMode : false;
-
-            if (isPcEditing || isMobileEditMode) {
+            // ทำงาน Logic เพิ่มการ์ดตามปกติ (เฉพาะโหมดจัดเด็ค)
+            if (typeof isBuildMode !== 'function' || isBuildMode()) {
                 if (typeof handleQuickMultiAdd === 'function') {
                     handleQuickMultiAdd(e, card);
                 }
@@ -437,6 +428,8 @@ function canAddCardToDeck(targetCard, silent = false) {
             const condRule = (typeof getActiveConditionalRule === 'function') ? getActiveConditionalRule(cardId) : null;
             if (condRule && condRule.limit === 0) {
                 alert(`🚫 ${condRule.message || "การ์ดใบนี้ห้ามใส่ เนื่องจากมีการ์ดหลักอยู่ในเด็คแล้ว"}`);
+            } else if (typeof getSetBanReason === 'function' && getSetBanReason(cardId)) {
+                alert(`🚫 ${getSetBanReason(cardId)}\nไม่สามารถใส่ในเด็คได้`);
             } else {
                 alert(`🚫 การ์ดใบนี้ถูก "BANNED" ใน${format ? format.name : 'ฟอร์แมตปัจจุบัน'}\nไม่สามารถใส่ในเด็คได้`);
             }
@@ -445,6 +438,13 @@ function canAddCardToDeck(targetCard, silent = false) {
     }
 
     if (totalCount >= maxLimit) {
+        // ติดกฎใบซ้ำของฟอร์แมต (เช่น คลาสสิค) — แจ้งเหตุผลของกฎนั้น
+        const formatCopy = (typeof getFormatCopyLimit === 'function') ? getFormatCopyLimit(targetCard, currentBanlistFormat) : null;
+        if (formatCopy && formatCopy.limit === maxLimit && typeof getCardMaxLimitBase === 'function'
+            && getCardMaxLimitBase(targetCard) > maxLimit) {
+            if (!silent) alert(`⚠️ ${formatCopy.reason}`);
+            return false;
+        }
         if (!silent) {
             if (maxLimit === 1) {
                 // เช็คว่าเป็นกฎ Limit_if_no_commander หรือไม่
@@ -850,6 +850,10 @@ function updateDeckUI() {
         updateAllButtonStates();
     }
 
+    // 5.1 ตัวนับตามฟอร์แมต + ตัวตรวจเด็คลงแข่ง (deck_format.js)
+    if (typeof updateDeckFormatCounters === 'function') updateDeckFormatCounters();
+    if (typeof renderDeckValidation === 'function') renderDeckValidation();
+
     // 6. อัปเดตปุ่มบันทึก (Save Button)
     const saveBtn = document.querySelector('.btn-save-main'); 
     if (saveBtn) {
@@ -867,6 +871,12 @@ function updateDeckUI() {
 
 // ฟังก์ชันอัปเดตแค่ตัวเลขรวม (ไม่ล้างหน้าจอ)
 function updateTotalCounterOnly() {
+    // ตัวนับตามกฎของฟอร์แมตเด็ค (deck_format.js) — คลาสสิค 30 พอดี / Extra 5 ฯลฯ
+    if (typeof updateDeckFormatCounters === 'function') {
+        updateDeckFormatCounters();
+        if (typeof renderDeckValidation === 'function') renderDeckValidation();
+        return;
+    }
     // นับเฉพาะ Main Deck: ไม่เอา Fusion, Armored_Dino และ Master
     const mainCount = myDeck.filter(c => 
         !c.type.includes('Fusion_Monster') && 
@@ -1149,7 +1159,14 @@ function removeFromDeck(index) {
 
 // 6. ระบบ Export เป็นไฟล์ (รองรับมือถือ)
 function exportDeckToFile() {
-    const dataStr = JSON.stringify(myDeck);
+    // v2: เก็บชื่อเด็ค + ฟอร์แมตไปด้วย (ตัว import ยังอ่านไฟล์เก่าที่เป็น Array ได้)
+    const deckName = (document.getElementById('deckNameInput') || {}).value || '';
+    const dataStr = JSON.stringify({
+        version: 2,
+        name: deckName,
+        format: (typeof getDeckFormatKey === 'function') ? getDeckFormatKey() : undefined,
+        cards: myDeck
+    });
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
     const exportFileDefaultName = 'my-dino-deck.json';
@@ -1167,7 +1184,14 @@ function importDeckFromFile(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            const importedData = JSON.parse(e.target.result);
+            let importedData = JSON.parse(e.target.result);
+
+            // ไฟล์ v2 = { name, format, cards } / ไฟล์เก่า = Array ของการ์ด
+            if (importedData && !Array.isArray(importedData) && Array.isArray(importedData.cards)) {
+                if (importedData.format && typeof applyDeckFormat === 'function') applyDeckFormat(importedData.format);
+                if (importedData.name) document.getElementById('deckNameInput').value = importedData.name;
+                importedData = importedData.cards;
+            }
             
             // ตรวจสอบเบื้องต้นว่าเป็นไฟล์เด็คจริงไหม
             if (Array.isArray(importedData)) {

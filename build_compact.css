@@ -1,0 +1,240 @@
+/* =========================================================
+   build_compact.css — โหมดจัดเด็คแบบสะอาดตา
+   ไม่ได้ตัดฟีเจอร์ออก: ปุ่มที่ใช้ไม่บ่อยย้ายไปอยู่ในเมนู "⋯" / ตัวกรองพับไว้
+   (ใช้ #deckBuilderView นำหน้า เพื่อชนะสไตล์ปุ่มส่วนกลาง button:not(.qty-btn) ใน filterdiv.css)
+   ========================================================= */
+
+/* ---------- A. แถบเด็คด้านขวา ---------- */
+
+/* A1. แถบบน: แถวเดียว */
+#deckBuilderView .dp-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    min-height: 0;
+}
+#deckBuilderView .dp-topbar h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 16px;
+    white-space: nowrap;
+}
+#deckBuilderView .dp-back {
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: none;
+}
+#deckBuilderView .dp-back:hover { transform: none; }
+#deckBuilderView .dp-coll-btn {
+    display: flex; align-items: center; gap: 5px;
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 12px;
+    background: linear-gradient(135deg, #ff9f43 0%, #ff6b6b 100%);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    font-size: 12.5px;
+    box-shadow: none;
+}
+#deckBuilderView .dp-coll-btn:hover { filter: brightness(1.1); transform: none; box-shadow: none; }
+
+/* A2. ข้อมูลเด็ค */
+#deckBuilderView .dp-info { padding: 10px 14px 12px; }
+#deckBuilderView .deck-name-field {
+    margin: 0 0 8px;
+    padding: 7px 10px;
+    font-size: 15px;
+    background: #1b1b24;
+    color: #fff;
+    border: 1px solid #5c4a14;
+    border-radius: 8px;
+}
+#deckBuilderView .deck-name-field::placeholder { color: #888; }
+#deckBuilderView .deck-name-field:focus { border-color: #ffd900; }
+
+#deckBuilderView .dp-row { display: flex; align-items: flex-start; gap: 8px; }
+#deckBuilderView .dp-format {
+    display: flex; align-items: center; gap: 6px;
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 4px 0 10px;
+    background: #2b2b3a;
+    border: 1px solid #454b60;
+    border-radius: 8px;
+    color: #ffd900;
+    font-size: 13px;
+}
+#deckBuilderView .dp-format select {
+    height: 30px;
+    padding: 0 4px;
+    margin: 0;
+    line-height: 30px;
+    max-width: 170px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+}
+#deckBuilderView .dp-format select option { background: #2b2b3a; }
+#deckBuilderView #deckValidation { flex: 1; min-width: 0; }
+#deckBuilderView #deckValidation .deck-validation { margin: 0; font-size: 12.5px; }
+#deckBuilderView #deckValidation summary { padding: 6px 10px; min-height: 20px; }
+#deckBuilderView #deckValidation .dv-format { display: none; } /* ซ้ำกับตัวเลือกฟอร์แมตข้างๆ */
+
+/* A3. แถบเครื่องมือ */
+#deckBuilderView .dp-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+#deckBuilderView .dp-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    background: #2f3446;
+    color: #e8e8e8;
+    border: 1px solid #454b60;
+    border-radius: 8px;
+    box-shadow: none;
+    transform: none;
+}
+#deckBuilderView .dp-btn:hover { background: #3c4360; color: #fff; box-shadow: none; transform: none; }
+#deckBuilderView .dp-btn.dp-primary { background: #07357D; border-color: #1a4a9e; color: #fff; }
+#deckBuilderView .dp-btn.dp-primary:hover { background: #0b4db3; }
+
+#deckBuilderView .dp-more { position: relative; margin-left: auto; }
+#deckBuilderView .dp-more-btn { width: 38px; padding: 0; font-size: 18px; letter-spacing: 1px; }
+#deckBuilderView .dp-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 3000;
+    min-width: 230px;
+    padding: 6px;
+    background: #1e1e2e;
+    border: 1px solid #6c5ce7;
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.55);
+}
+#deckBuilderView .dp-menu[hidden] { display: none; }
+#deckBuilderView .dp-menu button {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 400;
+    background: transparent;
+    color: #eee;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: none;
+    transform: none;
+}
+#deckBuilderView .dp-menu button i { width: 18px; text-align: center; color: #b9b1ff; }
+#deckBuilderView .dp-menu button:hover { background: rgba(255,255,255,0.08); box-shadow: none; transform: none; }
+#deckBuilderView .dp-menu button.is-danger,
+#deckBuilderView .dp-menu button.is-danger i { color: #ff7b7b; }
+#deckBuilderView .dp-menu button.is-danger:hover { background: rgba(255,107,107,0.15); }
+#deckBuilderView .dp-menu-sep { height: 1px; background: #33334a; margin: 4px 2px; }
+
+/* A4. ตัวเด็ค: ระยะห่างน้อยลง */
+#deckBuilderView .deck-body { padding: 10px 14px 14px; }
+#deckBuilderView .deck-section-label { margin-top: 12px; margin-bottom: 8px; }
+#deckBuilderView .deck-section-label:first-child { margin-top: 0; }
+#deckBuilderView .starter-label small { opacity: 0.55; font-size: 10.5px; letter-spacing: 0; margin-left: 6px; }
+
+/* A5. แถบล่าง: 2 ปุ่ม แถวเดียว */
+#deckBuilderView .dp-footer {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+}
+#deckBuilderView .dp-footer .dp-btn { height: 38px; font-size: 14px; }
+#deckBuilderView .dp-footer .dp-wide { flex: 1; background: #07357D; border-color: #1a4a9e; color: #fff; }
+#deckBuilderView .dp-footer .dp-wide:hover { background: #0b4db3; }
+
+/* PC: ปุ่มย่อแถบเหลือแค่ลูกศร (มีแถบ ◀ อยู่ข้างๆ แล้ว) */
+@media (min-width: 769px) {
+    #deckBuilderView .dp-back-text { display: none; }
+}
+
+/* มือถือ: ปุ่มในแถบเครื่องมือเหลือแต่ไอคอน ยกเว้น Save */
+@media (max-width: 768px) {
+    #deckBuilderView .dp-toolbar .dp-lbl { display: none; }
+    #deckBuilderView .dp-btn { padding: 0 10px; }
+    #deckBuilderView .dp-row { flex-wrap: wrap; }
+    #deckBuilderView .dp-format { flex: 1 1 100%; }
+    #deckBuilderView .dp-format select { max-width: none; flex: 1; }
+    #deckBuilderView .dp-footer { flex-direction: row !important; background: #252525; }
+    #deckBuilderView .dp-footer .dp-btn { width: auto; margin: 0; height: 40px; }
+    #deckBuilderView .dp-footer .dp-wide { flex: 1; }
+}
+
+/* ---------- B. ฝั่งคลังการ์ด (เฉพาะโหมดจัดเด็ค) ---------- */
+
+/* B1. ตัวกรองพับไว้ (PC) — กดปุ่ม "ตัวกรอง" เพื่อเปิด / มีตัวเลขบอกว่าเปิดตัวกรองอยู่กี่อย่าง */
+@media (min-width: 769px) {
+    body.mode-build #filterToggleBtn {
+        display: flex !important;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        height: 45px;
+        padding: 0 14px;
+        background: #07357D;
+        color: #aac4ff;
+        border: 2px solid #1a4a9e;
+        border-radius: 8px;
+        box-shadow: none;
+    }
+    body.mode-build #searchBar:not(.filters-open) .filter-collapsible { display: none; }
+    body.mode-build #searchBar.filters-open #filterToggleIcon { transform: rotate(180deg); }
+
+    /* B2. การ์ดเล็กลงนิด เห็นได้มากขึ้นต่อแถว */
+    body.mode-build #cardContainer { gap: 14px; }
+    body.mode-build .card { width: 170px; flex: 0 1 170px; }
+
+    /* B3. หัวเว็บเล็กลงในโหมดจัดเด็ค */
+    body.mode-build h1.main-title { font-size: 26px; margin-top: 4px; margin-bottom: 8px; }
+    body.mode-build h1.main-title img { width: 38px; }
+}
+
+#filterToggleIcon { transition: transform 0.2s; }
+#filterToggleBtn.has-active { border-color: #ffd900 !important; color: #fff !important; }
+.filter-badge {
+    display: inline-block;
+    min-width: 18px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #ffd900;
+    color: #1a1a1a;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+}
+.filter-badge[hidden] { display: none; }
+
+/* B4. ปุ่มเพิ่มการ์ดใต้การ์ด (PC): เล็กลง ไม่แย่งสายตาจากรูปการ์ด — มือถือใช้แบบเดิม */
+@media (min-width: 769px) {
+body.mode-build .card .add-to-deck-btn {
+    margin-top: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    border-radius: 6px;
+    box-shadow: none;
+}
+body.mode-build .card .add-to-deck-btn:hover:not([disabled]) { transform: none; filter: brightness(1.1); }
+}

@@ -22,19 +22,22 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="filterdiv.css?v=1.3">
-    <link rel="stylesheet" href="clan_dp_icons.css?v=1.1">
-    <link rel="stylesheet" href="deck_builder.css?v=1.3">
+    <link rel="stylesheet" href="filterdiv.css?v=1.6">
+    <link rel="stylesheet" href="clan_dp_icons.css?v=1.4">
+    <link rel="stylesheet" href="deck_builder.css?v=1.4">
     <link rel="stylesheet" href="hilight_text.css"> 
     <link rel="stylesheet" href="totop.css"> 
     <link rel="stylesheet" href="rarity_inModal.css?v=1.1"> 
     <link rel="stylesheet" href="collection_style.css"> 
     <link rel="stylesheet" href="responsive.css?v=1.3">
-	<link rel="stylesheet" href="showcase_mode.css?v=1.1"> 
+	<link rel="stylesheet" href="showcase_mode.css?v=1.1">
+	<link rel="stylesheet" href="showcase_views.css?v=2"> 
     <link rel="stylesheet" href="bottom_nav.css"> 
     <link rel="stylesheet" href="quickadd.css"> 
     <link rel="stylesheet" href="modal_button.css"> 
     <link rel="stylesheet" href="res_limited.css"> 
+    <link rel="stylesheet" href="lc_features.css?v=7">
+    <link rel="stylesheet" href="build_compact.css?v=1">
 
     <style>
         /* --- 1. Global Styles --- */
@@ -377,7 +380,7 @@ body::before {
 
   gtag('config', 'G-XQW68Z4JG2');
 </script>
-<body>
+<body class="mode-browse">
 
 <div id="main-wrapper">
         
@@ -389,38 +392,54 @@ body::before {
         <button id="backToTop" title="Go to top">
             <img src="images/button1.png" alt="Back to Top">
         </button>
-       <div class="banlist-selector-container" style="margin: 10px 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
-    <label style="font-size: 14px; font-weight: bold; color: #f1c40f; display:block; margin-bottom:5px;">
-        <i class="fa-solid fa-scale-balanced"></i> เลือกฟอร์แมต Banlist:
-    </label>
-    <select id="banlistFormatSelect" onchange="changeBanlistFormat(this.value)" 
-            style="width: 100%; padding: 8px; border-radius: 4px; background: #1a1a1a; color: white; border: 1px solid #555; font-family: 'Kanit', sans-serif;">
-        <option value="None">กำลังโหลด...</option>
-    </select>
-            <button id="limitedSearch" onclick="limitedSearch()">การ์ดที่โดนจำกัด</button>
+       <div class="controls" id="searchBar">
+    <!-- แถวบน: ค้นหา + โหมดค้นหา | ฟอร์แมต + การ์ดที่โดนจำกัด | (มือถือ) ปุ่มตัวกรอง -->
+    <div class="search-row">
+        <!-- สลับโหมด: ดูการ์ด / จัดเด็ค (มือถือใช้ปุ่มลอยด้านล่างแทน) -->
+        <div class="app-mode-switch" id="appModeSwitch" role="group" aria-label="โหมดการใช้งาน">
+            <button type="button" data-mode="browse" onclick="setAppMode('browse')" title="ดูข้อมูลการ์ดอย่างเดียว ไม่คิดตามเด็ค">
+                <i class="fa-solid fa-eye"></i><span>ดูการ์ด</span>
+            </button>
+            <button type="button" data-mode="build" onclick="setAppMode('build')" title="จัดเด็ค: เรียงตามเผ่า / การ์ดเทา / ปุ่มเพิ่มการ์ด">
+                <i class="fa-solid fa-screwdriver-wrench"></i><span>จัดเด็ค</span>
+            </button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ค้นหาชื่อการ์ด (ไทย / EN)...">
+            <button id="abilitySearchToggle" onclick="toggleAbilitySearch()"
+                title="สลับโหมดค้นหา: ชื่อการ์ด / Effect"
+                style="
+                    flex-shrink:0; height:45px; padding:0 14px;
+                    background:#07357D; color:#aac4ff;
+                    border:2px solid #1a4a9e; border-radius:8px;
+                    font-family:'Kanit',sans-serif; font-size:13px;
+                    cursor:pointer; white-space:nowrap;
+                    transition: all 0.2s ease;
+                    box-shadow: 0 0 8px rgba(255,217,0,0.3);
+                ">
+                🔍 ชื่อ
+            </button>
+        </div>
 
-</div>
+        <div class="format-box">
+            <label for="banlistFormatSelect" class="format-label" title="เลือกฟอร์แมต Banlist">
+                <i class="fa-solid fa-scale-balanced"></i><span>ฟอร์แมต</span>
+            </label>
+            <select id="banlistFormatSelect" onchange="changeBanlistFormat(this.value)">
+                <option value="None">กำลังโหลด...</option>
+            </select>
+            <button id="limitedSearch" onclick="limitedSearch()" title="แสดงการ์ดที่โดนแบน / ลิมิตในฟอร์แมตนี้">
+                <i class="fa-solid fa-ban"></i><span>โดนจำกัด</span>
+            </button>
+        </div>
 
-<div class="controls" id="searchBar">
-    <div style="display:flex; gap:8px; align-items:center; width:100%;">
-        <input type="text" id="searchInput" placeholder="ค้นหาชื่อการ์ด (ไทย / EN)..." style="flex:1;">
-        <button id="abilitySearchToggle" onclick="toggleAbilitySearch()"
-            title="สลับโหมดค้นหา Effect"
-            style="
-                flex-shrink:0; height:45px; padding:0 14px;
-                background:#07357D; color:#aac4ff;
-                border:2px solid #1a4a9e; border-radius:8px;
-                font-family:'Kanit',sans-serif; font-size:13px;
-                cursor:pointer; white-space:nowrap;
-                transition: all 0.2s ease;
-                box-shadow: 0 0 8px rgba(255,217,0,0.3);
-            ">
-            🔍 ชื่อ
-        </button>
         <button id="filterToggleBtn" onclick="toggleFilterBar()" title="ตัวกรอง">
-            <i class="fas fa-filter"></i> ตัวกรอง <i class="fas fa-chevron-down" id="filterToggleIcon"></i>
+            <i class="fas fa-filter"></i> ตัวกรอง <span id="filterActiveBadge" class="filter-badge" hidden></span> <i class="fas fa-chevron-down" id="filterToggleIcon"></i>
         </button>
     </div>
+
+    <!-- แถวเล็ก: เรียงตาม -->
+    <div id="cardSortBar" class="card-sort-bar"></div>
 
     <div class="filter-collapsible" id="filterCollapsible">
     <div class="filter-collapsible-inner">
@@ -539,6 +558,10 @@ body::before {
 
 <button onclick="toggleShowcaseEdit()">แก้ไข</button>
 
+<button id="ownedModeBtn" onclick="toggleOwnedMode()" title="เอากองการ์ดจริงมาเทียบ แตะนับใบที่มี — ใบที่เหลือเป็นสีเทา = ขาด">🧩 นับการ์ดที่มี</button>
+
+<button onclick="openRegisterDialog()" title="ทำใบลงทะเบียนเด็คสำหรับทัวร์ (พิมพ์ / PDF)">📝 ใบลงทะเบียน</button>
+
 										
             <button onclick="closeDeckShowcase()" class="btn-close-showcase">✖</button>
         </div>
@@ -559,55 +582,53 @@ body::before {
         <div id="deckBuilderView">
 
 		
-<div class="side-panel-header" style="position: relative; padding-right: 140px; min-height: 60px; display: flex; align-items: center;">
-    <button class="mobile-back-btn" onclick="toggleSidePanel()">← กลับไปเลือกการ์ด</button>                
-    
-    <h3 id="panelTitle" style="color: #ffffff; margin: 0 15px; font-size: 18px;"> 
-        <i class="fa-solid fa-screwdriver-wrench"></i> จัดเด็คของคุณ</h3>
-
-<button id="collToggleBtn" onclick="handleCollectionNavigation()" 
-        style="position: absolute; top: 12px; right: 15px; 
-               background: linear-gradient(135deg, #ff9f43 0%, #ff6b6b 100%); 
-               color: white; border: none; padding: 7px 12px; border-radius: 8px; 
-               cursor: pointer; font-size: 12px; font-family: 'Kanit'; 
-               box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 5px; z-index: 1000;">
-    <span id="viewModeIcon">📂</span>
-    <span id="viewModeText">คอลเล็คชั่น</span>
-</button>
+<!-- ===== แถบบน: ชื่อหน้า + คอลเล็คชั่น (ย่อให้เหลือแถวเดียว) ===== -->
+<div class="side-panel-header dp-topbar">
+    <button class="mobile-back-btn dp-back" onclick="toggleSidePanel()" title="ย่อแถบเด็ค / กลับไปเลือกการ์ด">←<span class="dp-back-text"> กลับไปเลือกการ์ด</span></button>
+    <h3 id="panelTitle"><i class="fa-solid fa-screwdriver-wrench"></i> จัดเด็ค</h3>
+    <button id="collToggleBtn" class="dp-coll-btn" onclick="handleCollectionNavigation()" title="คอลเล็คชั่นเด็คที่เซฟไว้">
+        <span id="viewModeIcon">📂</span>
+        <span id="viewModeText">คอลเล็คชั่น</span>
+    </button>
 </div>
-		
-            <div class="side-panel-header">
-                (มีระบบแบ็คอัพ)
-                <input type="text" id="deckNameInput" placeholder="ตั้งชื่อเด็คของคุณ..." class="deck-name-field">
-                
-<div class="menu">
 
-    <div class="menu-row">
+<!-- ===== ข้อมูลเด็ค: ชื่อ / ฟอร์แมต + ผลตรวจ / แถบเครื่องมือ ===== -->
+<div class="side-panel-header dp-info">
+    <input type="text" id="deckNameInput" placeholder="ตั้งชื่อเด็คของคุณ..." class="deck-name-field"
+           title="เด็คที่กำลังจัดจะถูกบันทึกอัตโนมัติ (มีระบบแบ็คอัพ)">
+    <div class="dp-row">
+        <label class="dp-format" title="ฟอร์แมตของเด็ค">
+            <i class="fa-solid fa-scale-balanced"></i>
+            <select id="deckFormatSelect" onchange="setDeckFormat(this.value)" aria-label="ฟอร์แมตของเด็ค"></select>
+        </label>
+        <div id="deckValidation"></div>
+    </div>
+
+    <div class="dp-toolbar">
         <input type="file" id="importDeckInput" style="display: none;" accept=".json" onchange="importDeckFromFile(event)">
-        
-<button onclick="document.getElementById('importDeckInput').click()" class="btn-import">
-    <i class="fa-solid fa-file-import"></i></button>
-
-        
-        <button onclick="saveOverwrite()" ><i class="fa-solid fa-floppy-disk"></i>  Save</button>
-        
-        <button onclick="saveAsNew()" ><i class="fa-solid fa-floppy-disk"></i>  Save As</button>
-        <button onclick="copyDeckLink()" ><i class="fa-regular fa-copy"></i></button>   
-        <button onclick="importDeckPrompt()" ><i class="fa-regular fa-clipboard"></i></button>      
+        <button class="dp-btn dp-primary" onclick="saveOverwrite()" title="บันทึกทับเด็คเดิมในคอลเล็คชั่น"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+        <button class="dp-btn" onclick="saveAsNew()" title="บันทึกเป็นเด็คใหม่"><i class="fa-regular fa-floppy-disk"></i> Save As</button>
+        <button class="dp-btn" onclick="copyDeckLink()" title="คัดลอกลิงก์เด็ค"><i class="fa-solid fa-link"></i><span class="dp-lbl"> ลิงก์</span></button>
+        <button class="dp-btn" onclick="importDeckPrompt()" title="วางลิงก์ / รหัสเด็คเพื่อนำเข้า"><i class="fa-regular fa-clipboard"></i><span class="dp-lbl"> วางโค้ด</span></button>
+        <div class="dp-more">
+            <button class="dp-btn dp-more-btn" onclick="toggleDeckMenu(event)" aria-haspopup="true" aria-expanded="false" title="เมนูเพิ่มเติม">⋯</button>
+            <div class="dp-menu" id="deckMoreMenu" role="menu" hidden>
+                <button role="menuitem" onclick="deckMenuRun(sortDeck)"><i class="fa-solid fa-sort"></i> เรียงการ์ด</button>
+                <button role="menuitem" onclick="deckMenuRun(toggleCoverSelectionMode)"><i class="fa-regular fa-image"></i> เลือกหน้าปก</button>
+                <button role="menuitem" onclick="deckMenuRun(exportToUntap)"><i class="fa-solid fa-code"></i> โค้ด Untap</button>
+                <button role="menuitem" onclick="deckMenuRun(openRegisterDialog)"><i class="fa-solid fa-file-signature"></i> ใบลงทะเบียน (พิมพ์ / PDF)</button>
+                <div class="dp-menu-sep"></div>
+                <button role="menuitem" onclick="deckMenuRun(() => document.getElementById('importDeckInput').click())"><i class="fa-solid fa-file-import"></i> นำเข้าไฟล์ .json</button>
+                <button role="menuitem" onclick="deckMenuRun(exportDeckToFile)"><i class="fa-solid fa-download"></i> ดาวน์โหลดไฟล์ .json</button>
+                <div class="dp-menu-sep"></div>
+                <button role="menuitem" class="is-danger" onclick="deckMenuRun(clearDeck)"><i class="fa-solid fa-trash"></i> ล้างเด็คทั้งหมด</button>
+            </div>
+        </div>
     </div>
 </div>
-            </div>
 
 <div class="deck-body">
-			
-<div class="menu-row">
-    <button class="btn-sort" onclick="toggleCoverSelectionMode()" class="btn-select-cover">🖼️ เลือกหน้าปก</button>
-    <button class="btn-sort" onclick="sortDeck()"><i class="fa-solid fa-sort"></i> เรียงการ์ด</button>
-    <button class="btn-export-untap" onclick="exportToUntap()"><i class="fa-solid fa-code"></i> โค้ด Untap</button>                       
-                       
-</div>
-			
-                <div class="deck-section-label">STARTER (Master/ Boost Master/ Commander)</div>
+                <div class="deck-section-label starter-label">Starter <small>Master / Boost Master / Commander</small></div>
                 <div id="starterContainer" class="deck-grid starter-zone"></div>
 
                 <div class="deck-section-label main-deck-label">
@@ -627,20 +648,11 @@ body::before {
             </div>
 
 
-<div class="side-panel-footer">
-        <div class="header-controls">
-            <button onclick="exportDeckToFile()" title="บันทึก JSON">
-                     <i class="fa-solid fa-download"></i> Download
-            </button>
-
-			<button onclick="openDeckShowcase()" >
-                    <i class="fa-solid fa-maximize"></i> ดูเต็มจอ
-            </button>
-        </div>
-
-                 <div class="side-panel-footer, menu-row"></div>   
-                <button onclick="clearDeck()" class="btn-clear-all">🗑️ ล้างเด็คทั้งหมด</button>
-            </div>
+<!-- ===== แถบล่าง: ปุ่มหลัก 2 ปุ่ม (ปุ่มอื่นย้ายไปอยู่ในเมนู ⋯ ด้านบน) ===== -->
+<div class="side-panel-footer dp-footer">
+    <button class="dp-btn dp-wide" onclick="openDeckShowcase()"><i class="fa-solid fa-maximize"></i> ดูเต็มจอ</button>
+    <button class="dp-btn" onclick="openRegisterDialog()" title="ใบลงทะเบียนเด็คสำหรับทัวร์ (พิมพ์ / PDF)"><i class="fa-solid fa-file-signature"></i> ใบลงทะเบียน</button>
+</div>
 
 
 </div>
@@ -735,16 +747,13 @@ body::before {
         <!-- Taxonomy -->
         <div style="margin-bottom: 16px;">
             <label style="display:block; margin-bottom:6px; font-size:14px; color:#ccc;">
-                🦕 อนุกรมวิธาน (Taxonomy)
+                🦕 อนุกรมวิธาน (Taxonomy) <span style="font-size:12px;color:#888;">— เลือกได้หลายอัน</span>
             </label>
-            <select id="advTaxonomy"
-                style="width:100%; padding:8px; border-radius:6px; border:1px solid #444;
-                       background:#0d0d1a; color:#fff; font-family:'Kanit',sans-serif;">
-                <option value="">ทั้งหมด</option>
-                <option value="Tyrannosauridae">Tyrannosauridae</option>
-                <option value="Abelisauridae">Abelisauridae</option>
-                <option value="Elasmosauridae">Elasmosauridae</option>
-            </select>
+            <div id="advTaxonomy"></div>
+            <div style="text-align:right; margin-top:4px;">
+                <a href="#" onclick="setSelectedTaxonomies([]); return false;"
+                   style="font-size:12px; color:#aaa;">ล้างที่เลือก</a>
+            </div>
         </div>
 
         <!-- Legendary Toggle -->
@@ -806,6 +815,9 @@ body::before {
     </div>
 
     <div class="nav-right">
+        <button type="button" onclick="openGlossaryModal()" class="nav-btn btn-glossary" title="อภิธานศัพท์คีย์เวิร์ด">
+            <i class="fas fa-book-open"></i> <span class="btn-text">คำศัพท์</span>
+        </button>
         <a href="https://www.facebook.com/DinomasterPlayground" target="_blank" class="nav-btn btn-facebook" title="Dinomaster Playground">
             <i class="fa-brands fa-facebook"></i>        
         </a>
@@ -817,11 +829,40 @@ body::before {
         <a href="https://forms.gle/FFKSLwKTckbnnzEX8" target="_blank" class="nav-btn btn-bug" title="แจ้งปัญหา">
             <i class="fas fa-bug"></i> <span class="btn-text">แจ้งปัญหา</span>
         </a>
-        <a href="https://tipme.in.th/oneonecard6969" target="_blank" class="nav-btn btn-donate" title="สนับสนุนผู้สร้าง">
+        <a href="#" onclick="openDonateModal(); return false;" class="nav-btn btn-donate" title="สนับสนุนผู้สร้าง (สแกน QR พร้อมเพย์)">
             <i class="fas fa-coffee"></i> <span class="btn-text">Donate</span>
         </a>
     </div>
 </nav>
+
+<!-- ===== หน้าต่าง Donate: QR พร้อมเพย์ (แทน tipme เดิม) ===== -->
+<div id="donateModal" class="donate-modal" onclick="if (event.target === this) closeDonateModal()" role="dialog" aria-label="สนับสนุนผู้สร้าง" hidden>
+    <div class="donate-box">
+        <button type="button" class="donate-close" onclick="closeDonateModal()" aria-label="ปิด">✕</button>
+        <h3>☕ สนับสนุนค่ากาแฟ</h3>
+        <p class="donate-purpose">💡 สมทบค่า AI โปร รายเดือน ที่ใช้พัฒนาเว็บนี้</p>
+        <p class="donate-sub">สแกน QR ด้วยแอปธนาคารได้ทุกธนาคาร (พร้อมเพย์)</p>
+        <img src="images/donate_qr.jpg" alt="QR พร้อมเพย์ สำหรับสนับสนุนผู้สร้างเว็บ" class="donate-qr">
+        <a href="images/donate_qr.jpg" download="LifeCrystal-Donate-QR.jpg" class="donate-save">
+            <i class="fas fa-download"></i> บันทึกรูป QR (ไว้เปิดสแกนในแอปธนาคาร)
+        </a>
+        <p class="donate-thanks">ขอบคุณทุกการสนับสนุนครับ 🙏</p>
+    </div>
+</div>
+<script>
+    function openDonateModal() {
+        const m = document.getElementById('donateModal');
+        if (m) { m.hidden = false; document.body.style.overflow = 'hidden'; }
+    }
+    function closeDonateModal() {
+        const m = document.getElementById('donateModal');
+        if (m) { m.hidden = true; document.body.style.overflow = ''; }
+    }
+    document.addEventListener('keydown', e => {
+        const m = document.getElementById('donateModal');
+        if (e.key === 'Escape' && m && !m.hidden) closeDonateModal();
+    });
+</script>
 
 <div id="siteInfoModal" class="info-modal">
     <div class="info-modal-content">
@@ -901,7 +942,7 @@ body::before {
 Dinomaster ให้ยังคงดำเนินต่อไป ภายใต้ความเชื่อที่ว่า Dinomaster ยังคงเป็นผลงานและทรัพย์สินทางปัญญาของเจ้าของสิทธิ์เดิมเสมอ เราไม่ได้มีเป้าหมายที่จะสร้างเกมขึ้นมาใหม่ เข้ามาแทนที่ หรือแข่งขันกับผลิตภัณฑ์ทางการ แต่ต้องการสร้างรูปแบบการเล่นทางเลือก (Community Format) ที่ช่วยเติมสีสัน ลดความจำเจของเมต้า และเปิดโอกาสให้เด็คที่หลากหลายกลับมามีบทบาทอีกครั้ง โดยยังคงยึดโยงอยู่กับการ์ดและระบบการเล่นดั้งเดิมเป็นหัวใจสำคัญ การ์ด Fanmade ทุกใบจึงเป็นเพียงสื่อกลางที่ชุมชนร่วมกันสร้างขึ้นเพื่อดูแลประสบการณ์การเล่นของผู้เล่น และพร้อมที่จะปรับเปลี่ยน ยุติ หรือส่งต่อความร่วมมือให้กับเจ้าของสิทธิ์ หากวันหนึ่งมีการกลับมาพัฒนาเกมอย่างเป็นทางการอีกครั้ง เพราะเป้าหมายสูงสุดของเราไม่ใช่การสร้าง Dinomaster เวอร์ชันใหม่ แต่คือการทำให้ผู้คนยังคงมีพื้นที่ในการเล่นและรัก Dinomaster ร่วมกันต่อไป
 
         <div class="modal-actions">
-            <a href="https://tipme.in.th/oneonecard6969" target="_blank" class="big-donate-btn">
+            <a href="#" onclick="openDonateModal(); return false;" class="big-donate-btn">
                 <i class="fas fa-heart"></i> สนับสนุนค่ากาแฟ
             </a>
         </div>
@@ -913,7 +954,7 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
 </div>
 
             <button id="mobileEditModeBtn" onclick="toggleMobileDeckMode()">
-                <span id="editIcon">➕</span> <span id="editText">เพิ่มการ์ดลงเด็ค</span>
+                <span id="editIcon">➕</span> <span id="editText">โหมดจัดเด็ค</span>
             </button>
 
 
@@ -923,7 +964,7 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="card_data/C_original.js"></script>
     <script src="card_data/MG_original.js"></script>
     <script src="card_data/C_Enigma.js"></script>
-    <script src="card_data/MG_enigma.js?v=1.3"></script>
+    <script src="card_data/MG_enigma.js?v=1.4"></script>
 	<script src="card_data/Character.js"></script>
     <script src="card_data/C_Newmaster.js"></script>
     <script src="card_data/MG_Newmaster.js?v=1"></script>	
@@ -944,22 +985,32 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="card_data/fanmade_Boost7.js"></script>
     <script src="card_data/fanmade_pr09.js"></script>
     <script src="card_data/fanmade_pr10.js"></script>
-        <script src="banlist_data.js?v=3"></script>
+        <script src="banlist_data.js?v=7"></script>
 
-    <script src="small_script.js?v=1.1"></script>	
-    <script src="deck_builder_logic.js?v=1.4.6"></script>
-    <script src="Showcase_logic.js?v=1"></script>	
+    <script src="small_script.js?v=1.2"></script>	
+    <script src="deck_builder_logic.js?v=1.4.10"></script>
+    <script src="Showcase_logic.js?v=7"></script>	
 	<script src="handsimulate_logic.js"></script>
-    <script src="collection_logic.js?v=1.1"></script>
-    <script src="save_deck_logic.js"></script>
+    <script src="collection_logic.js?v=1.2"></script>
+    <script src="save_deck_logic.js?v=2"></script>
     <script src="capturelogic.js"></script>
     <script src="untap_logic.js"></script>
-    <script src="quickadd_logic.js?v=1.3"></script>
-    <script src="dynamic_bg.js"></script>    
-    <script src="card_stats.js"></script>
-    <script src="clan_dp_icons.js?v=1.2"></script>
-    <script src="main.js?v=1.6.4"></script>
-    <script src="clan_identity_logic.js?v=3"></script>
+    <script src="quickadd_logic.js?v=1.4"></script>
+    <script src="dynamic_bg.js?v=2"></script>    
+    <script src="card_stats.js?v=5"></script>
+    <script src="clan_dp_icons.js?v=1.6"></script>
+    <script src="main.js?v=1.8.2"></script>
+    <script src="card_sort_logic.js?v=2"></script>
+    <script src="clan_identity_logic.js?v=5"></script>
+    <!-- ฟีเจอร์ชุดใหม่: อภิธานศัพท์ / ชื่อการ์ดกดค้นหา / ฟอร์แมตรายเด็ค+ตรวจเด็ค / ลิงก์สั้น / ใบลงทะเบียน / การ์ดที่ขาด -->
+    <script src="keyword_glossary.js?v=2"></script>
+    <script src="ability_enhance.js?v=5"></script>
+    <script src="search_trail.js?v=1"></script>
+    <script src="deck_code.js?v=1"></script>
+    <script src="deck_format.js?v=2"></script>
+    <script src="deck_register.js?v=2"></script>
+    <script src="showcase_owned.js?v=2"></script>
+    <script src="build_compact.js?v=1"></script>
     <script src="card_knowledge_builder.js"></script>
 
     <script src="ai_deck.js"></script>	

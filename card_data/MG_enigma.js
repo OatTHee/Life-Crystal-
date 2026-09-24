@@ -259,6 +259,7 @@ const MG_enigmaData = [
         dp: 4,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Golden_Rare",
         clan: "มีปีก",
         ability: `<span class="hlabi">Effect :</span> <br> Creature ที่มีค่าร่าย 2 หรือต่ำกว่าที่คู่ต่อสู้ควบคุมไม่สามารถสั่งการได้ (2 เทิร์น) <br> • ทิ้ง Creature เผ่ามีปีก 2 ใบ : นำการ์ดใบนี้กลับขึ้นมือ`,
         image: "images/EnigmaMG/Winged_Reptiles_Trick.jpg"
@@ -281,6 +282,7 @@ const MG_enigmaData = [
         dp: 2,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Golden_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เลือก Creature ที่กำลังต่อสู้กัน 1 กลุ่ม หยุดกระบวนการต่อสู้ทั้งหมด`,
         image: "images/EnigmaMG/Break The Fight.jpg"
@@ -303,6 +305,7 @@ const MG_enigmaData = [
         dp: 4,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Golden_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เลือกอันดับย่อย 1 ชนิด จาก Creature ของเรา Creature ทั้งหมดในอันดับย่อยนั้นปรับค่า AT+400/DF+400 (2 เทิร์น)`,
         image: "images/EnigmaMG/Power Of Suborder.jpg"
@@ -325,6 +328,7 @@ const MG_enigmaData = [
         dp: 2,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Silver_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เราสามารถใช้ Action Card ในสุสานของเราได้ (1 เทิร์น) โดย Action Card ที่ตกสุสานจะถูกนำออกจากเกมแทน`,
         image: "images/EnigmaMG/Sight Of Dejavu.jpg"
@@ -336,6 +340,7 @@ const MG_enigmaData = [
         dp: 4,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Silver_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เราจั่วการ์ด 4 ใบ จากนั้นสุ่มทิ้งการ์ดบนมือ 2 ใบ`,
         image: "images/EnigmaMG/Try to Risk.jpg"
@@ -348,6 +353,7 @@ const MG_enigmaData = [
         dp: 3,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Silver_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เลือกนำการ์ดในสุสานของเรา 1-3 ใบ สับเข้า Deck และจั่วการ์ด 1 ใบ`,
         image: "images/EnigmaMG/Life Restoration.jpg"
@@ -359,6 +365,7 @@ const MG_enigmaData = [
         dp: 3,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Silver_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เมื่อการ์ดตกเป็นเป้าหมายของ Action Card สามารถเปลี่ยนเป้าหมายของ Action นั้นได้ (3 เทิร์น)`,
         image: "images/EnigmaMG/Reflective Mirror.jpg"
@@ -392,6 +399,7 @@ const MG_enigmaData = [
         dp: 5,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Golden_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> แสดงการ์ดบนสุดของ Deck 3 ใบ : เรารับ DP ตามค่าร่ายรวมของการ์ดที่แสดง (รวมสูงสุดไม่เกิน 10 จุด) จากนั้นนำการ์ดที่แสดงและการ์ดใบนี้ออกจากเกม`,
         image: "images/EnigmaMG/Power DP Roulette.jpg"
@@ -414,6 +422,7 @@ const MG_enigmaData = [
         dp: 6,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Silver_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> สับการ์ดทุกใบในสนาม มือ และสุสานเข้ากอง จั่ว 5 ใบ และลง Creature DP ไม่เกิน 5 ได้ 1 ใบ (สั่งการไม่ได้ในเทิร์นนี้) <br> <span class="hlred">*(BANNED)*</span>`,
         image: "images/EnigmaMG/Advantage Rematch.jpg"
@@ -447,6 +456,7 @@ const MG_enigmaData = [
         dp: 4,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Golden_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> เลือก Creature ในสุสาน (DP ไม่เกิน 4) นำมาแทนที่ Creature เป้าหมายในสนามเป็นเวลา 2 เทิร์น`,
         image: "images/EnigmaMG/Oversoul.jpg"
@@ -458,6 +468,7 @@ const MG_enigmaData = [
         dp: 4,
         type: "Action",
         set: "อินิกม่า",
+        rarity: "Golden_Rare",
         clan: "",
         ability: `<span class="hlabi">Effect :</span> <br> Creature ที่รวมร่างจะไม่รับผลของ Action Card เป็นเวลา 2 เทิร์น`,
         image: "images/EnigmaMG/Guardianship.jpg"
@@ -822,6 +833,7 @@ const MG_enigmaData = [
     dp: 2,
     type: "Armor",
     set: "อินิกม่า",
+    rarity: "Golden_Rare",
     clan: "",
     ability: `<span class="hlabi">Skill :</span> <br> • Creature ที่สวมใส่ไม่ตกเป็นเป้าหมายของ Action Card ของฝ่ายตรงข้าม <br> • <span class="hlmanual">Manual</span> ใช้ DP 2 : เรารับ DP 3 และนำการ์ดใบนี้ลงสุสาน`,
     image: "images/EnigmaMG/Faahsai Gemstone.jpg"
@@ -834,6 +846,7 @@ const MG_enigmaData = [
     dp: 3,
     type: "Armor",
     set: "อินิกม่า",
+    rarity: "Golden_Rare",
     clan: "",
     ability: `<span class="hlabi">Skill :</span> <br> Creature ที่สวมใส่ สามารถข้ามไปโจมตีการ์ดใน DF Line ได้`,
     image: "images/EnigmaMG/Dragon Wing.jpg"
@@ -846,6 +859,7 @@ const MG_enigmaData = [
     dp: 3,
     type: "Armor",
     set: "อินิกม่า",
+    rarity: "Golden_Rare",
     clan: "",
     ability: `<span class="hlabi">Skill :</span> <br> Creature ที่สวมใส่ สามารถสั่งโจมตีได้ 2 ครั้ง`,
     image: "images/EnigmaMG/Twin Blade.jpg"

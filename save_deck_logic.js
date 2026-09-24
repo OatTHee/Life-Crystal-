@@ -17,6 +17,7 @@ function saveOverwrite() {
         currentCollections[index].name = deckName;
         currentCollections[index].cards = JSON.parse(JSON.stringify(myDeck));
         currentCollections[index].cover = getDeckCoverURL(); 
+        currentCollections[index].format = (typeof getDeckFormatKey === 'function') ? getDeckFormatKey() : undefined;
         currentCollections[index].timestamp = new Date().toLocaleString() + " (แก้ไข)";
         
         // 4. เซฟกลับลง Storage และอัปเดตตัวแปร Global ให้ตรงกัน
@@ -45,6 +46,7 @@ function saveAsNew() {
         name: deckName,
         cards: JSON.parse(JSON.stringify(myDeck)),
         cover: getDeckCoverURL(),
+        format: (typeof getDeckFormatKey === 'function') ? getDeckFormatKey() : undefined,
         timestamp: new Date().toLocaleString()
     };
 

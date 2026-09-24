@@ -92,6 +92,19 @@ const banlistData = {
         ]
     },
 
+    "Classic": {
+        name: "คลาสสิค (Classic)",
+        // ใช้ได้เฉพาะการ์ดจากชุดเหล่านี้ — ใบอื่นทั้งหมดถูกแบนอัตโนมัติ (คำนวณตอนโหลดหน้า)
+        // หมายเหตุ: การ์ดในชุด "รีอินิกม่า" ที่ id ตรงกับการ์ดชุด "อินิกม่า" (ริปริ้นท์/อาร์ตใหม่ เช่น Dracorex DE051)
+        // ยังใช้ได้ เพราะระบบเช็คจาก id — ถือเป็นการ์ดใบเดียวกัน
+        allowedSets: ["ออริจินอล", "อินิกม่า", "คาแร็คเตอร์"],
+        banned: [],            // แบนเพิ่มเองได้ตามปกติ (จะรวมกับรายการแบนอัตโนมัติ)
+        limited: [],
+        limit_if_no_commander: [],
+        conflict_groups: [],
+        conditional_limits: []
+    },
+
     "No_Meta": {
         name: "โนเมต้า",
         banned: [
@@ -194,10 +207,11 @@ function getActiveConditionalRule(cardId) {
     const format = banlistData[currentBanlistFormat] || banlistData["None"];
     if (!format || !format.conditional_limits || typeof myDeck === 'undefined') return null;
 
+    const deck = (typeof getRuleDeck === 'function') ? getRuleDeck() : myDeck; // โหมดดูการ์ด = เด็คว่าง
     const strId = String(cardId);
     for (const rule of format.conditional_limits) {
         if (!rule.target || !rule.target.includes(strId)) continue;
-        if (myDeck.some(c => rule.trigger.includes(String(c.id)))) return rule;
+        if (deck.some(c => rule.trigger.includes(String(c.id)))) return rule;
     }
     return null;
 }
@@ -214,12 +228,15 @@ function computeCardBanStatus(card) {
 
     const id = String(card.id);
     const types = Array.isArray(card.type) ? card.type : (card.type ? [card.type] : []);
+    // เด็คที่ใช้คิดเงื่อนไข — โหมดดูการ์ดถือว่าเด็คว่าง (แสดงแบน/ลิมิตตามฟอร์แมตอย่างเดียว)
+    const ruleDeck = (typeof getRuleDeck === 'function') ? getRuleDeck()
+        : (typeof myDeck !== 'undefined' ? myDeck : []);
 
     // 0) ข้อยกเว้นแบน (overridesBan) ต้องเช็คก่อนเสมอ
-    if (format.conditional_limits && typeof myDeck !== 'undefined') {
+    if (format.conditional_limits) {
         for (const rule of format.conditional_limits) {
             if (!rule.overridesBan || !rule.target.includes(id)) continue;
-            if (myDeck.some(c => rule.trigger.includes(String(c.id)))) {
+            if (ruleDeck.some(c => rule.trigger.includes(String(c.id)))) {
                 result.maxLimit = rule.limit;
                 result.isLimited = (rule.limit === 1);
                 result.reason = rule.message || '';
@@ -240,7 +257,7 @@ function computeCardBanStatus(card) {
     if (format.limited && format.limited.includes(id)) {
         result.maxLimit = 1; result.isLimited = true;
     } else if (format.limit_if_no_commander && format.limit_if_no_commander.includes(id)) {
-        const hasCommander = typeof myDeck !== 'undefined' && myDeck.some(c => c.isCommander);
+        const hasCommander = ruleDeck.some(c => c.isCommander);
         if (!hasCommander) { result.maxLimit = 1; result.isLimited = true; }
     }
 
@@ -251,6 +268,13 @@ function computeCardBanStatus(card) {
         result.reason = condRule.message || '';
         result.isBanned = (condRule.limit === 0);
         result.isLimited = (condRule.limit === 1);
+    }
+
+    // 4) กฎใบซ้ำของฟอร์แมต (deck_format.js) — ไม่นับเป็นป้าย Limit ของ Banlist
+    const fc = (typeof getFormatCopyLimit === 'function') ? getFormatCopyLimit(card, currentBanlistFormat) : null;
+    if (fc && fc.limit < result.maxLimit) {
+        result.maxLimit = fc.limit;
+        if (!result.reason) result.reason = fc.reason;
     }
 
     return result;
@@ -268,10 +292,48 @@ function buildBanlistBadgeHtml(status) {
     return '';
 }
 
+// --- ฟอร์แมตที่จำกัดชุดการ์ด (allowedSets) ---
+// สร้างรายการแบนอัตโนมัติ: การ์ดที่ id ไม่มีอยู่ในชุดที่อนุญาตเลยแม้แต่ใบเดียว = แบน
+// ต้องเรียกหลังจากมี cardsData แล้ว (เรียกจาก main.js)
+function applySetRestrictedFormats(cards) {
+    if (!Array.isArray(cards)) return;
+    Object.values(banlistData).forEach(format => {
+        if (!Array.isArray(format.allowedSets) || format.allowedSets.length === 0) return;
+
+        // id ที่ถูกกฎ = id ที่มีอย่างน้อย 1 ใบอยู่ในชุดที่อนุญาต
+        const legalIds = new Set(
+            cards.filter(c => format.allowedSets.includes(c.set)).map(c => String(c.id))
+        );
+
+        const manual = format._manualBanned || (format._manualBanned = [...(format.banned || [])]);
+        const autoBanned = [...new Set(
+            cards.map(c => String(c.id)).filter(id => !legalIds.has(id))
+        )];
+
+        format._setBannedIds = new Set(autoBanned);
+        format.banned = [...new Set([...manual, ...autoBanned])];
+    });
+}
+
+// เหตุผลที่การ์ดโดนแบนเพราะ "ไม่อยู่ในชุดที่ฟอร์แมตนี้อนุญาต" (null = ไม่ใช่กรณีนี้)
+function getSetBanReason(cardId) {
+    if (typeof banlistData === 'undefined' || typeof currentBanlistFormat === 'undefined') return null;
+    const format = banlistData[currentBanlistFormat];
+    if (!format || !format._setBannedIds || !format._setBannedIds.has(String(cardId))) return null;
+    return `ฟอร์แมต${format.name} ใช้ได้เฉพาะการ์ดชุด ${format.allowedSets.join(' / ')}`;
+}
+
 let currentBanlistFormat = localStorage.getItem('dinomaster_banlist_format') || "None";
 
 // ... (ส่วน Logic ด้านล่างคงเดิม) ...
+// จำนวนใบสูงสุดที่ใส่ได้ = กฎ Banlist (ด้านล่าง) ∩ กฎใบซ้ำของฟอร์แมต (deck_format.js เช่น คลาสสิค DP 4+ ใบเดียว)
 function getCardMaxLimit(card) {
+    const base = getCardMaxLimitBase(card);
+    const fc = (typeof getFormatCopyLimit === 'function') ? getFormatCopyLimit(card, currentBanlistFormat) : null;
+    return fc ? Math.min(base, fc.limit) : base;
+}
+
+function getCardMaxLimitBase(card) {
     const format = banlistData[currentBanlistFormat] || banlistData["None"];
     const cardId = String(card.id);
 
@@ -333,6 +395,9 @@ function changeBanlistFormat(formatKey) {
         updateAllButtonStates();
     }
     
+    // 2.1 ฟอร์แมตรายเด็ค: sync ตัวเลือก / ตัวนับ / ตัวตรวจเด็ค (deck_format.js)
+    if (typeof onDeckFormatChanged === 'function') onDeckFormatChanged();
+
     // 3. แจ้งเตือน (Feedback)
     if (typeof showQuickFeedback === 'function') {
         showQuickFeedback(null, `สลับเป็น ${banlistData[formatKey].name}`, "#3498db");

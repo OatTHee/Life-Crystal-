@@ -43,15 +43,18 @@ function isClanRestrictedCard(card) {
  */
 function getDeckClanRestrictions() {
     const rules = [];
-    if (typeof myDeck === 'undefined' || !Array.isArray(myDeck)) return rules;
+    // โหมดดูการ์ด: ไม่มีกฎเผ่าจากเด็ค (ดู getRuleDeck ใน small_script.js)
+    const deck = (typeof getRuleDeck === 'function') ? getRuleDeck()
+        : ((typeof myDeck !== 'undefined' && Array.isArray(myDeck)) ? myDeck : []);
+    if (deck.length === 0) return rules;
 
-    const commander = myDeck.find(c => c.isCommander);
+    const commander = deck.find(c => c.isCommander);
     if (commander) {
         const clans = getClanArray(commander.clan);
         if (clans.length) rules.push({ source: 'commander', label: 'คอมมานเดอร์', card: commander, clans });
     }
 
-    const lc = myDeck.find(c => c.type === "LC");
+    const lc = deck.find(c => c.type === "LC");
     if (lc) {
         const clans = getClanArray(lc.clan);
         if (clans.length) rules.push({ source: 'lc', label: 'ไลฟ์คริสตัล', card: lc, clans });
@@ -117,6 +120,7 @@ function getDeckLifeCrystal() {
 // คืน { short, message } ถ้าติด หรือ null ถ้าใส่ได้
 function findCommanderLcConflict(card) {
     if (!card || card.type !== "LC") return null;
+    if (typeof isBuildMode === 'function' && !isBuildMode()) return null; // โหมดดูการ์ด
 
     const commander = getDeckCommander();
     if (!commander) return null;
@@ -194,9 +198,16 @@ const ClanSortEngine = {
             const originalRenderCards = window.renderCards;
 
             window.renderCards = function(cards) {
-                const sortedCards = ClanSortEngine.sort(cards);
+                // ถ้ามีระบบเรียงลำดับหลัก (card_sort_logic.js) ให้ใช้ตัวนั้น
+                // (รวม: ใบใส่ได้ก่อนใบเทา -> เผ่าตรงก่อน -> ตัวเลือกเรียงของผู้ใช้)
+                const sortedCards = (typeof CardSortEngine !== 'undefined')
+                    ? CardSortEngine.sort(cards)
+                    : ClanSortEngine.sort(cards);
                 return originalRenderCards(sortedCards);
             };
+
+            // วาดใหม่ 1 รอบหลังติดตั้งเสร็จ ให้การเรียงมีผลตั้งแต่เปิดหน้า
+            if (typeof currentFilteredCards !== 'undefined') window.renderCards(currentFilteredCards);
 
             console.log("🧬 Clan Identity Logic: Activated (Commander + Life Crystal)");
         }

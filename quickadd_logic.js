@@ -152,7 +152,9 @@ function showEditModeHint() {
     const isMobileEditing = (isMobile) && ((typeof isEditMode !== 'undefined') ? isEditMode : false);
 
     // ถ้าไม่เข้าเงื่อนไขเลยสักอย่าง ให้จบฟังก์ชัน (ไม่โชว์ Hint)
-    if (!isPcEditing && !isMobileEditing) return;
+    // โหมดจัดเด็ค (small_script.js) นับเป็นกำลังจัดเด็คเสมอ แม้ย่อพาเนลอยู่
+    const inBuildMode = (typeof isBuildMode === 'function') && isBuildMode();
+    if (!isPcEditing && !isMobileEditing && !inBuildMode) return;
 
     // --- ส่วนสร้าง Element (เหมือนเดิม) ---
     const oldHint = document.querySelector('.edit-mode-hint');

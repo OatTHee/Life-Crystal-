@@ -152,3 +152,120 @@ function initClanFilterIcons() {
         cb.insertAdjacentElement('afterend', img); // วางไว้ระหว่าง checkbox กับข้อความ
     });
 }
+
+// --- 6. อนุกรมวิธาน (Taxonomy) ---
+// ข้อมูลกลางชุดเดียว ใช้ทั้งป้ายใน Modal และตัวกรองขั้นสูง
+// rank: วงศ์ / วงศ์ย่อย / อันดับ — parent = กลุ่มที่ใหญ่กว่า (ใช้แสดงเป็นข้อมูลเสริม)
+const TAXONOMY_INFO = {
+    "Tyrannosauridae":   { clan: "สองขา",          th: "ไทรันโนซอริด",     rank: "วงศ์" },
+    "Abelisauridae":     { clan: "สองขา",          th: "อเบลิซอริด",       rank: "วงศ์" },
+    "Spinosauridae":     { clan: "สองขา",          th: "สไปโนซอริด",       rank: "วงศ์" },
+    "Megalosauridae":    { clan: "สองขา",          th: "เมกะโลซอริด",      rank: "วงศ์" },
+    "Therizinosauridae": { clan: "สองขา",          th: "เธอริซิโนซอริด",   rank: "วงศ์" },
+    "Hadrosauridae":     { clan: "สองขา",          th: "แฮโดรซอริด",       rank: "วงศ์" },
+    "Nodosauridae":      { clan: "มีเกราะหางหนาม", th: "โนโดซอริด",        rank: "วงศ์" },
+    "Ankylosauridae":    { clan: "มีเกราะหางหนาม", th: "แองคิโลซอริด",     rank: "วงศ์" },
+    "Stegosauridae":     { clan: "มีเกราะหางหนาม", th: "สเตโกซอริด",       rank: "วงศ์" },
+    "Chasmosaurinae":    { clan: "มีเขา",          th: "แคสโมซอรีน",       rank: "วงศ์ย่อย", parent: "Ceratopsidae" },
+    "Centrosaurinae":    { clan: "มีเขา",          th: "เซนโทรซอรีน",      rank: "วงศ์ย่อย", parent: "Ceratopsidae" },
+    "Titanosauridae":    { clan: "คอยาว",          th: "ไททันโนซอริด",     rank: "วงศ์" },
+    "Diplodocidae":      { clan: "คอยาว",          th: "ดิพโลโดซิด",       rank: "วงศ์" },
+    "Elasmosauridae":    { clan: "สัตว์น้ำ",        th: "อีแลสโมซอริด",     rank: "วงศ์" },
+    "Leptocleididae":    { clan: "สัตว์น้ำ",        th: "เล็ปโตไคลดิด",     rank: "วงศ์" },
+    "Pliosauridae":      { clan: "สัตว์น้ำ",        th: "ไพลโอซอริด",       rank: "วงศ์" },
+    "Ichthyosauria":     { clan: "สัตว์น้ำ",        th: "อิกทิโอซอร์",      rank: "อันดับ" },
+    "Pteranodontidae":   { clan: "มีปีก",          th: "เทอราโนดอนทิด",    rank: "วงศ์" },
+    "Rhamphorhynchidae": { clan: "มีปีก",          th: "แรมโฟรินคิด",      rank: "วงศ์" },
+    "Anurognathidae":    { clan: "มีปีก",          th: "อนูโรกนาธิด",      rank: "วงศ์" },
+    "Ornithocheiridae":  { clan: "มีปีก",          th: "ออร์นิโธแคริด",    rank: "วงศ์" },
+    "Azhdarchidae":      { clan: "มีปีก",          th: "อัซดาร์คิด",       rank: "วงศ์" }
+};
+
+// ป้ายอนุกรมวิธานใน Modal (คืนค่าว่างถ้าการ์ดไม่มี taxonomy)
+function renderTaxonomyBadge(taxonomy) {
+    if (!taxonomy) return '';
+    const info = TAXONOMY_INFO[taxonomy] || { rank: "วงศ์", th: "" };
+    const icon = info.clan ? getClanIconFile(info.clan) : null;
+    const sub = [info.th, info.parent ? `วงศ์ ${info.parent}` : ''].filter(Boolean).join(' · ');
+    return `<span class="taxo-badge" title="${info.rank} ${taxonomy}">` +
+           (icon ? `<img class="clan-icon" src="${icon}" alt="${info.clan}">` : '') +
+           `<span class="taxo-rank">${info.rank}</span>` +
+           `<span class="taxo-name">${taxonomy}</span>` +
+           (sub ? `<span class="taxo-sub">(${sub})</span>` : '') +
+           `</span>`;
+}
+
+// สร้างรายการเลือกอนุกรมวิธาน (เลือกได้หลายอัน) จัดกลุ่มตามเผ่า พร้อมไอคอนเผ่า + จำนวนการ์ด
+function initTaxonomyFilter(cards) {
+    const box = document.getElementById('advTaxonomy');
+    if (!box || box.dataset.ready) return;
+    const counts = {};
+    (cards || []).forEach(c => { if (c.taxonomy) counts[c.taxonomy] = (counts[c.taxonomy] || 0) + 1; });
+
+    const clanOrder = ["สองขา", "มีเกราะหางหนาม", "มีเขา", "คอยาว", "สัตว์น้ำ", "มีปีก"];
+    const names = Object.keys(TAXONOMY_INFO);
+    // taxonomy ที่มีในข้อมูลแต่ยังไม่ได้ลงตาราง ให้ไปอยู่กลุ่ม "อื่นๆ"
+    Object.keys(counts).forEach(t => { if (!TAXONOMY_INFO[t]) names.push(t); });
+
+    let html = '';
+    [...clanOrder, null].forEach(clan => {
+        const list = names.filter(t => ((TAXONOMY_INFO[t] || {}).clan || null) === clan);
+        if (!list.length) return;
+        const icon = clan ? getClanIconFile(clan) : null;
+        html += `<div class="taxo-group">` +
+                `<div class="taxo-group-title">${icon ? `<img class="clan-filter-icon" src="${icon}" alt="">` : ''}${clan ? 'เผ่า' + clan : 'อื่นๆ'}</div>` +
+                `<div class="taxo-chips">` +
+                list.map(t => `<label class="taxo-chip"><input type="checkbox" value="${t}">` +
+                    (icon ? `<img class="clan-filter-icon" src="${icon}" alt="">` : '') +
+                    `<span>${t}</span><small>${counts[t] || 0}</small></label>`).join('') +
+                `</div></div>`;
+    });
+    box.innerHTML = html;
+    box.dataset.ready = '1';
+}
+
+function getSelectedTaxonomies() {
+    return Array.from(document.querySelectorAll('#advTaxonomy input:checked')).map(cb => cb.value);
+}
+
+function setSelectedTaxonomies(values) {
+    const set = new Set(values || []);
+    document.querySelectorAll('#advTaxonomy input[type="checkbox"]').forEach(cb => cb.checked = set.has(cb.value));
+}
+
+// --- 7. ค่าพลังเมื่อรวมฝูง (Herd Power) ---
+// ข้อมูลอยู่ใน card_stats.js -> herd: [{ x: 2, at: 1800 }, { x: 3, at: 2500, df: 2000 }]
+// จำลองหน้าตาแถบ "[โลโก้เผ่า] X 2 ➜ ATTACK 2100" ที่พิมพ์อยู่บนหน้าการ์ด
+function renderHerdPower(card) {
+    const rows = card && Array.isArray(card.herd) ? card.herd : [];
+    if (!rows.length) return '';
+
+    const clanName = splitClanList(card.clan)[0];
+    const icon = clanName ? getClanIconFile(clanName) : null;
+    const iconHTML = icon
+        ? `<img class="herd-clan" src="${icon}" alt="${clanName}" title="เผ่า${clanName}">`
+        : '';
+    const arrow = `<svg class="herd-arrow" viewBox="0 0 40 24" aria-hidden="true">` +
+                  `<path d="M2 7h19V1l17 11-17 11v-6H2z"/></svg>`;
+    const fmt = n => Number(n).toLocaleString('en-US').replace(/,/g, '');
+
+    const rowHTML = rows.map(r => {
+        const stats = [];
+        if (r.at != null) stats.push(`<span class="herd-lbl at">ATTACK</span><span class="herd-val">${fmt(r.at)}</span>`);
+        if (r.df != null) stats.push(`<span class="herd-lbl df">DEFENCE</span><span class="herd-val">${fmt(r.df)}</span>`);
+        return `<div class="herd-pill${stats.length > 1 ? ' two' : ''}">` +
+                   iconHTML +
+                   `<span class="herd-x"><small>X</small>${r.x}</span>` +
+                   arrow +
+                   `<span class="herd-stats">${stats.join('')}</span>` +
+               `</div>`;
+    }).join('');
+
+    return `<div class="herd-power">` +
+               `<div class="herd-title">พลังเมื่อรวมฝูง</div>` +
+               `<div class="herd-board">${rowHTML}</div>` +
+               (card.herdByRule
+                   ? `<div class="herd-note">หน้าการ์ดไม่ได้ระบุค่ารวมฝูง ใช้กฎฟอร์แมตหลัก: AT +600 ต่อตัว (สูงสุด x3) · DF ใช้ค่าเดิม</div>`
+                   : '') +
+           `</div>`;
+}

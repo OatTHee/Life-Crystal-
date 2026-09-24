@@ -177,7 +177,9 @@ function renderCards(cards) {
     container.innerHTML = ''; 
 
     if (cards.length === 0) {
-        container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">ไม่พบการ์ดที่คุณค้นหา</p>';
+        // ช่วยหาทางออก: ตัวกรองที่ติดอยู่ / ชื่อที่ใกล้เคียง (site_extras.js)
+        if (typeof renderEmptySearchHelp === 'function') renderEmptySearchHelp(container);
+        else container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">ไม่พบการ์ดที่คุณค้นหา</p>';
         return; 
     }
 

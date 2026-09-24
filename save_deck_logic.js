@@ -22,6 +22,7 @@ function saveOverwrite() {
         
         // 4. เซฟกลับลง Storage และอัปเดตตัวแปร Global ให้ตรงกัน
         localStorage.setItem('dinomaster_collections', JSON.stringify(currentCollections));
+        if (window.lcLastWriteOk === false) return; // พื้นที่เต็ม — lc_storage.js แจ้งเตือนแล้ว
         if (window.hasOwnProperty('myCollections')) myCollections = currentCollections;
 
         isUnsaved = false;
@@ -55,6 +56,10 @@ function saveAsNew() {
     
     // 3. เซฟลง Storage และอัปเดต Global
     localStorage.setItem('dinomaster_collections', JSON.stringify(currentCollections));
+    if (window.lcLastWriteOk === false) {   // พื้นที่เต็ม — เซฟไม่สำเร็จ
+        alert(`❌ เซฟเด็ค "${deckName}" ไม่สำเร็จ เพราะพื้นที่เก็บข้อมูลเต็ม\nกรุณาสำรองข้อมูลแล้วลบเด็คที่ไม่ใช้ก่อน`);
+        return;
+    }
     if (window.hasOwnProperty('myCollections')) myCollections = currentCollections;
     
     currentEditingDeckId = newSave.id;

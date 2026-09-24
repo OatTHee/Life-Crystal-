@@ -560,7 +560,7 @@ nameTH: "ชุดเร่งลาวา",
 nameEN: "Lava Urgent Suit",
 dp: 2,
 type: "Armor",
-set: "",
+set: "นิวมาสเตอร์",
 clan: "มีเขา",
 ability:`<span class="hlabi">Skill :</span> <br> <span class="hlcont">Cont.</span> Creature ที่สวมใส่ปรับค่า AT+400 / DF-300`
 ,

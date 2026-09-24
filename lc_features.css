@@ -437,3 +437,153 @@
     border-radius: 8px;
     color: #ffe08a; font-size: 14px;
 }
+
+/* ---------- 12. สำรอง / กู้คืนข้อมูลทั้งหมด (backup_all.js) ---------- */
+.backup-bar {
+    padding: 10px 14px;
+    background: #202030;
+    border-bottom: 1px solid #333;
+    font-family: 'Kanit', sans-serif;
+}
+.backup-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.backup-bar .backup-btn {
+    height: 34px; padding: 0 14px;
+    font-family: 'Kanit', sans-serif; font-size: 13px;
+    background: #2f3446; color: #eee;
+    border: 1px solid #454b60; border-radius: 8px;
+    box-shadow: none; transform: none; cursor: pointer;
+}
+.backup-bar .backup-btn:hover { background: #3c4360; transform: none; box-shadow: none; }
+.backup-bar .backup-btn.is-primary { background: #1e8449; border-color: #27ae60; color: #fff; }
+.backup-bar .backup-btn.is-primary:hover { background: #239b56; }
+.backup-status { display: block; margin-top: 6px; font-size: 12px; color: #9a9ab0; }
+.backup-status.is-warn { color: #ffb37a; }
+
+.restore-options { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.lc-dialog .restore-opt {
+    display: block; width: 100%; text-align: left;
+    padding: 10px 12px; border-radius: 10px;
+    background: #2b2b3a; color: #eee; border: 1px solid #454b60;
+    font-family: 'Kanit', sans-serif; font-size: 14px; cursor: pointer;
+}
+.lc-dialog .restore-opt small { display: block; color: #aaa; font-size: 12px; margin-top: 2px; }
+.lc-dialog .restore-opt:hover { background: #363650; }
+.lc-dialog .restore-opt.is-recommended { border-color: #27ae60; }
+.lc-dialog .restore-opt.is-danger b { color: #ff9a9a; }
+.restore-tag { background: #27ae60; color: #fff; font-size: 11px; border-radius: 8px; padding: 0 6px; margin-left: 4px; }
+
+/* ---------- 13. ปุ่ม "✨ มีอะไรใหม่" (whats_new.js) ---------- */
+h1.main-title .whats-new-btn {
+    position: relative;
+    align-self: center;
+    flex-shrink: 0;
+    height: 30px;
+    padding: 0 12px;
+    font-family: 'Kanit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: #1a1a1a;
+    background: linear-gradient(135deg, #ffe066, #ffb347);
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 0 0 2px rgba(255, 224, 102, 0.25), 0 4px 12px rgba(255, 179, 71, 0.35);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+}
+h1.main-title .whats-new-btn:hover {
+    background: linear-gradient(135deg, #fff08a, #ffc266);
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(255, 224, 102, 0.35), 0 6px 16px rgba(255, 179, 71, 0.45);
+}
+/* ยังไม่เคยเปิดดูเวอร์ชันนี้ → จุดแดงกระพริบ + แสงวิ้ง */
+h1.main-title .whats-new-btn.is-new::after {
+    content: "";
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: #ff4757;
+    border: 2px solid #1e1e2e;
+    animation: wn-ping 1.6s ease-out infinite;
+}
+h1.main-title .whats-new-btn.is-new { animation: wn-glow 2.4s ease-in-out infinite; }
+@keyframes wn-ping {
+    0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+    80%, 100% { box-shadow: 0 0 0 9px rgba(255, 71, 87, 0); }
+}
+@keyframes wn-glow {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(255, 224, 102, 0.25), 0 4px 12px rgba(255, 179, 71, 0.35); }
+    50% { box-shadow: 0 0 0 4px rgba(255, 224, 102, 0.45), 0 4px 20px rgba(255, 179, 71, 0.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+    h1.main-title .whats-new-btn.is-new, h1.main-title .whats-new-btn.is-new::after { animation: none; }
+}
+@media (max-width: 768px) {
+    /* มือถือ: เหลือแค่ ✨ + จุดแดง ไม่ดันหัวเว็บตกบรรทัด */
+    h1.main-title { font-size: 19px !important; gap: 8px !important; }
+    h1.main-title .whats-new-btn { width: 28px; height: 28px; padding: 0; font-size: 14px; }
+    h1.main-title .whats-new-btn .wn-text { display: none; }
+}
+
+.whats-new-box { width: min(520px, 100%); }
+.whats-new-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.whats-new-list li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 9px 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+}
+.whats-new-list .wn-icon { font-size: 20px; line-height: 1.3; flex-shrink: 0; }
+.whats-new-list .wn-body b { display: block; font-size: 14.5px; color: #fff; }
+.whats-new-list .wn-body small { display: block; font-size: 12.5px; color: #b8b8c8; line-height: 1.5; margin-top: 2px; }
+.lc-dialog .whats-new-list .wn-try {
+    margin-top: 6px; padding: 3px 12px; height: auto;
+    font-family: 'Kanit', sans-serif; font-size: 12.5px;
+    background: #6c5ce7; color: #fff; border: 0; border-radius: 14px; cursor: pointer;
+}
+.lc-dialog .whats-new-list .wn-try:hover { background: #8577f0; }
+
+/* ---------- 14. ค้นหาไม่เจอ (site_extras.js) ---------- */
+.empty-search {
+    width: 100%;
+    max-width: 640px;
+    margin: 30px auto;
+    padding: 18px 20px;
+    background: rgba(20, 20, 32, 0.92);
+    border: 1px solid #454b60;
+    border-radius: 14px;
+    color: #ddd;
+    font-family: 'Kanit', sans-serif;
+    text-align: center;
+}
+.es-title { font-size: 18px; color: #fff; margin-bottom: 10px; }
+.es-title b { color: #ffd900; }
+.es-chips, .es-similar { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; margin: 8px 0; font-size: 13px; }
+.es-chips > span:first-child, .es-similar > span:first-child { color: #9a9ab0; }
+.es-chip { background: #2f3446; border: 1px solid #454b60; border-radius: 12px; padding: 2px 10px; color: #ffd27a; }
+.es-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0 4px; }
+.empty-search .es-btn, .empty-search .es-name {
+    font-family: 'Kanit', sans-serif; font-size: 14px;
+    padding: 7px 14px; border-radius: 18px;
+    background: #2f3446; color: #eee; border: 1px solid #454b60;
+    box-shadow: none; transform: none; cursor: pointer;
+}
+.empty-search .es-btn.is-primary { background: #07357D; border-color: #1a4a9e; color: #fff; }
+.empty-search .es-btn:hover, .empty-search .es-name:hover { background: #3c4360; transform: none; box-shadow: none; }
+.empty-search .es-btn.is-primary:hover { background: #0b4db3; }
+.empty-search .es-name { padding: 4px 12px; font-size: 13px; background: #e1ecff; color: #0a3a8c; border-color: #7fa8f5; }
+.empty-search .es-name:hover { background: #1a5fd6; color: #fff; }
+
+/* ---------- 15. ป้ายข้อมูลการ์ดล่าสุด (แถบล่าง) ---------- */
+.nav-left .data-updated {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    border-left: 1px solid #555;
+    padding-left: 12px;
+    white-space: nowrap;
+}
+@media (max-width: 768px) {
+    .nav-left .data-updated { display: none; }
+}

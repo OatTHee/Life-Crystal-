@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <link rel="icon" type="image/png" href="logo.png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Crystal│Dinomaster TCG</title>
+    <meta name="description" content="ฐานข้อมูลการ์ด Dinomaster ครบทุกชุด ค้นหาการ์ด ดูความสามารถ จัดเด็ค ตรวจเด็คตามฟอร์แมต ทำใบลงทะเบียนทัวร์ และแชร์เด็คได้ทันที">
+    <meta name="theme-color" content="#07357D">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo2.png">
 
-    <title>Life Crystal│Dinomaster TCG </title>
-<meta name="description" content="เครื่องมือจัดเด็ค Dinomaster ที่เร็วที่สุด ค้นหาการ์ดง่าย จำลองมือเริ่มต้น และแชร์เด็คได้ทันที">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://oatthee.github.io/Life-Crystal-/">
-<meta property="og:title" content="Life-Crystal | Dinomaster Deck Builder">
-<meta property="og:description" content="คลังข้อมูลการ์ดและระบบจัดเด็ค Dinomaster ครบวงจร">
-<meta property="og:image" content="https://oatthee.github.io/Life-Crystal-/images/og-preview.png"> <meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://oatthee.github.io/Life-Crystal-/">
-<meta property="twitter:title" content="Life-Crystal | Dinomaster Deck Builder">
-<meta property="twitter:description" content="เครื่องมือจัดเด็ค Dinomaster สำหรับนักเล่นการ์ด">
-<meta property="twitter:image" content="https://oatthee.github.io/Life-Crystal-/images/og-preview.png">
+    <!-- ป้ายพรีวิวเวลาแชร์ลิงก์ (Facebook / Discord / LINE / X) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Life Crystal">
+    <meta property="og:locale" content="th_TH">
+    <meta property="og:url" content="https://oatthee.github.io/Life-Crystal-/">
+    <meta property="og:title" content="Life Crystal │ ฐานข้อมูลการ์ด & จัดเด็ค Dinomaster">
+    <meta property="og:description" content="ค้นหาการ์ด Dinomaster ทุกชุด ดูความสามารถ จัดเด็ค ตรวจเด็คลงแข่ง และแชร์ลิงก์เด็คให้เพื่อนได้ทันที">
+    <meta property="og:image" content="https://oatthee.github.io/Life-Crystal-/images/og-preview.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Life Crystal - Dinomaster Full Scale War Saga">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Life Crystal │ ฐานข้อมูลการ์ด & จัดเด็ค Dinomaster">
+    <meta name="twitter:description" content="ค้นหาการ์ด Dinomaster ทุกชุด ดูความสามารถ จัดเด็ค ตรวจเด็คลงแข่ง และแชร์ลิงก์เด็คให้เพื่อนได้ทันที">
+    <meta name="twitter:image" content="https://oatthee.github.io/Life-Crystal-/images/og-preview.jpg">
 
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="filterdiv.css?v=1.6">
@@ -36,7 +45,7 @@
     <link rel="stylesheet" href="quickadd.css"> 
     <link rel="stylesheet" href="modal_button.css"> 
     <link rel="stylesheet" href="res_limited.css"> 
-    <link rel="stylesheet" href="lc_features.css?v=7">
+    <link rel="stylesheet" href="lc_features.css?v=10">
     <link rel="stylesheet" href="build_compact.css?v=1">
 
     <style>
@@ -387,6 +396,7 @@ body::before {
        <h1 class="main-title">
     <span>ฐานข้อมูลการ์ด Dinomaster</span>        
     <img src="logo2.png" width="50" alt="Dinomaster Logo">
+    <button type="button" id="whatsNewBtn" class="whats-new-btn" onclick="openWhatsNew()" title="ดูฟีเจอร์ใหม่ล่าสุด" aria-label="มีอะไรใหม่">✨<span class="wn-text"> มีอะไรใหม่</span></button>
 </h1>
 
         <button id="backToTop" title="Go to top">
@@ -620,6 +630,7 @@ body::before {
                 <div class="dp-menu-sep"></div>
                 <button role="menuitem" onclick="deckMenuRun(() => document.getElementById('importDeckInput').click())"><i class="fa-solid fa-file-import"></i> นำเข้าไฟล์ .json</button>
                 <button role="menuitem" onclick="deckMenuRun(exportDeckToFile)"><i class="fa-solid fa-download"></i> ดาวน์โหลดไฟล์ .json</button>
+                <button role="menuitem" onclick="deckMenuRun(exportAllData)"><i class="fa-solid fa-box-archive"></i> สำรองข้อมูลทั้งหมด (ทุกเด็ค)</button>
                 <div class="dp-menu-sep"></div>
                 <button role="menuitem" class="is-danger" onclick="deckMenuRun(clearDeck)"><i class="fa-solid fa-trash"></i> ล้างเด็คทั้งหมด</button>
             </div>
@@ -673,6 +684,15 @@ body::before {
                 <h3 style="color: #ffffff; margin: 15px;">
  
 <i class="fa-solid fa-book"></i> คอลเล็คชั่นเด็ค</h3>
+            </div>
+            <!-- สำรอง / กู้คืนข้อมูลทั้งหมด (backup_all.js) -->
+            <div class="backup-bar">
+                <div class="backup-actions">
+                    <button type="button" class="backup-btn is-primary" onclick="exportAllData()" title="ดาวน์โหลดไฟล์สำรอง: ทุกเด็ค + การ์ดที่นับไว้ + การตั้งค่า">💾 สำรองข้อมูลทั้งหมด</button>
+                    <button type="button" class="backup-btn" onclick="pickBackupFile()" title="กู้คืนจากไฟล์สำรอง (.json)">📂 กู้คืน</button>
+                    <input type="file" id="backupFileInput" accept=".json,application/json" hidden>
+                </div>
+                <small id="backupStatus" class="backup-status"></small>
             </div>
             <div class="deck-body" id="collectionListContainer"></div>
         </div>
@@ -812,6 +832,7 @@ body::before {
         <span class="info-link">
             <i class="fas fa-info-circle"></i> เกี่ยวกับ & ข้อกำหนด
         </span>
+        <span class="data-updated" id="dataUpdatedLabel"></span>
     </div>
 
     <div class="nav-right">
@@ -941,6 +962,16 @@ body::before {
 การ์ด Fanmade ชุดนี้ถือกำเนิดขึ้นจากความตั้งใจของกลุ่มผู้เล่นที่ต้องการรักษาชีวิตและความหลากหลายของการเล่น 
 Dinomaster ให้ยังคงดำเนินต่อไป ภายใต้ความเชื่อที่ว่า Dinomaster ยังคงเป็นผลงานและทรัพย์สินทางปัญญาของเจ้าของสิทธิ์เดิมเสมอ เราไม่ได้มีเป้าหมายที่จะสร้างเกมขึ้นมาใหม่ เข้ามาแทนที่ หรือแข่งขันกับผลิตภัณฑ์ทางการ แต่ต้องการสร้างรูปแบบการเล่นทางเลือก (Community Format) ที่ช่วยเติมสีสัน ลดความจำเจของเมต้า และเปิดโอกาสให้เด็คที่หลากหลายกลับมามีบทบาทอีกครั้ง โดยยังคงยึดโยงอยู่กับการ์ดและระบบการเล่นดั้งเดิมเป็นหัวใจสำคัญ การ์ด Fanmade ทุกใบจึงเป็นเพียงสื่อกลางที่ชุมชนร่วมกันสร้างขึ้นเพื่อดูแลประสบการณ์การเล่นของผู้เล่น และพร้อมที่จะปรับเปลี่ยน ยุติ หรือส่งต่อความร่วมมือให้กับเจ้าของสิทธิ์ หากวันหนึ่งมีการกลับมาพัฒนาเกมอย่างเป็นทางการอีกครั้ง เพราะเป้าหมายสูงสุดของเราไม่ใช่การสร้าง Dinomaster เวอร์ชันใหม่ แต่คือการทำให้ผู้คนยังคงมีพื้นที่ในการเล่นและรัก Dinomaster ร่วมกันต่อไป
 
+<h3>9. ความเป็นส่วนตัวและคุกกี้ (PDPA)</h3>
+<h4>ข้อมูลเด็คของคุณ:</h4> เด็ค คอลเล็คชั่น จำนวนการ์ดที่นับไว้ และชื่อในเซิร์ฟเวอร์ที่กรอกในใบลงทะเบียน
+ถูกเก็บไว้ <b>ในเบราว์เซอร์ของเครื่องคุณเท่านั้น</b> (localStorage) ไม่ได้ถูกส่งไปเก็บที่เซิร์ฟเวอร์ใด ๆ
+หากล้างข้อมูลเบราว์เซอร์ ข้อมูลจะหายไป — แนะนำให้กด "สำรองข้อมูลทั้งหมด" ในหน้าคอลเล็คชั่นเก็บไว้<br>
+<h4>สถิติการใช้งาน:</h4> เว็บไซต์ใช้ Google Analytics เพื่อนับจำนวนผู้เข้าชมและการใช้งานโดยรวมแบบไม่ระบุตัวตน
+ซึ่งอาจมีการใช้คุกกี้ของ Google หากไม่ต้องการ สามารถปิดคุกกี้ของบุคคลที่สามในการตั้งค่าเบราว์เซอร์ได้
+โดยการใช้งานเว็บไซต์ต่อ ถือว่าคุณรับทราบนโยบายนี้<br>
+<h4>ลิงก์และไฟล์ที่แชร์:</h4> ลิงก์เด็ค ไฟล์ .json และใบลงทะเบียนจะมีชื่อเด็คและรายการการ์ดอยู่ในนั้น
+โปรดพิจารณาก่อนเผยแพร่<br>
+
         <div class="modal-actions">
             <a href="#" onclick="openDonateModal(); return false;" class="big-donate-btn">
                 <i class="fas fa-heart"></i> สนับสนุนค่ากาแฟ
@@ -956,6 +987,8 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
             <button id="mobileEditModeBtn" onclick="toggleMobileDeckMode()">
                 <span id="editIcon">➕</span> <span id="editText">โหมดจัดเด็ค</span>
             </button>
+    <!-- ต้องมาก่อนทุกไฟล์ที่อ่านเด็คจากเบราว์เซอร์ -->
+    <script src="lc_storage.js?v=1"></script>
 
 
 
@@ -967,11 +1000,11 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="card_data/MG_enigma.js?v=1.4"></script>
 	<script src="card_data/Character.js"></script>
     <script src="card_data/C_Newmaster.js"></script>
-    <script src="card_data/MG_Newmaster.js?v=1"></script>	
+    <script src="card_data/MG_Newmaster.js?v=2"></script>	
     <script src="card_data/MS_newmaster.js"></script>
 	<script src="card_data/MG_Stepnext.js?v=1.2"></script>
     <script src="card_data/ReEnigma.js"></script>
-	<script src="card_data/C_StepNext.js?v=1.1"></script>
+	<script src="card_data/C_StepNext.js?v=1.2"></script>
 	<script src="card_data/MG_AR1.js?v=1"></script>
 	<script src="card_data/Armored_Dino.js?v=1.1"></script>
 	
@@ -980,7 +1013,7 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="card_data/fanmade_Boost3.js"></script>
     <script src="card_data/fanmade_Boost4.js"></script>
     <script src="card_data/fanmade_Boost5.js?v=1.3"></script>
-    <script src="card_data/fanmade_icefire.js?v=1.1"></script>
+    <script src="card_data/fanmade_icefire.js?v=1.2"></script>
     <script src="card_data/fanmade_Boost6.js"></script>
     <script src="card_data/fanmade_Boost7.js"></script>
     <script src="card_data/fanmade_pr09.js"></script>
@@ -988,11 +1021,11 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
         <script src="banlist_data.js?v=7"></script>
 
     <script src="small_script.js?v=1.2"></script>	
-    <script src="deck_builder_logic.js?v=1.4.10"></script>
+    <script src="deck_builder_logic.js?v=1.4.11"></script>
     <script src="Showcase_logic.js?v=7"></script>	
 	<script src="handsimulate_logic.js"></script>
     <script src="collection_logic.js?v=1.2"></script>
-    <script src="save_deck_logic.js?v=2"></script>
+    <script src="save_deck_logic.js?v=3"></script>
     <script src="capturelogic.js"></script>
     <script src="untap_logic.js"></script>
     <script src="quickadd_logic.js?v=1.4"></script>
@@ -1003,7 +1036,7 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="card_sort_logic.js?v=2"></script>
     <script src="clan_identity_logic.js?v=5"></script>
     <!-- ฟีเจอร์ชุดใหม่: อภิธานศัพท์ / ชื่อการ์ดกดค้นหา / ฟอร์แมตรายเด็ค+ตรวจเด็ค / ลิงก์สั้น / ใบลงทะเบียน / การ์ดที่ขาด -->
-    <script src="keyword_glossary.js?v=2"></script>
+    <script src="keyword_glossary.js?v=3"></script>
     <script src="ability_enhance.js?v=5"></script>
     <script src="search_trail.js?v=1"></script>
     <script src="deck_code.js?v=1"></script>
@@ -1011,6 +1044,9 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="deck_register.js?v=2"></script>
     <script src="showcase_owned.js?v=2"></script>
     <script src="build_compact.js?v=1"></script>
+    <script src="backup_all.js?v=1"></script>
+    <script src="whats_new.js?v=2"></script>
+    <script src="site_extras.js?v=1"></script>
     <script src="card_knowledge_builder.js"></script>
 
     <script src="ai_deck.js"></script>	

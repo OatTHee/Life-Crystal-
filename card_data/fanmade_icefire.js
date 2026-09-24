@@ -112,7 +112,7 @@
     • <span class="hlcont">Cont.</span> Creature ของเราจะไม่ถูกนำกลับขึ้นมือจากผลสำแดง 
     <span style="color:#E8AB00;">(หากเป็นผลสำแดงของฝ่ายเรา จะเลือกให้ยังถูกนำกลับขึ้นมืออยู่ก็ได้)</span> <br> 
     • <span class="hlauto">Auto</span> เมื่อโจมตี/ตกเป็นเป้าหมายการโจมตี : สามารถ <span class="hlkw">
-    [รีมููฟ]</span> Creature 
+    [รีมูฟ]</span> Creature 
     มีเกราะหางหนาม ในสุสาน 1 ใบ ถ้าทำ, ปรับ AT+300 ต่อจำนวนการ์ดบนมือเรา 1 ใบ จนจบการต่อสู้ <br> 
     <span class="hlabi">Skill :</span> <br> 
     • <span class="hlmanual">Manual</span> 

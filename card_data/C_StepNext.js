@@ -215,7 +215,7 @@ const C_StepNextData = [
         set: "สเต็ปเน็ก",
         clan: "คอยาว",
         ability: `<span class="hlabi">Skill :</span> <br> 
-        <span class="hlcont">Cont.</span> <span class="hlkw">[รุุกรับรอบตัว]</span> 
+        <span class="hlcont">Cont.</span> <span class="hlkw">[รุกรับรอบตัว]</span> 
         (ขณะต่อสู้เราสามารถสั่ง Creature ตัวนี้ใช้ค่า AT หรือ DF ต่อสู้ก็ได้ หากใช้ค่า DF ต่อสู้ ค่า SH จะมีผลลดค่า AT 
         ของคู่ต่อสู้ด้วย).`,
         image: "images/StepNext/Saltasaurus.jpg"

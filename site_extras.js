@@ -32,6 +32,8 @@ const CARD_DATA_UPDATED = '2026-09-25';
             if (s.taxonomy && s.taxonomy.length) chips.push(`อนุกรมวิธาน: ${s.taxonomy.join(', ')}`);
             if (s.legendary && s.legendary !== 'all') chips.push(s.legendary === 'yes' ? 'เฉพาะ Legend' : 'ไม่รวม Legend');
         }
+        if (window.lcListFilter === 'fav') chips.push('เฉพาะการ์ดโปรด ★');
+        if (window.lcListFilter === 'recent') chips.push('เฉพาะที่ดูล่าสุด 🕘');
         return chips;
     }
 

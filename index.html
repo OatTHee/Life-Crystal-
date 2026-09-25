@@ -26,7 +26,13 @@
     <meta name="twitter:description" content="ค้นหาการ์ด Dinomaster ทุกชุด ดูความสามารถ จัดเด็ค ตรวจเด็คลงแข่ง และแชร์ลิงก์เด็คให้เพื่อนได้ทันที">
     <meta name="twitter:image" content="https://oatthee.github.io/Life-Crystal-/images/og-preview.jpg">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- ความเร็ว: ต่อเซิร์ฟเวอร์รูป/ฟอนต์ไว้ล่วงหน้า + โหลดตัวจับภาพแบบไม่บล็อกหน้าเว็บ -->
+    <link rel="preconnect" href="https://images.weserv.nl">
+    <link rel="dns-prefetch" href="https://images.weserv.nl">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
@@ -45,7 +51,7 @@
     <link rel="stylesheet" href="quickadd.css"> 
     <link rel="stylesheet" href="modal_button.css"> 
     <link rel="stylesheet" href="res_limited.css"> 
-    <link rel="stylesheet" href="lc_features.css?v=10">
+    <link rel="stylesheet" href="lc_features.css?v=12">
     <link rel="stylesheet" href="build_compact.css?v=1">
 
     <style>
@@ -636,6 +642,13 @@ body::before {
             </div>
         </div>
     </div>
+
+    <!-- โน้ตประจำเด็ค (deck_extras.js) -->
+    <details class="dp-notes" id="deckNotesBox">
+        <summary>📝 โน้ตเด็ค <span id="deckNotesHint" class="dp-notes-hint"></span></summary>
+        <textarea id="deckNotesInput" maxlength="3000" rows="4"
+                  placeholder="จดแผนการเล่น คอมโบ การ์ดที่อยากเปลี่ยน จุดอ่อนที่ต้องระวัง... (บันทึกไปกับเด็คเมื่อกด Save)"></textarea>
+    </details>
 </div>
 
 <div class="deck-body">
@@ -693,6 +706,17 @@ body::before {
                     <input type="file" id="backupFileInput" accept=".json,application/json" hidden>
                 </div>
                 <small id="backupStatus" class="backup-status"></small>
+            </div>
+            <!-- ค้นหา / เรียงเด็ค (deck_extras.js) -->
+            <div class="coll-tools">
+                <input type="search" id="collSearchInput" placeholder="🔍 ค้นหาเด็ค (ชื่อ / โน้ต)" oninput="onCollSearch(this.value)" aria-label="ค้นหาเด็ค">
+                <select id="collSortSelect" onchange="onCollSort(this.value)" aria-label="เรียงเด็ค">
+                    <option value="updated">แก้ล่าสุด</option>
+                    <option value="name">ชื่อ ก-ฮ</option>
+                    <option value="format">ฟอร์แมต</option>
+                    <option value="saved">ลำดับที่เซฟ</option>
+                </select>
+                <small id="collCount" class="coll-count"></small>
             </div>
             <div class="deck-body" id="collectionListContainer"></div>
         </div>
@@ -1021,10 +1045,10 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
         <script src="banlist_data.js?v=7"></script>
 
     <script src="small_script.js?v=1.2"></script>	
-    <script src="deck_builder_logic.js?v=1.4.11"></script>
-    <script src="Showcase_logic.js?v=7"></script>	
+    <script src="deck_builder_logic.js?v=1.4.12"></script>
+    <script src="Showcase_logic.js?v=8"></script>	
 	<script src="handsimulate_logic.js"></script>
-    <script src="collection_logic.js?v=1.2"></script>
+    <script src="collection_logic.js?v=1.3"></script>
     <script src="save_deck_logic.js?v=3"></script>
     <script src="capturelogic.js"></script>
     <script src="untap_logic.js"></script>
@@ -1032,7 +1056,7 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="dynamic_bg.js?v=2"></script>    
     <script src="card_stats.js?v=5"></script>
     <script src="clan_dp_icons.js?v=1.6"></script>
-    <script src="main.js?v=1.8.2"></script>
+    <script src="main.js?v=1.8.3"></script>
     <script src="card_sort_logic.js?v=2"></script>
     <script src="clan_identity_logic.js?v=5"></script>
     <!-- ฟีเจอร์ชุดใหม่: อภิธานศัพท์ / ชื่อการ์ดกดค้นหา / ฟอร์แมตรายเด็ค+ตรวจเด็ค / ลิงก์สั้น / ใบลงทะเบียน / การ์ดที่ขาด -->
@@ -1040,13 +1064,15 @@ Dinomaster ให้ยังคงดำเนินต่อไป ภาย�
     <script src="ability_enhance.js?v=5"></script>
     <script src="search_trail.js?v=1"></script>
     <script src="deck_code.js?v=1"></script>
-    <script src="deck_format.js?v=2"></script>
+    <script src="deck_format.js?v=3"></script>
     <script src="deck_register.js?v=2"></script>
     <script src="showcase_owned.js?v=2"></script>
     <script src="build_compact.js?v=1"></script>
     <script src="backup_all.js?v=1"></script>
-    <script src="whats_new.js?v=2"></script>
-    <script src="site_extras.js?v=1"></script>
+    <script src="whats_new.js?v=3"></script>
+    <script src="site_extras.js?v=2"></script>
+    <script src="deck_extras.js?v=1"></script>
+    <script src="ux_extras.js?v=1"></script>
     <script src="card_knowledge_builder.js"></script>
 
     <script src="ai_deck.js"></script>	

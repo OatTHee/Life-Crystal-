@@ -12,7 +12,7 @@
 //   mainMax      : Main Deck ไม่เกินกี่ใบ
 //   mainExact    : Main Deck ต้องมีพอดีกี่ใบ (ถ้าใส่ จะใช้แทน mainMax)
 //   extraMax     : Extra Deck ไม่เกินกี่ใบ
-//   requireMaster: ต้องมี Master (หรือ Boost Master) 1 ใบ
+//   requireMaster: ต้องมี Master 1 ใบ (Boost Master ไม่นับแทน — เป็นคนละช่อง)
 //   checkSize    : false = ไม่ตรวจจำนวนการ์ด / Master (ใช้กับ "ไม่จำกัด")
 //   copyRule     : กฎจำนวนใบซ้ำพิเศษของการ์ดใน Main Deck (ดู getFormatCopyLimit ด้านล่าง)
 //      highDp      : การ์ดที่ DP ≥ ค่านี้ ใส่ได้ใบเดียว
@@ -169,12 +169,15 @@ function validateDeck(deck, formatKey) {
             add(`Extra Deck เกิน ${rules.extraMax} ใบ (ตอนนี้ ${counts.extra} ใบ)`);
     }
 
-    // 2) Master
-    const masters = deck.filter(c => dfHasType(c, "Master", "Boost_Master"));
+    // 2) Master / Boost Master — เป็นคนละช่อง มีได้อย่างละ 1 ใบ
+    const masters = deck.filter(c => dfHasType(c, "Master"));
+    const boostMasters = deck.filter(c => dfHasType(c, "Boost_Master"));
     if (rules.checkSize && rules.requireMaster && masters.length === 0)
-        add('ต้องมี Master (หรือ Boost Master) 1 ใบ');
+        add('ต้องมี Master 1 ใบ');
     if (masters.length > 1)
         add(`มี Master ได้ใบเดียว (ตอนนี้ ${masters.length} ใบ)`, masters.map(nameOf).join(', '));
+    if (boostMasters.length > 1)
+        add(`มี Boost Master ได้ใบเดียว (ตอนนี้ ${boostMasters.length} ใบ)`, boostMasters.map(nameOf).join(', '));
 
     // 3) LC / Legend มีได้ 1 แบบ
     const lcIds = [...new Set(deck.filter(c => dfHasType(c, "LC")).map(c => String(c.id)))];

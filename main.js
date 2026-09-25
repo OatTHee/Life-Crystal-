@@ -328,8 +328,10 @@ function openModal(cardOrId) {
 
     // --- 2. คำนวณสถานะต่างๆ (ประกาศไว้ด้านบนสุดเพื่อให้ทุกส่วนเรียกใช้ได้) ---
     const countInDeck = myDeck.filter(c => String(c.id) === String(card.id)).length;
-    const isMaster = card.type && (card.type.includes("Master") || card.type.includes("Boost_Master"));
-    const hasMasterInDeck = myDeck.some(c => c.type && (c.type.includes("Master") || c.type.includes("Boost_Master")));
+    // Master กับ Boost Master เป็นคนละช่อง: ใส่ Master ได้ 1 ใบ และ Boost Master ได้อีก 1 ใบ
+    const masterType = (card.type === "Master" || card.type === "Boost_Master") ? card.type : null;
+    const isMaster = !!masterType;
+    const hasMasterInDeck = !!masterType && myDeck.some(c => c.type === masterType);
     
     // กฎ Armor: ข้ามการเช็คเผ่า
     const isArmor = card.nameTH && card.nameTH.includes("Armor");
@@ -489,7 +491,7 @@ function openModal(cardOrId) {
                 : '(ไม่สามารถใส่การ์ดข้ามเผ่าได้)';
             btnColor = '#b0b0b0'; 
         } else if (isMasterDisabled) {
-            btnText = 'มี Master ในเด็คแล้ว';
+            btnText = masterType === 'Boost_Master' ? 'มี Boost Master ในเด็คแล้ว' : 'มี Master ในเด็คแล้ว';
             btnColor = '#b0b0b0';
         } else if (isLegendBlocked) {
             btnText = `มี Legend อื่นแล้ว (${activeLegend.nameTH})`;

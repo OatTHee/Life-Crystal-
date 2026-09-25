@@ -45,7 +45,7 @@ const MG_originalData = [
     },
     {
         id: "AC005 MG",
-        nameTH: "ซากดึกดำบรรพ์",
+        nameTH: "ฟอสซิล",
         nameEN: "Fossil",
         dp: 2,
         type: "Action",

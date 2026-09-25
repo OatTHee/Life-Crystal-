@@ -139,6 +139,7 @@ function createAddDeckButton(container) {
         myDeck = []; 
         currentEditingDeckId = null;
         document.getElementById('deckNameInput').value = "";
+        if (typeof setDeckNotes === 'function') setDeckNotes(''); // เด็คใหม่ = โน้ตว่าง (deck_extras.js)
         if (typeof updateDeckUI === 'function') updateDeckUI();
         toggleDeckViewMode();
     };

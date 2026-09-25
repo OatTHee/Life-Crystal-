@@ -301,7 +301,7 @@ function renderCards(cards) {
             ${badgeHtml}
             <img src="${optimizedImageUrl}"
             onerror="this.src='${card.image}'; this.onerror=null;"
-            class="card-img-btn" style="cursor: zoom-in;" loading="lazy" width="150" height="210">
+            class="card-img-btn" style="cursor: zoom-in;" loading="lazy" decoding="async" width="150" height="210">
             <div class="card-controls">
                 <button class="add-to-deck-btn" 
                     ${isDisabled ? 'disabled' : ''} 

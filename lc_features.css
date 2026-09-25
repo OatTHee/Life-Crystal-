@@ -587,3 +587,175 @@ h1.main-title .whats-new-btn.is-new { animation: wn-glow 2.4s ease-in-out infini
 @media (max-width: 768px) {
     .nav-left .data-updated { display: none; }
 }
+
+/* ---------- 16. โน้ตเด็ค + จัดการคอลเล็คชั่น (deck_extras.js) ---------- */
+#deckBuilderView .dp-notes { margin-top: 8px; font-size: 13px; color: #ccc; }
+#deckBuilderView .dp-notes summary { cursor: pointer; padding: 4px 0; list-style: none; user-select: none; }
+#deckBuilderView .dp-notes summary::-webkit-details-marker { display: none; }
+#deckBuilderView .dp-notes summary::after { content: " ▾"; opacity: 0.6; }
+#deckBuilderView .dp-notes[open] summary::after { content: " ▴"; }
+#deckBuilderView .dp-notes.has-notes summary { color: #ffd900; }
+#deckBuilderView .dp-notes-hint { font-size: 11px; opacity: 0.7; }
+#deckBuilderView .dp-notes textarea {
+    width: 100%; box-sizing: border-box; resize: vertical; min-height: 70px;
+    margin-top: 4px; padding: 8px 10px;
+    font-family: 'Kanit', sans-serif; font-size: 13.5px; line-height: 1.5;
+    background: #1b1b24; color: #eee; border: 1px solid #454b60; border-radius: 8px;
+}
+#deckBuilderView .dp-notes textarea:focus { border-color: #ffd900; outline: none; }
+
+.coll-tools { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 8px 14px; background: #202030; border-bottom: 1px solid #333; box-sizing: border-box; }
+.coll-tools input, .coll-tools select {
+    height: 32px; padding: 0 10px; font-family: 'Kanit', sans-serif; font-size: 13px;
+    background: #2b2b3a; color: #eee; border: 1px solid #454b60; border-radius: 8px;
+}
+.coll-tools input { flex: 1; min-width: 140px; }
+.coll-count { color: #9a9ab0; font-size: 12px; white-space: nowrap; }
+.collection-card-item .dup-deck-btn {
+    position: absolute !important; top: 10px; right: 48px;
+    width: 30px; height: 30px; padding: 0 !important;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(7, 53, 125, 0.9) !important; color: #fff !important;
+    border: none !important; border-radius: 50% !important; font-size: 15px;
+    box-shadow: none !important; cursor: pointer; z-index: 5;
+}
+.collection-card-item .dup-deck-btn:hover { background: #0b4db3 !important; transform: none !important; }
+.deck-info .coll-note-badge { display: inline-block; margin-left: 6px; font-size: 11px !important; background: #ffe7a0; color: #6b4a00 !important; border-radius: 10px; padding: 1px 7px; }
+.deck-info .coll-when { display: block; font-size: 11px !important; color: #555 !important; margin-top: 2px; }
+.coll-empty { text-align: center; color: #aaa; font-family: 'Kanit', sans-serif; font-size: 13px; }
+
+/* ---------- 17. การ์ดโปรด / ดูล่าสุด / ขนาดตัวอักษร / ซูมรูป (ux_extras.js) ---------- */
+.quick-lists { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+#searchBar .quick-lists .ql-btn, #searchBar .quick-lists .ql-clear {
+    height: 28px; padding: 0 12px;
+    font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 400;
+    background: transparent; color: #ccc;
+    border: 1px solid #555; border-radius: 14px;
+    box-shadow: none; transform: none; cursor: pointer;
+}
+#searchBar .quick-lists .ql-btn small { opacity: 0.65; margin-left: 2px; }
+#searchBar .quick-lists .ql-btn:hover { background: rgba(255,255,255,0.08); transform: none; box-shadow: none; }
+#searchBar .quick-lists .ql-btn.active { background: #ffd900; color: #1a1a1a; border-color: #ffd900; }
+#searchBar .quick-lists .ql-clear { border-style: dashed; font-size: 12px; color: #aaa; }
+
+#modalInfo h2 .fav-star {
+    margin-left: 8px; vertical-align: middle;
+    width: 34px; height: 34px; padding: 0;
+    font-size: 22px; line-height: 1;
+    background: transparent; color: #b0b0b0;
+    border: 1px solid #ddd; border-radius: 50%;
+    box-shadow: none; cursor: pointer;
+}
+#modalInfo h2 .fav-star:hover { color: #f1c40f; background: #fff8dc; transform: none; box-shadow: none; }
+#modalInfo h2 .fav-star.is-on { color: #f1c40f; border-color: #f1c40f; background: #fffbe8; }
+
+#modalInfo .ability-box { font-size: calc(1em * var(--lc-ability-scale, 1)); }
+#modalInfo .ab-font { float: right; display: inline-flex; gap: 4px; }
+#modalInfo .ab-font button {
+    width: 30px; height: 24px; padding: 0;
+    font-family: 'Kanit', sans-serif; font-size: 12px; font-weight: 600;
+    background: rgba(0,0,0,0.12); color: inherit;
+    border: 1px solid rgba(0,0,0,0.2); border-radius: 6px;
+    box-shadow: none; cursor: pointer;
+}
+#modalInfo .ab-font button:hover:not(:disabled) { background: rgba(0,0,0,0.22); transform: none; box-shadow: none; }
+#modalInfo .ab-font button:disabled { opacity: 0.35; cursor: default; }
+#modalImg { cursor: zoom-in; }
+.lc-zoom-overlay img { max-width: 96vw !important; max-height: 96vh !important; touch-action: pinch-zoom; }
+
+/* =========================================================
+   18. Showcase — ภาพรวมเด็ค (Deck Overview)
+   ========================================================= */
+#showcaseBody .showcase-overview-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 12px;
+    background: #1e1e2e; color: #d8d6f0;
+    border: 1px solid rgba(108, 92, 231, 0.7); border-radius: 20px;
+    font-family: 'Kanit', sans-serif; font-size: 14px; font-weight: normal;
+    box-shadow: none; transform: none; cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+#showcaseBody .showcase-overview-btn:hover { background: rgba(108, 92, 231, 0.22); color: #fff; transform: none; box-shadow: none; }
+#showcaseBody .showcase-overview-btn.is-open { background: #6c5ce7; border-color: #6c5ce7; color: #fff; }
+#showcaseBody .showcase-overview-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+#showcaseBody .showcase-overview-btn .sob-chev { width: 14px; height: 14px; opacity: 0.75; transition: transform 0.2s; }
+#showcaseBody .showcase-overview-btn.is-open .sob-chev { transform: rotate(180deg); }
+
+.deck-overview {
+    --dov-bg: #161625; --dov-card: #1e1e30; --dov-line: rgba(255,255,255,0.08);
+    --dov-ink: #f2f2f7; --dov-ink2: #b4b4c6; --dov-ink3: #7d7d93;
+    margin: 0 0 16px; padding: 18px;
+    background: var(--dov-bg); color: var(--dov-ink);
+    border: 1px solid rgba(108, 92, 231, 0.45); border-radius: 14px;
+    font-family: 'Kanit', sans-serif;
+}
+.deck-overview[hidden] { display: none; }
+.deck-overview .dov-empty { margin: 8px 0; text-align: center; color: var(--dov-ink3); }
+.deck-overview .dov-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+.deck-overview .dov-title { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; color: var(--dov-ink); }
+.deck-overview .dov-total { font-size: 13px; color: var(--dov-ink2); }
+
+.deck-overview .dov-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.deck-overview .dov-tile {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 12px 8px; background: var(--dov-card);
+    border: 1px solid var(--dov-line); border-radius: 10px; text-align: center;
+}
+.deck-overview .dov-tile-label { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dov-ink2); }
+.deck-overview .dov-tile-num { font-size: 26px; font-weight: 600; line-height: 1.15; color: var(--dov-ink); font-variant-numeric: tabular-nums; }
+.deck-overview .dov-tile-sub { font-size: 11px; color: var(--dov-ink3); }
+
+.deck-overview .dov-panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.deck-overview .dov-panel {
+    display: flex; flex-direction: column; min-width: 0;
+    padding: 14px 14px 12px; background: var(--dov-card);
+    border: 1px solid var(--dov-line); border-radius: 10px;
+}
+.deck-overview .dov-panel-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+.deck-overview .dov-panel-head h4 { margin: 0; font-size: 14px; font-weight: 600; color: var(--dov-ink); }
+.deck-overview .dov-panel-head h4 small { margin-left: 4px; font-weight: normal; color: var(--dov-ink3); }
+.deck-overview .dov-panel-meta { font-size: 12px; color: var(--dov-ink2); }
+
+.deck-overview .dov-chart {
+    display: flex; align-items: stretch; gap: 6px; height: 170px;
+    padding: 0 2px; border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.deck-overview .dov-col { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; cursor: default; }
+.deck-overview .dov-val { flex: none; height: 18px; font-size: 12px; line-height: 18px; color: var(--dov-ink2); font-variant-numeric: tabular-nums; }
+.deck-overview .dov-bar-area { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.deck-overview .dov-bar {
+    flex: none; width: 70%; max-width: 26px; display: flex; flex-direction: column-reverse; gap: 2px;
+    border-radius: 4px 4px 0 0; overflow: hidden;
+}
+.deck-overview .dov-seg { display: block; min-height: 3px; flex-basis: 0; }
+.deck-overview .dov-x { position: absolute; bottom: -22px; font-size: 11px; color: var(--dov-ink3); font-variant-numeric: tabular-nums; }
+.deck-overview .dov-col:hover .dov-bar { filter: brightness(1.15); }
+.deck-overview .dov-col:hover .dov-x { color: var(--dov-ink); }
+.deck-overview .dov-col:not(.is-empty):hover::after {
+    content: attr(data-tip);
+    position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+    z-index: 5; width: max-content; max-width: 220px; padding: 6px 9px;
+    background: #0d0d16; color: var(--dov-ink); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; font-size: 12px; line-height: 1.35; white-space: normal; pointer-events: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+}
+.deck-overview .dov-col:first-child:hover::after { left: 0; transform: none; }
+.deck-overview .dov-col:last-child:hover::after { left: auto; right: 0; transform: none; }
+
+.deck-overview .dov-legend {
+    display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 30px; padding-top: 10px;
+    border-top: 1px solid var(--dov-line); font-size: 12px; color: var(--dov-ink2);
+}
+.deck-overview .dov-key { display: inline-flex; align-items: center; gap: 5px; }
+.deck-overview .dov-key b { font-weight: 600; color: var(--dov-ink); font-variant-numeric: tabular-nums; }
+.deck-overview .dov-key img { width: 16px; height: 16px; object-fit: contain; }
+.deck-overview .dov-key.is-muted { color: var(--dov-ink3); }
+.deck-overview .dov-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+
+@media (max-width: 768px) {
+    .deck-overview { padding: 14px; }
+    .deck-overview .dov-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .deck-overview .dov-panels { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .deck-overview .dov-tile-num { font-size: 22px; }
+    .deck-overview .dov-chart { height: 140px; gap: 4px; }
+}

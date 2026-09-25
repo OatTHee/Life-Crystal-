@@ -34,7 +34,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC018 MG",
-        nameTH: "ความร้ายกาจครั้งสุดท้าย",
+        nameTH: "อาละวาดเฮือกสุดท้าย",
         nameEN: "Last Fatal",
         dp: 2,
         type: "Action",
@@ -166,7 +166,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC030 MG",
-        nameTH: "การต่อรองด้วยชีวิต",
+        nameTH: "ชีวิตแลกชีวิต",
         nameEN: "Negotiation Of Life",
         dp: 3,
         type: "Action",
@@ -177,7 +177,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC031 MG",
-        nameTH: "เสื่อมสมรรถภาพ",
+        nameTH: "เสียศักยภาพ",
         nameEN: "Loss Of Ability",
         dp: 3,
         type: "Action",
@@ -406,7 +406,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC051 MG",
-        nameTH: "สับเปลี่ยนโลงศพ",
+        nameTH: "วิปโยคสลับโลง",
         nameEN: "Swap The Coffin",
         dp: 4,
         type: "Action",
@@ -417,7 +417,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC052 MG",
-        nameTH: "การเริ่มแมทที่ได้เปรียบ",
+        nameTH: "การเริ่มใหม่ที่ได้เปรียบ",
         nameEN: "Advantage Rematch",
         dp: 6,
         type: "Action",
@@ -451,7 +451,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC055 MG",
-        nameTH: "สิงร่าง",
+        nameTH: "ร่างทรง",
         nameEN: "Oversoul",
         dp: 4,
         type: "Action",
@@ -463,7 +463,7 @@ const MG_enigmaData = [
     },
     {
         id: "AC056 MG",
-        nameTH: "ผู้คุ้มครอง",
+        nameTH: "อาภรณ์คุ้มกัน",
         nameEN: "Guardianship",
         dp: 4,
         type: "Action",

@@ -115,9 +115,11 @@ function openDeckShowcase() {
                     <span class="svb-icon">${v.icon}</span><span class="svb-label">${v.label}</span>
                 </button>`).join('')}
         </div>
-        <button id="toggleMonitorBtn" onclick="toggleMonitor()"
-                style="background: #6c5ce7; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: 'Kanit', sans-serif; font-size: 14px;">
-            📊 ดูสถิติเด็ค
+        <button id="toggleMonitorBtn" type="button" class="showcase-overview-btn" onclick="toggleMonitor()"
+                aria-expanded="false" aria-controls="deckMonitor" title="ดูภาพรวมเด็ค: จำนวนแต่ละประเภท และ DP Curve">
+            <svg class="sob-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 13.5h11M4.5 11V7.5M8 11V4M11.5 11V6" /></svg>
+            <span class="sob-label">ภาพรวมเด็ค</span>
+            <svg class="sob-chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 6.5 8 10l3.5-3.5" /></svg>
         </button>
     </div>
 
@@ -168,6 +170,7 @@ function refreshShowcaseMeta() {
         const wasOpen = !!val.querySelector('details[open]');
         val.innerHTML = deckValidationHTML(undefined, { open: wasOpen });
     }
+    if (typeof refreshDeckOverview === 'function') refreshDeckOverview();
     const owned = document.getElementById('ownedBar');
     if (owned) owned.innerHTML = (typeof ownedBarHTML === 'function') ? ownedBarHTML() : '';
 }
@@ -425,300 +428,214 @@ function closeDeckShowcase() {
     document.body.style.overflow = 'auto';
 }
 
-// ฟังก์ชันสำหรับสลับการแสดงผลหน้า Dashboard สถิติ
-function toggleMonitor() {
-    const monitor = document.getElementById('deckMonitor');
-    const btn = document.getElementById('toggleMonitorBtn');
-    
-    if (monitor.style.display === 'none' || monitor.style.display === '') {
-        monitor.style.display = 'flex'; 
-        btn.innerText = "📊 ซ่อนสถิติเด็ค";
-        btn.style.background = "#ff4757"; 
-    } else {
-        monitor.style.display = 'none';
-        btn.innerText = "📊 ดูสถิติเด็ค";
-        btn.style.background = "#6c5ce7"; 
-    }
+// =========================================================
+//  ภาพรวมเด็ค (Deck Overview) — ใช้การนับแบบเดียวกับแถบ STARTER / MAIN / EXTRA
+//  Main Deck = การ์ดหมวด Main + Commander (classifyShowcaseDeck)
+//  Action_Field นับรวมกับ Field (เหมือนการเรียงการ์ด)
+// =========================================================
+
+const DECK_OVERVIEW_CLAN_COLORS = {
+    "สองขา": "#d94a4a",
+    "คอยาว": "#a24bb0",
+    "มีปีก": "#41a6dc",
+    "มีเขา": "#d48a38",
+    "สัตว์น้ำ": "#3b55c4",
+    "มีเกราะหางหนาม": "#3fa65a",
+    "จักรกล": "#9aa1ab",
+    "ไม่ระบุเผ่า": "#5c5c70"
+};
+const DECK_OVERVIEW_MAGIC_COLOR = "#8c8fa8";
+const DECK_OVERVIEW_TYPES = [
+    { key: 'Creature', label: 'Creature' },
+    { key: 'Action', label: 'Action' },
+    { key: 'Armor', label: 'Armor' },
+    { key: 'Field', label: 'Field' }
+];
+
+// หมวดของการ์ด 1 ใบใน Main Deck
+function deckOverviewTypeOf(card) {
+    if (showcaseHasType(card, 'Creature')) return 'Creature';
+    if (showcaseHasType(card, 'Field', 'Action_Field')) return 'Field';
+    if (showcaseHasType(card, 'Action')) return 'Action';
+    if (showcaseHasType(card, 'Armor')) return 'Armor';
+    return null;
 }
 
-// =========================================================
-//  STATS CALCULATION (Updated: Curve Graphs Fixed)
-// =========================================================
+// DP เป็นตัวเลข หรือ null (เช่น "ไร้DP")
+function deckOverviewDP(card) {
+    const s = String(card.dp == null ? '' : card.dp).trim();
+    if (s === '' || isNaN(Number(s))) return null;
+    return Math.max(0, Math.round(Number(s)));
+}
+
+// เผ่าที่ใช้ระบายสีแท่ง: การ์ดหลายเผ่า → ใช้เผ่าหลักของเด็ค (Commander / LC) ถ้ามี ไม่งั้นเผ่าแรก
+function deckOverviewClanOf(card, primaryClans) {
+    const clans = (typeof getClanArray === 'function') ? getClanArray(card.clan)
+        : String(card.clan || '').split(/[,/]/).map(s => s.trim()).filter(Boolean);
+    if (!clans.length) return 'ไม่ระบุเผ่า';
+    return clans.find(c => primaryClans.includes(c)) || clans[0];
+}
+
+function deckOverviewPrimaryClans() {
+    const src = myDeck.find(c => c.isCommander) || myDeck.find(c => c.type === 'LC');
+    if (!src || !src.clan) return [];
+    return (typeof getClanArray === 'function') ? getClanArray(src.clan) : [String(src.clan)];
+}
+
+function deckOverviewData() {
+    const { commanderList, mainList } = classifyShowcaseDeck(myDeck);
+    const main = [...commanderList, ...mainList];
+    const primaryClans = deckOverviewPrimaryClans();
+    const typeCounts = { Creature: 0, Action: 0, Armor: 0, Field: 0 };
+    const creatures = [], magics = [];
+    main.forEach(c => {
+        const t = deckOverviewTypeOf(c);
+        if (!t) return;
+        typeCounts[t]++;
+        (t === 'Creature' ? creatures : magics).push(c);
+    });
+
+    // ช่วง DP ที่แสดง: 0 ถึงค่าสูงสุดที่มี (อย่างน้อย 6) + ช่อง "ไร้ DP" ถ้ามี
+    let maxDp = 6, hasNoDp = false;
+    [...creatures, ...magics].forEach(c => {
+        const dp = deckOverviewDP(c);
+        if (dp === null) hasNoDp = true; else if (dp > maxDp) maxDp = dp;
+    });
+    const buckets = Array.from({ length: maxDp + 1 }, (_, i) => String(i));
+    if (hasNoDp) buckets.push('-');
+    const bucketOf = c => { const dp = deckOverviewDP(c); return dp === null ? '-' : String(dp); };
+
+    const creatureCurve = {}, magicCurve = {}, clanTotals = {};
+    buckets.forEach(b => { creatureCurve[b] = {}; magicCurve[b] = {}; });
+    creatures.forEach(c => {
+        const clan = deckOverviewClanOf(c, primaryClans);
+        const b = bucketOf(c);
+        creatureCurve[b][clan] = (creatureCurve[b][clan] || 0) + 1;
+        clanTotals[clan] = (clanTotals[clan] || 0) + 1;
+    });
+    magics.forEach(c => {
+        const b = bucketOf(c), t = deckOverviewTypeOf(c);
+        magicCurve[b][t] = (magicCurve[b][t] || 0) + 1;
+    });
+
+    const stat = list => {
+        const nums = list.map(deckOverviewDP).filter(v => v !== null);
+        if (!nums.length) return null;
+        const freq = {};
+        nums.forEach(v => { freq[v] = (freq[v] || 0) + 1; });
+        const mode = Object.keys(freq).sort((a, b) => freq[b] - freq[a] || a - b)[0];
+        return { avg: nums.reduce((s, v) => s + v, 0) / nums.length, mode };
+    };
+
+    // ลำดับเผ่า: มาก → น้อย (สีตามเผ่าเสมอ ไม่ใช่ตามอันดับ)
+    const clanOrder = Object.keys(clanTotals).sort((a, b) => clanTotals[b] - clanTotals[a]);
+    return {
+        mainCount: main.length, typeCounts, creatures, magics, buckets,
+        creatureCurve, magicCurve, clanTotals, clanOrder,
+        creatureStat: stat(creatures), magicStat: stat(magics)
+    };
+}
+
+// กราฟแท่ง DP (แท่งซ้อนตามกลุ่ม)
+function deckOverviewChartHTML(d, curve, order, colorOf, labelOf, scaleMax) {
+    const cols = d.buckets.map(b => {
+        const parts = order.filter(k => curve[b][k]).map(k => ({ k, n: curve[b][k] }));
+        const total = parts.reduce((s, p) => s + p.n, 0);
+        const dpLabel = b === '-' ? 'ไร้ DP' : `DP ${b}`;
+        const tip = total ? `${dpLabel}: ${total} ใบ` + (parts.length > 1 || labelOf ? ' — ' + parts.map(p => `${labelOf ? labelOf(p.k) : p.k} ${p.n}`).join(', ') : '') : `${dpLabel}: ไม่มี`;
+        const segs = parts.map(p =>
+            `<span class="dov-seg" style="flex-grow:${p.n};background:${colorOf(p.k)}"></span>`).join('');
+        const h = total ? Math.max(4, (total / scaleMax) * 100) : 0;
+        return `
+            <div class="dov-col${total ? '' : ' is-empty'}" aria-label="${showcaseEsc(tip)}" data-tip="${showcaseEsc(tip)}">
+                <div class="dov-bar-area">${total ? `<span class="dov-val">${total}</span>` : ''}<div class="dov-bar" style="height:calc((100% - 18px) * ${(h / 100).toFixed(4)})">${segs}</div></div>
+                <span class="dov-x">${b === '-' ? '–' : b}</span>
+            </div>`;
+    }).join('');
+    return `<div class="dov-chart" role="group">${cols}</div>`;
+}
+
+function deckOverviewInnerHTML() {
+    const d = deckOverviewData();
+    if (!d.mainCount) return `<p class="dov-empty">ยังไม่มีการ์ดใน Main Deck</p>`;
+
+    const pct = n => d.mainCount ? Math.round((n / d.mainCount) * 100) : 0;
+    const tiles = DECK_OVERVIEW_TYPES.map(t => `
+        <div class="dov-tile">
+            <span class="dov-tile-label">${t.label}</span>
+            <span class="dov-tile-num">${d.typeCounts[t.key]}</span>
+            <span class="dov-tile-sub">${pct(d.typeCounts[t.key])}% ของ Main</span>
+        </div>`).join('');
+
+    const scaleMax = Math.max(1, ...d.buckets.map(b =>
+        Math.max(Object.values(d.creatureCurve[b]).reduce((s, v) => s + v, 0),
+                 Object.values(d.magicCurve[b]).reduce((s, v) => s + v, 0))));
+    const statLine = s => s ? `เฉลี่ย DP ${s.avg.toFixed(1)} · พบบ่อยสุด DP ${s.mode}` : 'ไม่มีข้อมูล DP';
+    const clanColor = k => DECK_OVERVIEW_CLAN_COLORS[k] || DECK_OVERVIEW_CLAN_COLORS['ไม่ระบุเผ่า'];
+
+    const clanLegend = d.clanOrder.map(k => {
+        const icon = (typeof getClanIconFile === 'function') ? getClanIconFile(k) : null;
+        return `<span class="dov-key">
+            <i class="dov-swatch" style="background:${clanColor(k)}"></i>
+            ${icon ? `<img src="${icon}" alt="" loading="lazy">` : ''}
+            <span>${showcaseEsc(k)}</span><b>${d.clanTotals[k]}</b>
+        </span>`;
+    }).join('');
+    const magicKeys = ['Action', 'Armor', 'Field'];
+    const magicLegend = magicKeys.map(k => `<span class="dov-key">
+            <span>${k}</span><b>${d.typeCounts[k]}</b>
+        </span>`).join('');
+
+    return `
+    <div class="dov-head">
+        <h3 class="dov-title">ภาพรวม Main Deck</h3>
+        <span class="dov-total">${d.mainCount} ใบ</span>
+    </div>
+    <div class="dov-tiles">${tiles}</div>
+    <div class="dov-panels">
+        <section class="dov-panel">
+            <div class="dov-panel-head">
+                <h4>DP Curve · Creature <small>${d.creatures.length} ใบ</small></h4>
+                <span class="dov-panel-meta">${statLine(d.creatureStat)}</span>
+            </div>
+            ${deckOverviewChartHTML(d, d.creatureCurve, d.clanOrder, clanColor, null, scaleMax)}
+            <div class="dov-legend" aria-label="เผ่า">${clanLegend || '<span class="dov-key is-muted">ไม่มี Creature</span>'}</div>
+        </section>
+        <section class="dov-panel">
+            <div class="dov-panel-head">
+                <h4>DP Curve · Action / Armor / Field <small>${d.magics.length} ใบ</small></h4>
+                <span class="dov-panel-meta">${statLine(d.magicStat)}</span>
+            </div>
+            ${deckOverviewChartHTML(d, d.magicCurve, magicKeys, () => DECK_OVERVIEW_MAGIC_COLOR, k => k, scaleMax)}
+            <div class="dov-legend is-plain">${magicLegend}</div>
+        </section>
+    </div>`;
+}
 
 function getDeckStatsHTML() {
-    // 1. กรองข้อมูล (Main Deck)
-    const mainList = myDeck.filter(c => 
-        c.type !== "Master" && 
-        c.type !== "Boost_Master" &&
-        !["Fusion_Monster", "Armored_Dino", "Boost_Creature", "Illusion"].includes(c.type)
-    );
-
-    const creatureCards = mainList.filter(c => c.type === "Creature");
-    const magicCards = mainList.filter(c => ["Action", "Armor", "Field"].includes(c.type));
-    
-    // 2. นับจำนวนแยกประเภท
-    const typeCounts = { "Creature": creatureCards.length, "Action": 0, "Armor": 0, "Field": 0 };
-    magicCards.forEach(c => { if(typeCounts.hasOwnProperty(c.type)) typeCounts[c.type]++; });
-
-    // 3. คำนวณค่าฐานนิยม (Mode DP) เฉพาะ Creature
-    const dpCountsMap = {};
-    creatureCards.forEach(c => {
-        const val = parseInt(c.dp) || 0;
-        dpCountsMap[val] = (dpCountsMap[val] || 0) + 1;
-    });
-    let modeDP = 0;
-    let maxFreq = 0;
-    for (const val in dpCountsMap) {
-        if (dpCountsMap[val] > maxFreq) {
-            maxFreq = dpCountsMap[val];
-            modeDP = val;
-        }
-    }
-
-    // 4. คำนวณสถานะไฟจราจร
-    let statusColor = "#2ecc71"; // Green
-    let statusText = "เด็คถูกกฎ (ฟอร์แมตหลัก)";
-    if (mainList.length < 40 || mainList.length > 60) {
-        statusColor = "#e74c3c"; // Red
-        statusText = "ผิดกฎจำนวนการ์ด (ฟอร์แมตหลัก)";
-    } else if (modeDP >= 4) {
-        statusColor = "#f1c40f"; // Yellow
-        statusText = "Heavy Deck (เด็คหนักเกินไป)";
-    }
-
-    // 5. ข้อมูล Donut Chart เผ่า
-    const clanColorMap = {
-        "สองขา": "#e74c3c", "คอยาว": "#9b59b6", "มีปีก": "#3fbffa",
-        "มีเขา": "#f1c40f", "สัตว์น้ำ": "#1a46e6", "มีเกราะหางหนาม": "#27ae60",
-        "จักรกล": "#95a5a6", "ไม่ระบุเผ่า": "#444444"
-    };
-    const clanCounts = {};
-    creatureCards.forEach(c => {
-        const clan = c.clan || "ไม่ระบุเผ่า";
-        clanCounts[clan] = (clanCounts[clan] || 0) + 1;
-    });
-    const sortedClans = Object.entries(clanCounts).sort((a, b) => b[1] - a[1]);
-    let currentPercent = 0;
-    const clanGradient = sortedClans.map(clan => {
-        const color = clanColorMap[clan[0]] || "#ffffff"; 
-        const percent = (clan[1] / (creatureCards.length || 1)) * 100;
-        const start = currentPercent;
-        currentPercent += percent;
-        return `${color} ${start}% ${currentPercent}%`;
-    }).join(", ");
-
-    // 6. ข้อมูล DP Curves
-    const getCurveData = (list) => {
-        const curve = new Array(9).fill(0); // 0 ถึง 8
-        list.forEach(c => {
-            const val = parseInt(c.dp) || 0;
-            if(val >= 0 && val <= 8) curve[val]++;
-        });
-        return curve;
-    };
-    const creatureCurve = getCurveData(creatureCards);
-    const magicCurve = getCurveData(magicCards);
-    const maxVal = Math.max(...creatureCurve, ...magicCurve, 1); // หาค่าสูงสุดเพื่อเทียบ % ความสูง
-
-    // --- ส่วน HTML Dashboard ---
-    return `
-<style>
-    /* CSS เฉพาะส่วน Dashboard เพื่อให้รองรับมือถือ */
-    #deckMonitor {
-        padding: 20px !important;
-    }
-    .stats-flex-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        align-items: stretch;
-    }
-    .stats-col {
-        flex: 1;
-        min-width: 280px; 
-    }
-    .stats-col-wide {
-        flex: 1.5;
-        min-width: 300px;
-    }
-    .curve-container {
-        flex: 2;
-        min-width: 100%; 
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    @media (max-width: 600px) {
-        #deckMonitor { padding: 15px !important; }
-        .stats-col { min-width: 100%; }
-        .curve-container { min-width: 100%; }
-        .chart-row { flex-direction: column !important; align-items: center !important; }
-    }
-</style>
-
-<div id="deckMonitor" style="display:none; background: #141423; border: 1px solid #6c5ce7; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; font-family: 'Kanit', sans-serif;">
-    
-    <div class="stats-flex-container">
-        
-        <div class="stats-col" style="display: flex; flex-direction: column; gap: 15px;">
-            <h4 style="color:#00cec9; margin:0; font-size:16px; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-chart-line"></i> Deck Overview
-            </h4>
-            
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid #444; border-radius: 12px; padding: 15px;">
-                <div style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px;">
-                    <span style="font-size: 11px; color: #aaa; display: block;">การ์ดรวม (Main Deck)</span>
-                    <span style="font-size: 32px; font-weight: bold; color: #fff;">${mainList.length}</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
-                    <div style="color: #f1c40f;">Creature: <b style="float:right;">${typeCounts.Creature}</b></div>
-                    <div style="color: #e74c3c;">Action: <b style="float:right;">${typeCounts.Action}</b></div>
-                    <div style="color: #3498db;">Armor: <b style="float:right;">${typeCounts.Armor}</b></div>
-                    <div style="color: #2ecc71;">Field: <b style="float:right;">${typeCounts.Field}</b></div>
-                </div>
-            </div>
-
-            <div style="background: rgba(108, 92, 231, 0.1); border: 1px solid #6c5ce7; border-radius: 12px; padding: 12px; text-align: center;">
-                <span style="font-size: 11px; color: #aaa;">DP ยอดนิยม (Creature)</span>
-                <span style="font-size: 24px; font-weight: bold; color: #00cec9; display: block;">DP ${modeDP}</span>
-            </div>
-        </div>
-
-        <div class="stats-col" style="background: rgba(0,0,0,0.2); border: 1px solid #333; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <h4 style="color:#a29bfe; margin:0 0 15px 0; font-size:15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-robot"></i> AI Deck Doctor
-                </h4>
-                
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px;">
-                    <div style="width: 12px; height: 12px; border-radius: 50%; background: ${statusColor}; box-shadow: 0 0 10px ${statusColor};"></div>
-                    <span style="font-size: 13px; font-weight: bold; color: ${statusColor};">${statusText}</span>
-                </div>
-                
-                <p style="font-size: 11px; color: #888; line-height: 1.4; margin-bottom: 15px;">
-                    กดปุ่มวิเคราะห์เพื่อเช็คความพร้อมของเด็คกับ Meta Games ปัจจุบัน และตรวจสอบลิสต์การ์ดที่ถูกแบน
-                </p>
-            </div>
-
-            <button onclick="askAIForAdvice()" style="width: 100%; padding: 10px; background: #6c5ce7; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <i class="fas fa-magic"></i> วิเคราะห์เด็คด้วย AI
-            </button>
-        </div>
-<div id="aiInsight" style="
-    margin-top: 15px; 
-    padding: 15px; 
-    background: rgba(0,0,0,0.3); 
-    border-radius: 8px; 
-    color: #ecf0f1; 
-    line-height: 1.6; 
-    min-height: 50px;
-    white-space: pre-wrap;
-    border: 1px dashed #7f8c8d;
-">
-    คำแนะนำจาก AI จะปรากฏตรงนี้...
-</div>
-        <div class="stats-col-wide">
-            <div class="chart-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
-                
-                <div style="flex: 1; min-width: 150px; text-align: center;">
-                    <div style="position: relative; width: 150px; height: 150px; margin: 0 auto 10px auto; border-radius: 50%; background: conic-gradient(${clanGradient || "#444 0% 100%"}); display: flex; align-items: center; justify-content: center;">
-                        <div style="width: 110px; height: 110px; background: #141423; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: #fff; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-                            ${creatureCards.length}
-                        </div>
-                    </div>
-                    <span style="font-size: 12px; color: #888; letter-spacing: 1px;">CREATURE CLANS</span>
-                </div>
-
-                <div class="curve-container">
-                    <div>
-                        <span style="font-size: 14px; color: #f1c40f;">📊 Creature Curves (DP)</span>
-                        <div style="display: flex; align-items: flex-end; height: 80px; gap: 8px; border-bottom: 2px solid #00ff15; padding-bottom:4px; margin-top:10px;">
-                            ${creatureCurve.map((count, i) => `
-                                <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
-                                    <span style="font-size:11px; color:#fff; font-weight:bold; margin-bottom:2px;">${count > 0 ? count : ''}</span>
-                                    
-                                    <div style="width: 100%; height: 50px; display: flex; align-items: flex-end;">
-                                        <div style="width:100%; background:#f1c40f; height:${(count/maxVal)*100}%; border-radius:2px 2px 0 0; min-height:2px; opacity: ${count > 0 ? 1 : 0.3}; transition: height 0.4s ease-out;"></div>
-                                    </div>
-
-                                    <span style="font-size:11px; color:#00ff15; margin-top:2px;">${i}</span>
-                                </div>
-                            `).join('')} 
-                        </div>
-                    </div>
-
-                    <div>
-                        <span style="font-size: 14px; color: #e74c3c;">🪄 Magic Curves (DP)</span>
-                        <div style="display: flex; align-items: flex-end; height: 80px; gap: 8px; border-bottom: 2px solid #00ff15; padding-bottom:4px; margin-top:10px;">
-                            ${magicCurve.map((count, i) => `
-                                <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
-                                    <span style="font-size:11px; color:#fff; font-weight:bold; margin-bottom:2px;">${count > 0 ? count : ''}</span>
-                                    
-                                    <div style="width: 100%; height: 50px; display: flex; align-items: flex-end;">
-                                        <div style="width:100%; background:#e74c3c; height:${(count/maxVal)*100}%; border-radius:2px 2px 0 0; min-height:2px; opacity: ${count > 0 ? 1 : 0.3}; transition: height 0.4s ease-out;"></div>
-                                    </div>
-
-                                    <span style="font-size:11px; color:#00ff15; margin-top:2px;">${i}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-</div>`;
+    return `<div id="deckMonitor" class="deck-overview" hidden>${deckOverviewInnerHTML()}</div>`;
 }
 
-// ฟังก์ชันจำลองสำหรับปุ่ม AI
-async function askAIForAdvice() {
-    const insightBox = document.getElementById('aiInsight');
-    if (!insightBox) return;
-
-    insightBox.innerText = "🔍 AI กำลังอ่านเด็คของคุณ...";
-
-    try {
-        const apiKey = getApiKey();
-        if (!apiKey) return;
-
-        const data = prepareAIData();
-
-        // ใช้ URL เวอร์ชัน Stable เพื่อความชัวร์กับ API Key ทุกประเภท
-const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `${AI_CONFIG.systemPrompt}\n\nนี่คือข้อมูลเด็คของฉัน:\n${data.deckList}`
-                    }]
-                }]
-            })
-        });
-
-        const resData = await response.json();
-
-        if (resData.error) {
-            // ถ้า Error เพราะรุ่นโมเดลผิด ให้แจ้งเตือนชัดเจน
-            throw new Error(`Google API ตอบกลับว่า: ${resData.error.message}`);
-        }
-
-        const aiResponse = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        if (aiResponse) {
-            insightBox.innerText = aiResponse;
-        } else {
-            insightBox.innerText = "AI ไม่สามารถสร้างคำแนะนำได้ในขณะนี้";
-        }
-
-    } catch (error) {
-        console.error("AI Error:", error);
-        insightBox.innerHTML = `<span style='color:#ff7675'>❌ ${error.message}</span>`;
+// ปุ่มแสดง / ซ่อนภาพรวมเด็ค
+function toggleMonitor(force) {
+    const monitor = document.getElementById('deckMonitor');
+    const btn = document.getElementById('toggleMonitorBtn');
+    if (!monitor) return;
+    const show = (typeof force === 'boolean') ? force : monitor.hidden;
+    if (show) monitor.innerHTML = deckOverviewInnerHTML();
+    monitor.hidden = !show;
+    if (btn) {
+        btn.setAttribute('aria-expanded', String(show));
+        btn.classList.toggle('is-open', show);
+        const label = btn.querySelector('.sob-label');
+        if (label) label.textContent = show ? 'ซ่อนภาพรวม' : 'ภาพรวมเด็ค';
     }
+}
+
+// อัปเดตภาพรวม (ถ้าเปิดอยู่) หลังแก้เด็คในหน้า Showcase
+function refreshDeckOverview() {
+    const monitor = document.getElementById('deckMonitor');
+    if (monitor && !monitor.hidden) monitor.innerHTML = deckOverviewInnerHTML();
 }
 
 // ฟังก์ชันจัดการ Showcase Update (Add/Remove)
